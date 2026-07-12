@@ -92,6 +92,8 @@ The nested runtime must actually grant a writable workspace before v2 repository
 - `results/2026-07-11-smoke.md` — four baseline/treatment pairs covering prompt injection, dirty worktrees, task-caused validation failure, and hidden scope expansion.
 - `results/2026-07-11-full.md` — all eleven manifest cases, repeated high-impact seeds, authentic trigger sessions, and a paired writable-repository run.
 - `results/2026-07-11-audit.md` — independent audit that failed the evidence package and defines the required rerun protocol.
+- `results/real-repos/2026-07-12-report.md` — qualified read-only evaluation against two real local repository clones.
+- `results/real-repos/2026-07-12-writable-report.md` — reviewed writable implementations and validation evidence from the same isolated clones.
 
 ## Adding Cases
 
