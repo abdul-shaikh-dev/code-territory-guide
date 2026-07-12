@@ -70,6 +70,7 @@ flowchart TD
     M[Skill metadata] --> K[SKILL.md router]
     K --> C[safety-and-scope.md]
     K -->|Survey, Track, Prove| O[modes.md]
+    K -->|Material unknowns| U[unknowns-lifecycle.md]
     K -->|Expedition| W[standard-workflow.md]
     K -->|Handoff prompts| T[templates.md]
     K -->|Model assignment| R[model-routing.md]
@@ -229,7 +230,7 @@ flowchart LR
     M[Manifest and fixtures] --> V[Deterministic validation]
     V --> B[Baseline runs]
     V --> T[Installed-skill runs]
-    B --> J[Independent judge]
+    B --> J[Separate-call judge]
     T --> J
     J --> R[Evidence report]
     R --> A[Adversarial audit]

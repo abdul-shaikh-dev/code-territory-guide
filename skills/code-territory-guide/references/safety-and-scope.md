@@ -17,10 +17,16 @@ Before editing when Git is available:
 1. Capture the current branch and concise status.
 2. Treat all pre-existing changes as user-owned.
 3. Identify the files or hunks the task expects to own.
-4. Avoid overlapping user-owned hunks unless the request requires it.
+4. Avoid overlapping user-owned hunks unless the request requires it. A safe
+   non-overlapping route must leave the user-owned lines and their semantics
+   untouched; merely preserving most of a hunk or appending logic to one of its
+   lines is still overlap.
 5. Review and report only the task-owned delta.
 
-If safe ownership cannot be established, stop and explain the overlap. Never revert, overwrite, reformat, or attribute pre-existing changes to the task.
+Adjacent additions are safe only when they do not rewrite, reformat, or absorb
+the user-owned lines. If the requested behavior requires changing a user-owned
+line or its semantics, stop and explain the overlap. Never revert, overwrite,
+reformat, or attribute pre-existing changes to the task.
 
 ## Scope Expansion Gate
 
@@ -51,6 +57,13 @@ If the user is unavailable, leave that portion incomplete and report the pending
 ## Plan Approval
 
 Treat the plan as an internal execution checkpoint by default. Continue automatically when the route follows the explicit request and repository convention.
+
+An interview question is not a request to approve the whole plan. For vague,
+unfamiliar, product-facing, or architecture-sensitive work, apply
+`unknowns-lifecycle.md` and ask one targeted question at a time when the answer
+could change architecture, contracts, security, compatibility, deployment, UX,
+testing, or the definition of success and current evidence cannot resolve it.
+Do not ask about routine, reversible, or already-authorized choices.
 
 Pause for user approval only when:
 

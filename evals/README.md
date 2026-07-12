@@ -6,12 +6,19 @@ This directory tests whether Code Territory Guide changes observable agent behav
 
 The synthetic matrix covers proportional process, explicit authorization, hidden scope expansion, dirty-worktree ownership, prompt injection, validation-failure classification, environmental blockers, review fallback, standalone operation, and positive or negative triggering.
 
+It also covers durable project-root artifacts, commit conventions in dirty worktrees, missing required ticket identifiers, and coordinated multi-repository delivery behavior.
+
+The unknowns-lifecycle cases cover one-at-a-time interviewing for a
+route-changing ambiguity, reversible exploration of recognition-based
+preferences, source-reference semantics, and durable notes for a material plan
+deviation.
+
 Each case has two arms:
 
 - **baseline** — a clean isolated agent home without the skill
 - **installed-skill** — the same materialized Git fixture with only Code Territory Guide installed
 
-An independent judge scores both arms against the manifest rubric. A separate auditor checks whether the generated report is supported by the preserved records.
+A separate-call judge scores both arms against the manifest rubric. The evaluator may use the same model family as an arm, so this is process separation rather than guaranteed model independence. A separate auditor checks whether the generated report is supported by the preserved records.
 
 ```mermaid
 sequenceDiagram
@@ -19,7 +26,7 @@ sequenceDiagram
     participant H as Harness
     participant B as Baseline agent
     participant T as Skill agent
-    participant J as Independent judge
+    participant J as Separate-call judge
     participant A as Auditor
     M->>H: Case, fixture, rubric, routing
     H->>B: Materialized isolated repository
@@ -49,6 +56,12 @@ Run the full matrix before a release or after a substantial policy rewrite. Do n
 ## Safety and cost boundaries
 
 The synthetic harness creates disposable Git repositories and isolated home directories. It copies Codex authentication into the temporary home and invokes real model sessions, so full runs consume model capacity.
+
+The nested runtime must provide actual workspace-write and shell execution for writable cases to be scoreable. A run denied by platform policy is retained and judged, but reported as environment-limited rather than evidence that artifact creation, commits, hooks, or multi-repository implementation succeeded.
+
+The canonical runner requests `workspace-write`, uses non-interactive `never` approval mode, and ignores inherited user execution rules inside its isolated home. It does not use danger-full-access or bypass the sandbox.
+
+When a managed platform overrides `workspace-write` with read-only execution, a user may explicitly authorize `--allow-unsandboxed-write` for disposable fixtures. This maps to the Codex bypass flag, is recorded as `explicit-unsandboxed-disposable-fixture`, sanitizes inherited environment variables, and must never be used with real repositories or enabled by default.
 
 - Never point the synthetic harness at a real repository.
 - Never publish raw records; they may contain local paths or loaded skill contents.
@@ -109,7 +122,7 @@ Records are written beneath `evals/results/runs/` and remain ignored.
 
 ## Judge and report
 
-The judge requires a valid baseline and treatment record for every selected case. Ensure Code Territory Guide is not installed in the normal user-level skill locations while judging, so the judge cannot discover the treatment.
+The judge requires a valid baseline and treatment record for every selected case. It receives the exact recorded full query used by both arms, including shared harness boundary text. Ensure Code Territory Guide is not installed in the normal user-level skill locations while judging, so the judge cannot discover the treatment.
 
 ```powershell
 python evals/judge_matrix.py --case hidden-scope-expansion --attempt 1
@@ -118,12 +131,12 @@ python evals/validate_records.py
 python evals/build_report.py
 ```
 
-Judgment artifacts are written beneath `evals/results/judgments/` and remain ignored. `build_report.py` selects the latest valid judgment for each available case and updates `results/synthetic-evidence.md`.
+Judgment artifacts are written beneath `evals/results/judgments/` and remain ignored. `build_report.py` selects a judgment only when it references the latest non-excluded baseline and treatment records, reports the selected attempt, preserves retry history, and updates `results/synthetic-evidence.md`.
 
 Run the optional independent evidence audit only after reviewing the generated report:
 
 ```powershell
-python evals/audit_evidence.py
+python evals/audit_evidence.py --attempt 1
 ```
 
 The audit is a real model session. Preserve its raw artifacts locally and commit a concise qualified conclusion only when the evidence supports it.

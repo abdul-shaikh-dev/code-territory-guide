@@ -1,5 +1,9 @@
 # Field Brief: <task>
 
+## Decisions most likely to change
+
+- <Data model, interface, contract, UX, rollout, or visible behavior decision>
+
 ## Objective
 
 <Outcome and acceptance criteria>

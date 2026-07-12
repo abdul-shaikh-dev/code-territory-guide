@@ -2,6 +2,9 @@
 
 Read `safety-and-scope.md` before using a mode. Choose the lightest mode that reduces the main uncertainty; do not run every mode.
 
+For vague, unfamiliar, product-facing, or architecture-sensitive work, also
+load `unknowns-lifecycle.md`.
+
 ## Survey
 
 Use Survey when the request is vague, product-oriented, architectural, or has multiple materially different solutions.
@@ -9,12 +12,20 @@ Use Survey when the request is vague, product-oriented, architectural, or has mu
 Goal: improve the map before implementation.
 
 1. Inspect relevant repository context before asking design questions.
-2. Restate the intended outcome and constraints.
-3. Identify the decisions that materially affect behavior, architecture, data, security, compatibility, or scope.
-4. Present two or three viable approaches only when genuine alternatives exist.
-5. Recommend one direction with its principal tradeoff.
-6. Apply the plan-approval rules in `safety-and-scope.md`.
-7. Continue into Expedition when the target is clear.
+2. Classify material known knowns, known unknowns, unknown knowns, and unknown
+   unknowns.
+3. Run a blind spot pass when the domain, quality bar, or repository territory
+   is unfamiliar.
+4. Use a small brainstorm, prototype, or reference when the user is more likely
+   to recognize success than describe it.
+5. Identify decisions that materially affect behavior, architecture, data,
+   security, compatibility, deployment, UX, testing, or scope.
+6. Ask one targeted question at a time for route-changing ambiguity that
+   evidence cannot resolve.
+7. Present two or three viable approaches only when genuine alternatives exist,
+   then recommend one with its principal tradeoff.
+8. Continue into Expedition only when route-changing unknowns are resolved,
+   explicitly deferred, or awaiting a named user decision.
 
 Do not implement during Survey.
 
@@ -28,6 +39,12 @@ Return:
 
 ### Territory inspected
 - <relevant evidence>
+
+### Unknowns
+- Known knowns: <material explicit facts>
+- Known unknowns: <recognized unresolved decisions>
+- Unknown knowns: <tacit criteria surfaced>
+- Unknown unknowns: <blind spots discovered>
 
 ### Material choices
 - <choice and tradeoff, if any>

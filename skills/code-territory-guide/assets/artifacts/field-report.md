@@ -8,6 +8,13 @@
 
 <What changed and why>
 
+## Stakeholder view
+
+<Visible outcome, prototype, screenshot, before/after, demo, or omit this
+section when it adds no value>
+
+## Reviewer evidence
+
 ## Owned delta
 
 - `<path>` — <change>
@@ -37,3 +44,7 @@
 ## Durable learning
 
 <Saved location and summary, or none>
+
+## Understanding check
+
+<Explainer or quiz when requested; otherwise remove this section>

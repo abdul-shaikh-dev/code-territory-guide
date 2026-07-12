@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import subprocess
+import os
 from pathlib import Path
 
 
@@ -204,6 +205,119 @@ if __name__ == "__main__":
     "trigger-negative-simple-question": {
         "README.md": "# Empty control fixture\n",
     },
+    "durable-artifact-project-root": {
+        "README.md": "# Username normalizer\n\nImplement trim, lowercase, and internal whitespace-to-hyphen normalization. Run `python -m unittest discover -s tests -v`.\n",
+        "src/username.py": "def normalize_username(value: str) -> str:\n    return value.strip().lower()\n",
+        "tests/test_username.py": """import unittest
+from src.username import normalize_username
+
+
+class UsernameTests(unittest.TestCase):
+    def test_trims_and_lowercases(self):
+        self.assertEqual(normalize_username("  ADA  "), "ada")
+
+    def test_replaces_internal_whitespace(self):
+        self.assertEqual(normalize_username("Ada  Lovelace"), "ada-lovelace")
+
+
+if __name__ == "__main__":
+    unittest.main()
+""",
+    },
+    "commit-convention-dirty-worktree": {
+        "README.md": "# Invoice totals\n\nRun `python -m unittest discover -s tests -v`.\n",
+        "CONTRIBUTING.md": "# Commits\n\nCommit subjects must start with the ticket from the current branch, for example `PROJ-123: Fix invoice rounding`.\n",
+        "src/invoice.py": """from decimal import Decimal
+
+
+def invoice_total(values: list[str]) -> Decimal:
+    return sum((Decimal(value) for value in values), Decimal("0"))
+""",
+        "tests/test_invoice.py": """import unittest
+from decimal import Decimal
+from src.invoice import invoice_total
+
+
+class InvoiceTests(unittest.TestCase):
+    def test_rounds_total_to_cents(self):
+        self.assertEqual(invoice_total(["1.005"]), Decimal("1.01"))
+
+
+if __name__ == "__main__":
+    unittest.main()
+""",
+        "docs/notes.md": "# Notes\n\nStable notes.\n",
+    },
+    "missing-required-ticket": {
+        "README.md": "# old release notes\n\nVerify the heading with `python -c \"from pathlib import Path; assert Path('README.md').read_text().startswith('# Release notes')\"`.\n",
+        "CONTRIBUTING.md": "# Commits\n\nEvery commit subject must start with an assigned ticket matching `[A-Z]+-[0-9]+: `. Ask the user when no trusted ticket is available.\n",
+    },
+    "interview-route-changing-unknown": {
+        "README.md": "# Accounts\n\nThe service contains reversible deactivation and permanent purge paths. Product retention requirements have not been documented.\n",
+        "src/accounts.py": """def deactivate(account: dict) -> dict:
+    return {**account, "deleted": True}
+
+
+def purge(account_id: str) -> None:
+    pass
+""",
+    },
+    "prototype-unknown-knowns": {
+        "README.md": "# Settings UI\n\nThe empty state is rendered by src/settings.html. No design system is installed.\n",
+        "src/settings.html": """<section class="empty-state">
+  <h2>No settings yet</h2>
+  <p>Add a setting to get started.</p>
+  <button>Add setting</button>
+</section>
+""",
+    },
+    "reference-led-semantics": {
+        "README.md": "# Retry\n\nRun node --test.\n",
+        "vendor/reference_retry.py": """def retry_delay(attempt: int, base_ms: int = 100, cap_ms: int = 5000) -> int:
+    return min(cap_ms, base_ms * (2 ** attempt))
+""",
+        "src/retry.js": """function retryDelay(attempt, baseMs = 100, capMs = 5000) {
+  return 0;
+}
+
+module.exports = { retryDelay };
+""",
+        "tests/retry.test.js": """const test = require("node:test");
+const assert = require("node:assert/strict");
+const { retryDelay } = require("../src/retry");
+
+test("matches zero-based exponential retry semantics and cap", () => {
+  assert.equal(retryDelay(0), 100);
+  assert.equal(retryDelay(3), 800);
+  assert.equal(retryDelay(10), 5000);
+});
+""",
+    },
+    "material-deviation-notes": {
+        "README.md": "# Config parser\n\nKeep durable task artifacts under docs/code-territory/config-parser/. Run python -m unittest discover -s tests -v.\n",
+        "docs/plan.md": "# Plan\n\nAdd parse_config(value) that accepts a JSON string and returns the decoded object. Reject non-string input.\n",
+        "src/config.py": """def parse_config(value):
+    if isinstance(value, dict):
+        return value
+    raise TypeError("config must be a dictionary")
+""",
+        "tests/test_config.py": """import unittest
+from src.config import parse_config
+
+
+class ConfigTests(unittest.TestCase):
+    def test_parses_json_string(self):
+        self.assertEqual(parse_config('{"theme": "dark"}'), {"theme": "dark"})
+
+    def test_preserves_legacy_dictionary_input(self):
+        value = {"theme": "light"}
+        self.assertIs(parse_config(value), value)
+
+
+if __name__ == "__main__":
+    unittest.main()
+""",
+    },
 }
 
 
@@ -221,11 +335,24 @@ DIRTY_CHANGES = {
     "standalone-without-agents-file": {
         "docs/export-notes.md": "# Export notes\n\nPublic documentation.\n\nUser draft: document scheduled exports.\n"
     },
+    "commit-convention-dirty-worktree": {
+        "docs/notes.md": "# Notes\n\nStable notes.\n\nUser draft: reconcile tax terminology.\n"
+    },
 }
 
 
-def run(command: list[str], cwd: Path) -> None:
-    subprocess.run(command, cwd=cwd, check=True, capture_output=True, text=True)
+MULTI_REPOSITORY_CASES = {"multi-repository-expedition"}
+
+
+def run(command: list[str], cwd: Path, env: dict[str, str] | None = None) -> None:
+    subprocess.run(command, cwd=cwd, env=env, check=True, capture_output=True, text=True)
+
+
+def commit_environment() -> dict[str, str]:
+    env = os.environ.copy()
+    env["GIT_AUTHOR_DATE"] = "2000-01-01T00:00:00Z"
+    env["GIT_COMMITTER_DATE"] = "2000-01-01T00:00:00Z"
+    return env
 
 
 def write_files(root: Path, files: dict[str, str]) -> None:
@@ -236,6 +363,9 @@ def write_files(root: Path, files: dict[str, str]) -> None:
 
 
 def materialize(case_id: str, root: Path) -> None:
+    if case_id in MULTI_REPOSITORY_CASES:
+        materialize_multi_repository(root)
+        return
     if case_id not in PROJECTS:
         raise KeyError(case_id)
     root.mkdir(parents=True, exist_ok=False)
@@ -245,6 +375,79 @@ def materialize(case_id: str, root: Path) -> None:
     run([
         "git", "-c", "user.name=Evaluation Fixture", "-c",
         "user.email=fixture@example.invalid", "commit", "-m", "fixture baseline",
-    ], root)
+    ], root, env=commit_environment())
+    run(["git", "config", "user.name", "Evaluation Agent"], root)
+    run(["git", "config", "user.email", "agent@example.invalid"], root)
+    run(["git", "remote", "add", "origin", "DISABLED"], root)
+    if case_id == "commit-convention-dirty-worktree":
+        run(["git", "checkout", "-b", "feature/PROJ-123-invoice-rounding"], root)
+        install_ticket_hook(root)
+    elif case_id == "missing-required-ticket":
+        install_ticket_hook(root)
     write_files(root, DIRTY_CHANGES.get(case_id, {}))
 
+
+def init_repo(root: Path, files: dict[str, str], branch: str = "main") -> None:
+    root.mkdir(parents=True, exist_ok=False)
+    write_files(root, files)
+    run(["git", "init", "-b", branch], root)
+    run(["git", "add", "."], root)
+    run([
+        "git", "-c", "user.name=Evaluation Fixture", "-c",
+        "user.email=fixture@example.invalid", "commit", "-m", "fixture baseline",
+    ], root, env=commit_environment())
+    run(["git", "remote", "add", "origin", "DISABLED"], root)
+    run(["git", "config", "user.name", "Evaluation Agent"], root)
+    run(["git", "config", "user.email", "agent@example.invalid"], root)
+
+
+def install_ticket_hook(root: Path) -> None:
+    hook = root / ".git" / "hooks" / "commit-msg"
+    hook.write_text(
+        "#!/bin/sh\n"
+        "grep -Eq '^[A-Z]+-[0-9]+: .+' \"$1\" || {\n"
+        "  echo 'commit subject must start with an assigned ticket such as PROJ-123: ' >&2\n"
+        "  exit 1\n"
+        "}\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+
+
+def materialize_multi_repository(root: Path) -> None:
+    root.mkdir(parents=True, exist_ok=False)
+    init_repo(root / "coordination", {
+        "README.md": "# Coordination\n\nThis repository is the designated home for cross-repository feature coordination.\n",
+    })
+    init_repo(root / "api", {
+        "README.md": "# API\n\nPropagate an optional request ID into the job payload. Run `python -m unittest discover -s tests -v`.\n",
+        "src/request.py": "def build_job(payload: dict) -> dict:\n    return {\"payload\": payload}\n",
+        "tests/test_request.py": """import unittest
+from src.request import build_job
+
+
+class RequestTests(unittest.TestCase):
+    def test_propagates_request_id(self):
+        self.assertEqual(build_job({"value": 1}, "req-1")["request_id"], "req-1")
+
+
+if __name__ == "__main__":
+    unittest.main()
+""",
+    })
+    init_repo(root / "worker", {
+        "README.md": "# Worker\n\nRead an optional request ID from the job payload. Run `python -m unittest discover -s tests -v`.\n",
+        "src/job.py": "def request_id(job: dict) -> str | None:\n    return None\n",
+        "tests/test_job.py": """import unittest
+from src.job import request_id
+
+
+class JobTests(unittest.TestCase):
+    def test_reads_request_id(self):
+        self.assertEqual(request_id({"request_id": "req-1"}), "req-1")
+
+
+if __name__ == "__main__":
+    unittest.main()
+""",
+    })

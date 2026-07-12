@@ -20,12 +20,16 @@ Read `safety-and-scope.md` first. Use Expedition when the target is clear enough
 
 Inspect relevant repository evidence and distinguish:
 
-- explicit requirements
-- missing information visible from the request
-- unstated repository conventions and existing behavior
-- hidden integration, migration, security, compatibility, accessibility, or production risks
+- explicit requirements (**known knowns**)
+- missing information visible from the request (**known unknowns**)
+- unstated preferences, repository conventions, and existing behavior
+  (**unknown knowns**)
+- hidden integration, migration, security, compatibility, accessibility,
+  quality-bar, or production risks (**unknown unknowns**)
 
-Do not implement during this pass. Ask a question only when the answer meets the plan-approval or scope-expansion conditions in the canonical policy.
+Load `unknowns-lifecycle.md` when any category contains a route-changing gap.
+Do not implement during this pass. Ask one question at a time only when its
+answer meets the interview, plan-approval, or scope-expansion conditions.
 
 ## 2. Enter the Territory
 
@@ -49,6 +53,8 @@ Batch related reads. Before exceeding this budget, state the unresolved material
 
 Create a concise internal plan containing:
 
+- route-changing decisions first, especially data models, interfaces, contracts,
+  UX flows, rollout, and visible behavior
 - target behavior and acceptance criteria
 - task-owned files or boundaries
 - behavior to preserve
@@ -90,6 +96,12 @@ For multi-repository work, give each repository a local owned slice and validati
 Make the smallest safe change that satisfies the route. Prefer existing patterns and dependencies, readable local diffs, and tests close to changed behavior.
 
 Do not perform unrelated cleanup, speculative abstraction, broad reformatting, or edits to user-owned changes. Reapply the canonical scope gate whenever new information changes the route.
+
+When new evidence forces a material plan deviation, apply
+`unknowns-lifecycle.md`: pause at confirmation gates, choose a conservative
+reversible option only when authorized, record the evidence and deviation when
+persistence is useful, and revalidate affected criteria. Do not create
+implementation notes for routine local choices.
 
 ## 7. Validate and Classify
 
@@ -153,4 +165,9 @@ When artifact persistence was selected, update `field-report.md` with the verifi
 
 For multi-repository work, report both repository-local completion and aggregate completion. Mark the feature Complete only when every required repository slice and cross-repository acceptance check is complete; otherwise identify the incomplete or blocked slice.
 
-Include screenshots or before/after evidence when visual behavior materially changed and the evidence can be captured reliably. Include quiz questions only when the user requests teaching, knowledge transfer, or review preparation.
+For substantial work, lead with stakeholder-facing outcome and demonstration,
+then provide reviewer-facing technical evidence. Include screenshots,
+before/after evidence, a prototype, or a demo GIF when visual behavior
+materially changed and the evidence can be captured reliably. Include an
+explainer or quiz only when the user requests teaching, knowledge transfer,
+review preparation, or a demonstrated-understanding merge gate.

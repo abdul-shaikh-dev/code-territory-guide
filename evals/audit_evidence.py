@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import argparse
 import json
 import shutil
 import subprocess
@@ -16,10 +17,6 @@ ROUTING = json.loads((EVAL_ROOT / "model-routing.json").read_text(encoding="utf-
 CODEX = shutil.which("codex.cmd") or shutil.which("codex")
 REPORT = RESULT_ROOT / "synthetic-evidence.md"
 GENERATED = RESULT_ROOT / "generated"
-FINAL = GENERATED / "synthetic-evidence-audit.md"
-RAW = GENERATED / "synthetic-evidence-audit.jsonl"
-STDERR = GENERATED / "synthetic-evidence-audit.stderr.txt"
-RECORD = GENERATED / "synthetic-evidence-audit.record.json"
 
 
 def now() -> str:
@@ -28,10 +25,18 @@ def now() -> str:
 
 def main() -> None:
     GENERATED.mkdir(parents=True, exist_ok=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--attempt", type=int, default=1)
+    args = parser.parse_args()
+    stem = f"synthetic-evidence-audit-attempt-{args.attempt}"
+    final = GENERATED / f"{stem}.md"
+    raw = GENERATED / f"{stem}.jsonl"
+    stderr_path = GENERATED / f"{stem}.stderr.txt"
+    record_path = GENERATED / f"{stem}.record.json"
     if CODEX is None:
         raise SystemExit("codex launcher not found on PATH")
-    if RECORD.exists():
-        raise SystemExit(f"refusing to overwrite preserved audit: {RECORD}")
+    if record_path.exists():
+        raise SystemExit(f"refusing to overwrite preserved audit: {record_path}")
     route = ROUTING["audit"]
     prompt = """Act as an independent adversarial auditor of a behavioral-evaluation evidence package.
 
@@ -59,18 +64,18 @@ Do not edit files or run model sessions. Your final response is the audit docume
         CODEX, "exec", "--ephemeral", "--json", "--color", "never",
         "--sandbox", "read-only", "--skip-git-repo-check", "-C", str(REPO_ROOT),
         "-m", route["model"], "-c", f'model_reasoning_effort="{route["reasoning_effort"]}"',
-        "-o", str(FINAL), "-",
+        "-o", str(final), "-",
     ]
     completed = subprocess.run(
         command, input=prompt, capture_output=True, text=True, encoding="utf-8", errors="replace",
         timeout=600,
     )
     finished = now()
-    RAW.write_text(completed.stdout, encoding="utf-8")
-    STDERR.write_text(completed.stderr, encoding="utf-8")
-    valid = completed.returncode == 0 and FINAL.is_file() and FINAL.stat().st_size > 0
+    raw.write_text(completed.stdout, encoding="utf-8")
+    stderr_path.write_text(completed.stderr, encoding="utf-8")
+    valid = completed.returncode == 0 and final.is_file() and final.stat().st_size > 0
     record = {
-        "audit_run_id": "synthetic-evidence-audit--attempt-1",
+        "audit_run_id": f"synthetic-evidence-audit--attempt-{args.attempt}",
         "started_at": started,
         "finished_at": finished,
         "model": route["model"],
@@ -78,15 +83,15 @@ Do not edit files or run model sessions. Your final response is the audit docume
         "prompt": prompt,
         "prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
         "input_report": str(REPORT.relative_to(EVAL_ROOT)),
-        "raw_output": str(RAW.relative_to(EVAL_ROOT)),
-        "stderr": str(STDERR.relative_to(EVAL_ROOT)),
-        "final_output": str(FINAL.relative_to(EVAL_ROOT)) if FINAL.exists() else None,
+        "raw_output": str(raw.relative_to(EVAL_ROOT)),
+        "stderr": str(stderr_path.relative_to(EVAL_ROOT)),
+        "final_output": str(final.relative_to(EVAL_ROOT)) if final.exists() else None,
         "exit_status": completed.returncode,
         "excluded": {"value": not valid, "rule": None if valid else "audit did not produce a successful non-empty final output"},
     }
-    RECORD.write_text(json.dumps(record, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    record_path.write_text(json.dumps(record, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     shutil.rmtree(run_dir, ignore_errors=True)
-    print(f"audit exit={completed.returncode} valid={valid} record={RECORD}")
+    print(f"audit exit={completed.returncode} valid={valid} record={record_path}")
 
 
 if __name__ == "__main__":
