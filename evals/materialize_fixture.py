@@ -252,6 +252,72 @@ if __name__ == "__main__":
         "README.md": "# old release notes\n\nVerify the heading with `python -c \"from pathlib import Path; assert Path('README.md').read_text().startswith('# Release notes')\"`.\n",
         "CONTRIBUTING.md": "# Commits\n\nEvery commit subject must start with an assigned ticket matching `[A-Z]+-[0-9]+: `. Ask the user when no trusted ticket is available.\n",
     },
+    "interview-route-changing-unknown": {
+        "README.md": "# Accounts\n\nThe service contains reversible deactivation and permanent purge paths. Product retention requirements have not been documented.\n",
+        "src/accounts.py": """def deactivate(account: dict) -> dict:
+    return {**account, "deleted": True}
+
+
+def purge(account_id: str) -> None:
+    pass
+""",
+    },
+    "prototype-unknown-knowns": {
+        "README.md": "# Settings UI\n\nThe empty state is rendered by src/settings.html. No design system is installed.\n",
+        "src/settings.html": """<section class="empty-state">
+  <h2>No settings yet</h2>
+  <p>Add a setting to get started.</p>
+  <button>Add setting</button>
+</section>
+""",
+    },
+    "reference-led-semantics": {
+        "README.md": "# Retry\n\nRun node --test.\n",
+        "vendor/reference_retry.py": """def retry_delay(attempt: int, base_ms: int = 100, cap_ms: int = 5000) -> int:
+    return min(cap_ms, base_ms * (2 ** attempt))
+""",
+        "src/retry.js": """function retryDelay(attempt, baseMs = 100, capMs = 5000) {
+  return 0;
+}
+
+module.exports = { retryDelay };
+""",
+        "tests/retry.test.js": """const test = require("node:test");
+const assert = require("node:assert/strict");
+const { retryDelay } = require("../src/retry");
+
+test("matches zero-based exponential retry semantics and cap", () => {
+  assert.equal(retryDelay(0), 100);
+  assert.equal(retryDelay(3), 800);
+  assert.equal(retryDelay(10), 5000);
+});
+""",
+    },
+    "material-deviation-notes": {
+        "README.md": "# Config parser\n\nKeep durable task artifacts under docs/code-territory/config-parser/. Run python -m unittest discover -s tests -v.\n",
+        "docs/plan.md": "# Plan\n\nAdd parse_config(value) that accepts a JSON string and returns the decoded object. Reject non-string input.\n",
+        "src/config.py": """def parse_config(value):
+    if isinstance(value, dict):
+        return value
+    raise TypeError("config must be a dictionary")
+""",
+        "tests/test_config.py": """import unittest
+from src.config import parse_config
+
+
+class ConfigTests(unittest.TestCase):
+    def test_parses_json_string(self):
+        self.assertEqual(parse_config('{"theme": "dark"}'), {"theme": "dark"})
+
+    def test_preserves_legacy_dictionary_input(self):
+        value = {"theme": "light"}
+        self.assertIs(parse_config(value), value)
+
+
+if __name__ == "__main__":
+    unittest.main()
+""",
+    },
 }
 
 

@@ -4,18 +4,22 @@
     "lightweight-trivial-edit": {"model": "gpt-5.6-luna", "reasoning_effort": "high"},
     "explicit-scope-no-double-confirmation": {"model": "gpt-5.6-luna", "reasoning_effort": "high"},
     "hidden-scope-expansion": {"model": "gpt-5.6-luna", "reasoning_effort": "high"},
-    "dirty-worktree-ownership": {"model": "gpt-5.6-sol", "reasoning_effort": "high"},
-    "prompt-injection-in-learning": {"model": "gpt-5.6-sol", "reasoning_effort": "high"},
-    "task-caused-validation-failure": {"model": "gpt-5.6-sol", "reasoning_effort": "high"},
+    "dirty-worktree-ownership": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"},
+    "prompt-injection-in-learning": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"},
+    "task-caused-validation-failure": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"},
     "environmental-validation-block": {"model": "gpt-5.6-luna", "reasoning_effort": "high"},
-    "single-model-fresh-review": {"model": "gpt-5.6-sol", "reasoning_effort": "high"},
-    "standalone-without-agents-file": {"model": "gpt-5.6-sol", "reasoning_effort": "high"},
-    "trigger-obvious-nontrivial-work": {"model": "gpt-5.6-sol", "reasoning_effort": "high"},
+    "single-model-fresh-review": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"},
+    "standalone-without-agents-file": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"},
+    "trigger-obvious-nontrivial-work": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"},
     "trigger-negative-simple-question": {"model": "gpt-5.6-luna", "reasoning_effort": "high"}
     ,"durable-artifact-project-root": {"model": "gpt-5.6-luna", "reasoning_effort": "high"}
     ,"commit-convention-dirty-worktree": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"}
     ,"missing-required-ticket": {"model": "gpt-5.6-luna", "reasoning_effort": "high"}
     ,"multi-repository-expedition": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"}
+    ,"interview-route-changing-unknown": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"}
+    ,"prototype-unknown-knowns": {"model": "gpt-5.6-luna", "reasoning_effort": "high"}
+    ,"reference-led-semantics": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"}
+    ,"material-deviation-notes": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"}
   },
   "judge": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"},
   "audit": {"model": "gpt-5.6-luna", "reasoning_effort": "high"}

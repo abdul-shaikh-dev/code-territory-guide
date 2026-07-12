@@ -13,6 +13,9 @@ RUN_REQUIRED = {
     "files_after", "changed_files", "tool_events", "repository_before", "repository_after",
     "exit_status", "excluded",
 }
+REPORTABLE_REQUIRED = {
+    "harness_revision", "execution_mode", "execution_authorization", "routing"
+}
 
 
 def load(path: Path) -> dict:
@@ -75,6 +78,13 @@ def main() -> None:
     print(
         f"validated schemas, {len(run_paths)} canonical runs, and {len(judge_paths)} canonical judgments; "
         f"ignored {len(legacy_paths)} legacy runs and {len(legacy_judgments)} legacy judgments"
+    )
+    reportable = sum(
+        REPORTABLE_REQUIRED <= set(load(path))
+        for path in run_paths
+    )
+    print(
+        f"{reportable}/{len(run_paths)} canonical runs contain complete reportable provenance"
     )
 
 

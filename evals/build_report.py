@@ -8,7 +8,72 @@ EVAL_ROOT = Path(__file__).resolve().parent
 JUDGMENT_ROOT = EVAL_ROOT / "results" / "judgments"
 OUTPUT = EVAL_ROOT / "results" / "synthetic-evidence.md"
 MANIFEST = json.loads((EVAL_ROOT / "manifest.json").read_text(encoding="utf-8"))
+CASES = {case["id"]: case for case in MANIFEST["cases"]}
 RUN_ROOT = EVAL_ROOT / "results" / "runs"
+
+
+def expected_query(case: dict) -> str:
+    if case["id"] == "multi-repository-expedition":
+        boundary = (
+            "Work only in the named coordination, api, and worker repositories directly inside the current workspace. "
+            "The common workspace is not a Git repository or artifact destination. Do not search its parent or user-profile directories."
+        )
+    else:
+        boundary = (
+            "Work only in the current repository. Do not search parent directories or user-profile directories."
+        )
+    return (
+        case["query"]
+        + "\n\n"
+        + boundary
+        + " Preserve unrelated existing changes and use each repository's own validation instructions."
+    )
+
+
+def judgment_issue(record: dict, runs: list[dict]) -> str | None:
+    case = CASES.get(record.get("case_id"))
+    if case is None:
+        return "removed case"
+    if len(runs) != 2:
+        return "missing pair"
+    if any(
+        not run.get("harness_revision") or not run.get("routing")
+        for run in runs
+    ):
+        return "legacy provenance"
+    if len({run["harness_revision"] for run in runs}) != 1:
+        return "harness mismatch"
+    if len({run["routing_sha256"] for run in runs}) != 1:
+        return "routing mismatch"
+    if len({run["query"] for run in runs}) != 1 or runs[0]["query"] != expected_query(case):
+        return "stale prompt"
+    judgment = record.get("judgment")
+    if not judgment:
+        return "missing judgment"
+    expected_ids = [item["id"] for item in case["expected_behavior"]]
+    forbidden = case["forbidden_behavior"]
+    critical_ids = {
+        item["id"] for item in case["expected_behavior"] if item["critical"]
+    }
+    for arm_name in ("baseline", "treatment"):
+        arm = judgment.get(arm_name, {})
+        if [item.get("id") for item in arm.get("criteria", [])] != expected_ids:
+            return "stale rubric"
+        if [
+            item.get("description") for item in arm.get("forbidden", [])
+        ] != forbidden:
+            return "stale rubric"
+        critical_pass = all(
+            item["passed"]
+            for item in arm["criteria"]
+            if item["id"] in critical_ids
+        )
+        passed = critical_pass and not any(
+            item["occurred"] for item in arm["forbidden"]
+        )
+        if arm.get("critical_pass") != critical_pass or arm.get("pass") != passed:
+            return "inconsistent pass fields"
+    return None
 
 
 def latest_valid_run(case_id: str, arm: str) -> Path | None:
@@ -33,6 +98,8 @@ def load_latest_valid_judgments() -> list[dict]:
             continue
         input_records = [json.loads(path.read_text(encoding="utf-8")) for path in inputs]
         if not all(item.get("schema_version") == 2 for item in input_records):
+            continue
+        if judgment_issue(record, input_records):
             continue
         expected_inputs = [
             latest_valid_run(record["case_id"], "baseline"),
@@ -60,6 +127,14 @@ def selected_run_attempt(record: dict) -> int:
     return json.loads(path.read_text(encoding="utf-8"))["attempt"]
 
 
+def selected_runs(records: list[dict]) -> list[dict]:
+    return [
+        json.loads((EVAL_ROOT / relative).read_text(encoding="utf-8"))
+        for record in records
+        for relative in record["input_records"]
+    ]
+
+
 def valid_current_judgment_history() -> list[dict]:
     history = []
     for path in sorted(JUDGMENT_ROOT.glob("*.attempt-*.json")):
@@ -75,6 +150,17 @@ def valid_current_judgment_history() -> list[dict]:
         if all(run.get("schema_version") == 2 for run in runs):
             history.append(record)
     return sorted(history, key=lambda item: (item["case_id"], judgment_attempt(item)))
+
+
+def history_state(record: dict) -> str:
+    inputs = [EVAL_ROOT / relative for relative in record.get("input_records", [])]
+    if len(inputs) != 2 or not all(path.is_file() for path in inputs):
+        return "missing pair"
+    runs = [json.loads(path.read_text(encoding="utf-8")) for path in inputs]
+    issue = judgment_issue(record, runs)
+    if issue:
+        return issue
+    return evidence_state(record)
 
 
 def environment_limited(record: dict) -> bool:
@@ -100,6 +186,17 @@ def main() -> None:
     records = load_latest_valid_judgments()
     if not records:
         raise SystemExit("no valid judgments found; run judge_matrix.py first")
+    runs = selected_runs(records)
+    treatment_hashes = {
+        run["treatment"].get("tree_sha256")
+        for run in runs
+        if run["arm"] == "installed-skill"
+    }
+    if len(treatment_hashes) != 1:
+        raise SystemExit(
+            "selected judgments use multiple treatment payloads; rerun a frozen full matrix "
+            f"before building an aggregate report: {sorted(treatment_hashes)}"
+        )
 
     baseline = sum(record["judgment"]["baseline"]["pass"] for record in records)
     treatment = sum(record["judgment"]["treatment"]["pass"] for record in records)
@@ -141,12 +238,17 @@ def main() -> None:
         "production safety, or performance on tasks outside the manifest. Inspect the preserved local run and "
         "judgment records before making stronger claims.",
         "",
-        f"Coverage is limited to {len(records)} of {len(MANIFEST['cases'])} current-schema scoreable cases. "
-        "The other cases have only legacy, excluded, or not-yet-rerun evidence under the current harness.",
+        (
+            f"Coverage includes all {len(records)} current-schema scoreable cases."
+            if len(records) == len(MANIFEST["cases"])
+            else (
+                f"Coverage is limited to {len(records)} of {len(MANIFEST['cases'])} current-schema scoreable cases. "
+                "The remaining cases have only legacy, excluded, or not-yet-rerun evidence under the current harness."
+            )
+        ),
         "",
-        "All selected runs used explicit unsandboxed execution inside disposable, disabled-remote fixtures because "
-        "the managed platform overrode normal workspace-write with read-only policy. These results do not establish "
-        "behavior under the ordinary sandboxed path.",
+        "All selected runs used explicitly authorized unsandboxed execution inside disposable, disabled-remote "
+        "fixtures. These results do not establish behavior under the ordinary sandboxed path.",
         "",
         "Judgments were produced by separate Sol/medium evaluator calls with installed skill output redacted. "
         "For Sol/medium treatment cases this is evaluator-call separation, not model independence.",
@@ -154,8 +256,15 @@ def main() -> None:
         "The harness appends the same repository boundary and validation reminder to both arms. Results are "
         "within-harness comparisons and do not isolate the skill from that shared prompt framing.",
         "",
-        "Selected attempt-6 records predate the explicit `harness_revision` field, so the exact harness revision "
-        "is not independently recoverable from those records. Future runs persist `materialized-git-v3`.",
+        (
+            "All selected runs record the same harness revision and an exact per-case routing snapshot."
+            if all(run.get("harness_revision") and run.get("routing") for run in runs)
+            and len({run["harness_revision"] for run in runs}) == 1
+            else (
+                "Some selected historical records predate exact harness or routing snapshots, so their execution "
+                "configuration is not independently recoverable."
+            )
+        ),
         "",
         "An environment-limited pair retains its separate-call judge outcome, but cannot establish writable artifact, "
         "commit, hook, or multi-repository implementation behavior when both arms were denied shell execution or writes.",
@@ -171,7 +280,7 @@ def main() -> None:
             f"| `{record['case_id']}` | {selected_run_attempt(record)} | {judgment_attempt(record)} | "
             f"{mark(judgment['baseline']['pass'])} | {mark(judgment['treatment']['pass'])} | "
             f"{judgment['comparison']['outcome']} | "
-            f"{evidence_state(record)} |"
+            f"{history_state(record)} |"
         )
     lines.append("")
     lines.extend([

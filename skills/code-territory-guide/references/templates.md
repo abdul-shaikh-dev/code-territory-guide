@@ -34,12 +34,17 @@ Return:
 ## Survey
 
 ```text
-Use Survey for this task. Inspect relevant repository context first. Restate the outcome, identify only material choices, recommend the smallest valuable direction, and apply the canonical plan-approval rules. Do not implement.
+Use Survey for this task. Inspect relevant repository context first. Classify
+material known knowns, known unknowns, unknown knowns, and unknown unknowns.
+Choose a blind spot pass, prototype, reference, or one-at-a-time interview only
+where it can change the route. Recommend the smallest valuable direction and
+apply the canonical plan-approval rules. Do not implement.
 
 Task:
 <task>
 
-Return: intent, territory inspected, material choices, recommendation, and readiness for Expedition.
+Return: intent, territory inspected, unknowns, material choices, recommendation,
+and readiness for Expedition.
 ```
 
 ## Track
@@ -73,6 +78,7 @@ Task:
 <task>
 
 Include:
+- route-changing decisions first
 - objective and acceptance criteria
 - task-owned files or hunks
 - existing patterns and behavior to preserve
@@ -162,7 +168,8 @@ Rules:
 ## Field Report
 
 ```text
-Create a proportional Field Report for this task.
+Create a proportional Field Report for this task. For substantial work, lead
+with stakeholder outcome or demonstration, then reviewer evidence.
 
 Include:
 - Complete, Incomplete, or Blocked
@@ -175,5 +182,7 @@ Include:
 - delivery state and commit hash or link, when applicable
 - durable learning saved, if any
 
-Add visual evidence only for material visual behavior. Add quiz questions only when teaching or knowledge transfer was requested.
+Add visual evidence only for material visual behavior. Add an explainer or quiz
+only when teaching, knowledge transfer, review preparation, or a
+demonstrated-understanding merge gate was requested.
 ```

@@ -8,6 +8,11 @@ The synthetic matrix covers proportional process, explicit authorization, hidden
 
 It also covers durable project-root artifacts, commit conventions in dirty worktrees, missing required ticket identifiers, and coordinated multi-repository delivery behavior.
 
+The unknowns-lifecycle cases cover one-at-a-time interviewing for a
+route-changing ambiguity, reversible exploration of recognition-based
+preferences, source-reference semantics, and durable notes for a material plan
+deviation.
+
 Each case has two arms:
 
 - **baseline** — a clean isolated agent home without the skill

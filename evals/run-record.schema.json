@@ -23,6 +23,7 @@
     "execution_authorization": {"type": "object"},
     "model": {"type": "string"},
     "reasoning_effort": {"enum": ["low", "medium", "high", "xhigh", "max", "ultra"]},
+    "routing": {"type": "object"},
     "routing_sha256": {"type": "string"},
     "query": {"type": "string"},
     "fixture": {"type": "object"},

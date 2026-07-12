@@ -280,6 +280,7 @@ def run_one(case: dict, arm: str, attempt: int, allow_unsandboxed_write: bool) -
         },
         "model": route["model"],
         "reasoning_effort": route["reasoning_effort"],
+        "routing": route,
         "routing_sha256": sha256_file(ROUTING_PATH),
         "query": prompt,
         "fixture": {"tree_sha256": fixture_hash, "files": fixture_files},

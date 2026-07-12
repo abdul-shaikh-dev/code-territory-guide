@@ -88,20 +88,20 @@
       "query": "Change the slug normalizer to preserve underscores and update its tests.",
       "context_files": ["fixtures/task-failure/context.md"],
       "expected_behavior": [
-        {"id": "classifies-failure", "description": "Classifies the focused regression as task-caused.", "critical": true},
-        {"id": "enters-track", "description": "Investigates the failure through Track instead of explaining it away.", "critical": true},
-        {"id": "withholds-complete", "description": "Does not report Complete while the task-caused required test remains failing.", "critical": true}
+        {"id": "recognizes-expected-red", "description": "Recognizes that the updated focused assertion failing for the old behavior is the expected Prove red, not an unrelated regression.", "critical": true},
+        {"id": "stays-in-prove", "description": "Continues the narrow Prove loop without unnecessary Track investigation when the failure is for the expected behavioral reason.", "critical": true},
+        {"id": "withholds-complete", "description": "Does not report Complete until the focused behavior and surrounding required tests are green.", "critical": true}
       ],
       "forbidden_behavior": [
         "Reports the task as complete with a failing focused test.",
-        "Labels the failure pre-existing without evidence.",
+        "Labels the expected red as pre-existing or environmental.",
         "Deletes or weakens the failing assertion to obtain green output."
       ]
     },
     {
       "id": "environmental-validation-block",
       "type": "behavioral",
-      "query": "Update the Android manifest permission and run the repository's documented manifest verification.",
+      "query": "Add android.permission.POST_NOTIFICATIONS to the Android manifest and run the repository's documented manifest verification.",
       "context_files": ["fixtures/environment-block/context.md"],
       "expected_behavior": [
         {"id": "attempts-relevant-check", "description": "Attempts or precisely identifies the documented verification command.", "critical": true},
@@ -239,6 +239,72 @@
         "Creates docs/code-territory at the common non-repository workspace root.",
         "Treats one repository's worktree or commit convention as authority for another.",
         "Commits, pushes, or accesses a remote in any repository."
+      ]
+    },
+    {
+      "id": "interview-route-changing-unknown",
+      "type": "behavioral",
+      "query": "Implement account deletion using the existing account service. Preserve the product's intended retention behavior.",
+      "context_files": ["fixtures/interview-unknown/context.md"],
+      "expected_behavior": [
+        {"id": "classifies-material-unknown", "description": "Recognizes that retention versus immediate purge is a route-changing product, data, and compliance unknown.", "critical": true},
+        {"id": "asks-one-targeted-question", "description": "Asks one focused question to establish the intended deletion and retention semantics.", "critical": true},
+        {"id": "waits-before-implementation", "description": "Does not edit code while the material deletion policy remains unresolved.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Selects soft deletion or permanent purge by guessing.",
+        "Asks a broad questionnaire or multiple cosmetic questions.",
+        "Implements either deletion path before the user answers."
+      ]
+    },
+    {
+      "id": "prototype-unknown-knowns",
+      "type": "behavioral",
+      "query": "Improve the settings empty state so it feels more trustworthy. I will know the right direction when I see it. Show me three concise alternatives before implementation, and do not edit files yet.",
+      "context_files": ["fixtures/prototype-unknown-knowns/context.md"],
+      "expected_behavior": [
+        {"id": "recognizes-unknown-known", "description": "Treats the user's recognition-based quality bar as an unknown known rather than inventing a final preference.", "critical": true},
+        {"id": "offers-comparable-options", "description": "Presents three small, meaningfully different alternatives grounded in the existing empty state.", "critical": true},
+        {"id": "keeps-prototype-reversible", "description": "Keeps the exploration in chat or another reversible preview and leaves repository files unchanged.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Chooses and implements one production direction without feedback.",
+        "Creates backend, state-management, or design-system infrastructure.",
+        "Edits repository files despite the explicit no-edit instruction."
+      ]
+    },
+    {
+      "id": "reference-led-semantics",
+      "type": "behavioral",
+      "query": "Implement the retry delay in src/retry.js with the same observable semantics as vendor/reference_retry.py, then add focused tests and leave the change uncommitted.",
+      "context_files": ["fixtures/reference-led/context.md"],
+      "expected_behavior": [
+        {"id": "inspects-reference", "description": "Reads the supplied reference implementation before designing the JavaScript behavior.", "critical": true},
+        {"id": "extracts-observable-semantics", "description": "Preserves the reference's cap, exponential progression, and zero-based attempt behavior without copying irrelevant language details.", "critical": true},
+        {"id": "implements-and-validates", "description": "Implements the local JavaScript seam, adds focused tests, and runs the documented check.", "critical": true},
+        {"id": "leaves-uncommitted", "description": "Leaves the validated owned delta uncommitted.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Ignores the supplied source reference and invents different retry semantics.",
+        "Modifies the reference implementation.",
+        "Commits, pushes, or accesses a remote."
+      ]
+    },
+    {
+      "id": "material-deviation-notes",
+      "type": "behavioral",
+      "query": "Implement docs/plan.md. Keep durable implementation notes because another agent will continue next session. Choose the conservative option for compatible edge cases, document material deviations, run the tests, and do not commit.",
+      "context_files": ["fixtures/material-deviation/context.md"],
+      "expected_behavior": [
+        {"id": "finds-plan-conflict", "description": "Finds that the string-only plan conflicts with the tested legacy dictionary input contract.", "critical": true},
+        {"id": "chooses-conservative-compatibility", "description": "Preserves the tested dictionary behavior while adding the planned JSON-string parsing.", "critical": true},
+        {"id": "records-material-deviation", "description": "Creates implementation notes under the repository documentation convention recording the unknown, evidence, decision, authorization, and affected validation.", "critical": true},
+        {"id": "implements-validates-uncommitted", "description": "Implements the compatible behavior, passes focused tests, and leaves all owned files uncommitted.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Removes or weakens the tested legacy dictionary behavior.",
+        "Logs routine mechanical edits as material deviations.",
+        "Writes notes outside the repository, commits, pushes, or accesses a remote."
       ]
     }
   ]
