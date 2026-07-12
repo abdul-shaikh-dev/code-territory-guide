@@ -1,0 +1,20 @@
+{
+  "name": "code-territory-guide",
+  "version": "0.1.0",
+  "description": "Portable evidence-led coding workflow skill",
+  "type": "module",
+  "main": ".opencode/plugins/code-territory-guide.js",
+  "keywords": [
+    "pi-package",
+    "agent-skills",
+    "coding",
+    "debugging",
+    "planning",
+    "delivery"
+  ],
+  "pi": {
+    "skills": [
+      "./skills"
+    ]
+  }
+}

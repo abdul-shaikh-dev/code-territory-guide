@@ -1,0 +1,29 @@
+{
+  "name": "code-territory-guide",
+  "version": "0.1.0",
+  "description": "Evidence-led workflow for scoped, safe code changes.",
+  "author": {
+    "name": "Abdul Gaffar Shaikh"
+  },
+  "homepage": "https://github.com/abdul-shaikh-dev/code-territory-guide",
+  "keywords": [
+    "skills",
+    "coding",
+    "debugging",
+    "planning",
+    "delivery"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Code Territory Guide",
+    "shortDescription": "Scoped code changes and safe delivery",
+    "longDescription": "Guide repository work through evidence-led discovery, ownership, implementation, validation, artifacts, review, and authorized delivery.",
+    "developerName": "Abdul Gaffar Shaikh",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/abdul-shaikh-dev/code-territory-guide"
+  }
+}

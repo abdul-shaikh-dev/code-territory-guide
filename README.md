@@ -1,6 +1,6 @@
 # Code Territory Guide
 
-Code Territory Guide is a Codex skill for making non-trivial code changes without confusing the request with the repository’s actual state. It turns vague maps into evidence-backed routes, protects unrelated work, keeps implementation scoped, and reports what was genuinely verified.
+Code Territory Guide is a portable Agent Skill for making non-trivial code changes without confusing the request with the repository’s actual state. It turns vague maps into evidence-backed routes, protects unrelated work, keeps implementation scoped, and reports what was genuinely verified.
 
 Use it for ambiguous features, debugging, behavior changes, refactors, test-sensitive work, or any task where authorization, ownership, and completion claims need to stay explicit.
 
@@ -78,48 +78,146 @@ flowchart TD
 
 The skill is self-contained. A companion `AGENTS.md` is not required.
 
+`SKILL.md`, its references, and its artifact templates define the portable
+behavior. `agents/openai.yaml` adds optional Codex-facing presentation metadata;
+other harnesses can ignore it without losing the workflow.
+
 For work that spans sessions, agents, or substantial investigation, the skill materializes only the useful artifacts under the owning repository’s existing documentation convention or `docs/code-territory/<task-slug>/`, resolved from that repository’s Git root. It never writes into the installed skill or a parent multi-repository workspace by assumption. Narrow work remains in chat.
 
 Cross-repository features keep separate ownership, validation, completion, and delivery state per repository. A shared Expedition Index is created only in an explicitly designated coordination repository; otherwise coordination remains in chat.
 
 ## Installation
 
-Copy [`skills/code-territory-guide/`](skills/code-territory-guide/) into a skill directory supported by your Codex installation, for example:
+Installation differs by agent harness. If you use more than one, install Code Territory Guide separately for each one. Every adapter loads the same canonical [`skills/code-territory-guide/`](skills/code-territory-guide/) directory.
+
+### Claude Code
+
+Register this repository as a marketplace:
+
+```text
+/plugin marketplace add abdul-shaikh-dev/code-territory-guide
+```
+
+Install the plugin:
+
+```text
+/plugin install code-territory-guide@code-territory-guide
+```
+
+### Antigravity
+
+```bash
+agy plugin install https://github.com/abdul-shaikh-dev/code-territory-guide
+```
+
+Reinstall with the same command to update.
+
+### Codex App and CLI
+
+Register the Git marketplace:
+
+```bash
+codex plugin marketplace add abdul-shaikh-dev/code-territory-guide
+```
+
+Install the plugin:
+
+```bash
+codex plugin add code-territory-guide@code-territory-guide
+```
+
+In the Codex app, the same marketplace makes Code Territory Guide available in the Plugins interface.
+
+### Cursor
+
+The repository includes a Cursor plugin manifest and is ready for marketplace distribution. Until it is listed, use the manual Agent Skills installation below.
+
+### Factory Droid
+
+```bash
+droid plugin marketplace add https://github.com/abdul-shaikh-dev/code-territory-guide
+droid plugin install code-territory-guide@code-territory-guide
+```
+
+### GitHub Copilot CLI
+
+```bash
+copilot plugin marketplace add abdul-shaikh-dev/code-territory-guide
+copilot plugin install code-territory-guide@code-territory-guide
+```
+
+### Kimi Code
+
+```text
+/plugins install https://github.com/abdul-shaikh-dev/code-territory-guide
+```
+
+### OpenCode
+
+Tell OpenCode:
+
+```text
+Fetch and follow instructions from https://raw.githubusercontent.com/abdul-shaikh-dev/code-territory-guide/main/.opencode/INSTALL.md
+```
+
+See [the detailed OpenCode instructions](.opencode/INSTALL.md).
+
+### Pi
+
+```bash
+pi install git:github.com/abdul-shaikh-dev/code-territory-guide
+```
+
+For local development:
+
+```bash
+pi -e /path/to/code-territory-guide
+```
+
+### Manual Agent Skills installation
+
+For any harness with native Agent Skills support, copy or symlink the canonical skill directory into that harness's personal or project skill directory:
 
 ```powershell
 Copy-Item -Recurse skills/code-territory-guide "$HOME/.agents/skills/code-territory-guide"
 ```
 
-Restart or refresh the agent session so the skill metadata is rediscovered.
+On macOS or Linux:
+
+```bash
+cp -R skills/code-territory-guide ~/.agents/skills/code-territory-guide
+```
+
+Use the harness-specific skills directory when it differs from `~/.agents/skills`. Restart or refresh the agent session so the skill is rediscovered.
+
+### Updating
+
+Marketplace and Git-backed installations update through their harness. For a manual installation, pull this repository and recopy or refresh the symlink.
 
 ## Repository layout
 
 ```text
-skills/code-territory-guide/
-├── SKILL.md
-├── agents/openai.yaml
-├── assets/artifacts/
-│   ├── field-brief.md
-│   ├── field-report.md
-│   ├── expedition-index.md
-│   ├── survey.md
-│   └── track-report.md
-└── references/
-    ├── field-entry.md
-    ├── model-routing.md
-    ├── modes.md
-    ├── safety-and-scope.md
-    ├── standard-workflow.md
-    └── templates.md
-
-evals/
-├── README.md
-├── manifest.json
-├── fixtures/
-├── run_matrix.py
-├── judge_matrix.py
-├── build_report.py
-└── results/
+code-territory-guide/
+├── skills/code-territory-guide/       # canonical portable skill
+│   ├── SKILL.md
+│   ├── agents/openai.yaml              # optional Codex metadata
+│   ├── assets/artifacts/
+│   └── references/
+├── .claude-plugin/                     # Claude marketplace metadata
+├── .codex-plugin/                      # Codex plugin metadata
+├── .cursor-plugin/                     # Cursor plugin metadata
+├── .kimi-plugin/                       # Kimi plugin metadata
+├── .agents/plugins/marketplace.json    # compatible marketplace catalog
+├── .opencode/                          # OpenCode adapter and instructions
+├── package.json                        # Pi and Git-backed package metadata
+└── evals/
+    ├── README.md
+    ├── manifest.json
+    ├── fixtures/
+    ├── run_matrix.py
+    ├── judge_matrix.py
+    ├── build_report.py
+    └── results/
 ```
 
 ## Behavioral evaluation
