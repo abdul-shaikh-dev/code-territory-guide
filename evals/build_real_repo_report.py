@@ -8,7 +8,7 @@ from pathlib import Path
 EVAL_ROOT = Path(__file__).resolve().parent
 RUN_ROOT = EVAL_ROOT / "results" / "real-repos" / "runs"
 JUDGE_ROOT = EVAL_ROOT / "results" / "real-repos" / "judgments"
-OUTPUT = EVAL_ROOT / "results" / "real-repos" / "2026-07-12-report.md"
+OUTPUT = EVAL_ROOT / "results" / "generated" / "real-repository-readonly.md"
 SELECTED = {
     "simulator-capacity-zero-boundary": {
         "baseline": 1, "treatment": 3, "judge": 4,
@@ -66,6 +66,7 @@ def validate_selected(case_id: str, pick: dict) -> tuple[dict, dict, dict]:
 
 
 def main() -> None:
+    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     manifest = load(EVAL_ROOT / "real-repo-manifest.json")
     selected_ids = set()
     selected_records: dict[str, tuple[dict, dict, dict]] = {}

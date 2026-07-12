@@ -7,12 +7,14 @@ Read `safety-and-scope.md` first. Use Expedition when the target is clear enough
 1. Survey Blind Spots
 2. Enter the Territory
 3. Mark the Route
-4. Prepare a Field Brief
-5. Implement Small Patches
-6. Validate and Classify
-7. Review the Owned Delta
-8. Capture Durable Learning Conditionally
-9. Field Report
+4. Choose Artifact Persistence
+5. Prepare a Field Brief
+6. Implement Small Patches
+7. Validate and Classify
+8. Review the Owned Delta
+9. Deliver When Authorized
+10. Capture Durable Learning Conditionally
+11. Field Report
 
 ## 1. Survey Blind Spots
 
@@ -56,7 +58,15 @@ Create a concise internal plan containing:
 
 Proceed without a separate approval pause unless `safety-and-scope.md` requires one.
 
-## 4. Prepare a Field Brief
+## 4. Choose Artifact Persistence
+
+Apply the artifact policy in `safety-and-scope.md` and announce whether the route will remain in chat or be materialized. Prefer repository conventions; otherwise place qualifying artifacts under `docs/code-territory/<task-slug>/`.
+
+Use the smallest useful set. Copy the relevant starter from `assets/artifacts/` instead of recreating its structure, then remove unused placeholders.
+
+Resolve the destination from the owning Git root or explicitly supplied project root. For a multi-repository Expedition, maintain separate local artifacts and use a shared `expedition-index.md` only in the designated coordination repository.
+
+## 5. Prepare a Field Brief
 
 Create a field brief when handing implementation to another model or person, or when complexity makes an explicit contract useful.
 
@@ -71,15 +81,17 @@ Include:
 - compatibility, migration, security, observability, accessibility, or rollback needs when relevant
 - applicable scope-expansion boundaries from the canonical policy
 
-For a small single-model task, the internal plan may serve as the field brief.
+For a small single-model task, the internal plan may serve as the field brief. For delegated, multi-session, or multi-step work, materialize `field-brief.md` before implementation.
 
-## 5. Implement Small Patches
+For multi-repository work, give each repository a local owned slice and validation route. Record shared contracts, dependency order, integration checkpoints, rollout constraints, and aggregate acceptance criteria in the coordination brief. Do not let a broad cross-repository goal erase repository-local scope gates.
+
+## 6. Implement Small Patches
 
 Make the smallest safe change that satisfies the route. Prefer existing patterns and dependencies, readable local diffs, and tests close to changed behavior.
 
 Do not perform unrelated cleanup, speculative abstraction, broad reformatting, or edits to user-owned changes. Reapply the canonical scope gate whenever new information changes the route.
 
-## 6. Validate and Classify
+## 7. Validate and Classify
 
 Run checks proportionate to the changed behavior:
 
@@ -93,7 +105,7 @@ Classify every relevant failure as task-caused, pre-existing, or environmental. 
 
 Add narrow coverage when straightforward and useful. If coverage would require disproportionate infrastructure or unclear expected behavior, disclose the gap instead of creating brittle tests.
 
-## 7. Review the Owned Delta
+## 8. Review the Owned Delta
 
 Compare only task-owned changes against:
 
@@ -107,13 +119,23 @@ Check correctness, missed behavior, edge cases, scope creep, compatibility, secu
 
 Do not claim pre-existing work as part of the implementation. If an independent reviewer is unavailable, perform the fresh single-model checkpoint from `model-routing.md`.
 
-## 8. Capture Durable Learning Conditionally
+## 9. Deliver When Authorized
+
+Apply the delivery contract in `safety-and-scope.md` only after validation and owned-diff review.
+
+Leave changes uncommitted when delivery was not requested. When a commit is authorized, stage only task-owned paths or hunks, protect pre-existing staged content, verify the staged diff, resolve the repository's documented commit convention, create the commit without bypassing hooks, and record its hash. Treat push, pull request, merge, tag, and release as separate authorization levels.
+
+If requested delivery cannot be completed safely, preserve the local work and classify the outcome as Incomplete or Blocked rather than widening authority.
+
+In a multi-repository Expedition, authorize, stage, resolve commit convention, commit, and push each repository independently. Use compatible branch names when helpful, but do not force one repository's message format onto another or imply atomic delivery. Record each commit or pull request separately and report partial delivery honestly.
+
+## 10. Capture Durable Learning Conditionally
 
 Persist a learning only when it is verified, reusable, and the repository already has an appropriate convention or the user authorizes one. Keep temporary decisions in the conversation.
 
 Useful learnings include verified commands, architecture boundaries, recurring gotchas, dependency constraints, and stable project conventions. Never store secrets, private data, noisy logs, one-off task details, or speculation.
 
-## 9. Field Report
+## 11. Field Report
 
 Report proportionately:
 
@@ -124,6 +146,11 @@ Report proportionately:
 - material risks, assumptions, test gaps, or pending decisions
 - rollback or recovery guidance when failure would be costly
 - what the user should review
+- delivery state: uncommitted, committed, pushed, or pull request opened, with commit hash or link when applicable
 - durable learnings saved, if any
+
+When artifact persistence was selected, update `field-report.md` with the verified final state and summarize it in chat. Otherwise provide the complete Field Report in chat only.
+
+For multi-repository work, report both repository-local completion and aggregate completion. Mark the feature Complete only when every required repository slice and cross-repository acceptance check is complete; otherwise identify the incomplete or blocked slice.
 
 Include screenshots or before/after evidence when visual behavior materially changed and the evidence can be captured reliably. Include quiz questions only when the user requests teaching, knowledge transfer, or review preparation.

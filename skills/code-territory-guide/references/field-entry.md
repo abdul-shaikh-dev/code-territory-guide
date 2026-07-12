@@ -22,6 +22,8 @@ Reuse `EmptyPanel`. Render a filter-specific message only after loading complete
 
 Files: the dashboard view and its existing test file. Non-goals: changing filter behavior, query APIs, or the shared component. Scope expansion: new filtering semantics or a redesign of all empty states requires confirmation.
 
+Artifact decision: this is a narrow, single-session change, so keep the brief and report in chat.
+
 ## Expedition Result
 
 The smallest patch adds one conditional branch and two tests. The targeted test suite passes. No notes file is needed because the repository convention resolved the only ambiguity.
@@ -30,4 +32,4 @@ If the targeted test failed, classify the failure before handoff. A regression i
 
 ## Field Report
 
-Changed the dashboard's post-load empty rendering so filtered and unfiltered empty results have distinct guidance. Verified with the dashboard tests. Review the final copy and whether the clear-filters action belongs in this change.
+Changed the dashboard's post-load empty rendering so filtered and unfiltered empty results have distinct guidance. Verified with the dashboard tests. Delivery state: uncommitted because no commit or remote operation was requested. Review the final copy and whether the clear-filters action belongs in this change.

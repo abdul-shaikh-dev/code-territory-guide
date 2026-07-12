@@ -18,7 +18,10 @@ JUDGMENT_ROOT = EVAL_ROOT / "results" / "judgments"
 MANIFEST = json.loads((EVAL_ROOT / "manifest.json").read_text(encoding="utf-8"))
 ROUTING = json.loads((EVAL_ROOT / "model-routing.json").read_text(encoding="utf-8"))
 SCHEMA = EVAL_ROOT / "judge-output.schema.json"
-SKILL_DEST = Path.home() / ".agents" / "skills" / "code-territory-guide"
+SKILL_DESTINATIONS = (
+    Path.home() / ".agents" / "skills" / "code-territory-guide",
+    Path.home() / ".codex" / "skills" / "code-territory-guide",
+)
 CODEX = shutil.which("codex.cmd") or shutil.which("codex")
 MAX_WORKERS = 3
 TIMEOUT_SECONDS = 300
@@ -34,10 +37,10 @@ def sha256_text(value: str) -> str:
 
 def select_run(case_id: str, arm: str) -> tuple[Path, dict]:
     candidates: list[tuple[int, Path, dict]] = []
-    for path in RUN_ROOT.glob(f"{case_id}--{arm}--seed-*.json"):
+    for path in RUN_ROOT.glob(f"{case_id}--{arm}--attempt-*.json"):
         record = json.loads(path.read_text(encoding="utf-8"))
         if not record["excluded"]["value"]:
-            candidates.append((record["seed"], path, record))
+            candidates.append((record["attempt"], path, record))
     if not candidates:
         raise RuntimeError(f"no valid run for {case_id}/{arm}")
     _, path, record = max(candidates, key=lambda item: item[0])
@@ -47,21 +50,10 @@ def select_run(case_id: str, arm: str) -> tuple[Path, dict]:
 def evidence_view(record: dict) -> list[dict]:
     """Expose observable behavior without leaking the installed skill's contents."""
     evidence: list[dict] = []
-    for line in record["raw_output"].splitlines():
-        try:
-            event = json.loads(line)
-        except json.JSONDecodeError:
-            continue
-        item = event.get("item") or {}
-        if item.get("type") == "agent_message":
-            evidence.append({"type": "agent_message", "text": item.get("text", "")})
-        elif item.get("type") == "command_execution":
-            evidence.append({
-                "type": "command_execution",
-                "command": item.get("command", ""),
-                "status": item.get("status", ""),
-                "exit_code": item.get("exit_code"),
-            })
+    for event in record["tool_events"]:
+        if event.get("type") in {"agent_message", "command_execution", "file_change"}:
+            evidence.append(event)
+    evidence.append({"type": "worktree_diff", "text": record["diff"]})
     return evidence
 
 
@@ -200,8 +192,9 @@ def main() -> None:
     args = parser.parse_args()
     if CODEX is None:
         raise SystemExit("codex launcher not found on PATH")
-    if SKILL_DEST.exists():
-        raise SystemExit(f"remove installed treatment before judging: {SKILL_DEST}")
+    installed = [path for path in SKILL_DESTINATIONS if path.exists()]
+    if installed:
+        raise SystemExit(f"remove installed treatment before judging: {', '.join(map(str, installed))}")
     cases = [case for case in MANIFEST["cases"] if not args.case or case["id"] == args.case]
     if not cases:
         raise SystemExit(f"unknown case: {args.case}")

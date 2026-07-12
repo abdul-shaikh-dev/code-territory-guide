@@ -8,7 +8,7 @@ from pathlib import Path
 EVAL_ROOT = Path(__file__).resolve().parent
 REPO_ROOT = EVAL_ROOT.parent
 RUN_ROOT = EVAL_ROOT / "results" / "real-repos" / "runs"
-REPORT = EVAL_ROOT / "results" / "real-repos" / "2026-07-12-report.md"
+REPORT = EVAL_ROOT / "results" / "generated" / "real-repository-readonly.md"
 
 sys.path.insert(0, str(EVAL_ROOT))
 from build_real_repo_report import SELECTED, validate_selected  # noqa: E402
@@ -22,8 +22,7 @@ def load(path: Path) -> dict:
 def main() -> None:
     manifest = load(EVAL_ROOT / "real-repo-manifest.json")
     skill_hash, _ = tree_hash(SKILL_SOURCE)
-    if skill_hash != manifest["frozen_treatment_sha256"]:
-        raise ValueError("current skill does not match frozen_treatment_sha256")
+    current_skill_matches_evidence = skill_hash == manifest["frozen_treatment_sha256"]
 
     runs = [load(path) for path in sorted(RUN_ROOT.glob("*.json"))]
     if len(runs) != 9:
@@ -41,6 +40,8 @@ def main() -> None:
 
     for case_id, pick in SELECTED.items():
         baseline, treatment, judgment = validate_selected(case_id, pick)
+        if treatment["treatment"]["tree_sha256"] != manifest["frozen_treatment_sha256"]:
+            raise ValueError(f"selected treatment does not match frozen hash: {case_id}")
         if not judgment["baseline"]["pass"] or not judgment["treatment"]["pass"]:
             raise ValueError(f"selected arm failed: {case_id}")
         if judgment["comparison"]["outcome"] != "preserved":
@@ -62,8 +63,9 @@ def main() -> None:
         raise ValueError(f"report is missing required qualifications: {missing}")
 
     print(
-        "validated frozen skill hash, 9 preserved runs, 4 selected arms, "
-        "2 matched judgments, repository/push/treatment integrity, and qualified report claims"
+        "validated frozen treatment hash against selected runs, 9 preserved runs, 4 selected arms, "
+        "2 matched judgments, repository/push/treatment integrity, and qualified report claims; "
+        f"current skill matches historical treatment={current_skill_matches_evidence}"
     )
 
 

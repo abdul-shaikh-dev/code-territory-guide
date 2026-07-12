@@ -1,75 +1,39 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Code Territory Guide behavioral eval run v1",
+  "title": "Code Territory Guide materialized behavioral evaluation run",
   "type": "object",
   "required": [
-    "run_id", "case_id", "arm", "seed", "started_at", "finished_at", "harness",
-    "model", "reasoning_effort", "query", "context", "treatment", "raw_output",
-    "exit_status", "excluded", "criteria", "forbidden", "scorer"
+    "schema_version", "run_id", "case_id", "arm", "attempt", "started_at", "finished_at",
+    "harness", "model", "reasoning_effort", "routing_sha256", "query", "fixture",
+    "treatment", "raw_output", "tool_log", "worktree_before", "worktree_after", "diff",
+    "files_before", "files_after", "changed_files", "tool_events", "exit_status", "excluded"
   ],
   "properties": {
-    "run_id": {"type": "string", "minLength": 1},
-    "case_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
-    "arm": {"enum": ["baseline", "installed-skill", "inline-policy-ablation"]},
-    "seed": {"type": "integer", "minimum": 1},
-    "started_at": {"type": "string", "format": "date-time"},
-    "finished_at": {"type": "string", "format": "date-time"},
-    "harness": {"type": "string", "minLength": 1},
-    "model": {"type": "string", "minLength": 1},
-    "reasoning_effort": {"enum": ["low", "medium", "high", "extra_high", "max"]},
-    "query": {"type": "string", "minLength": 1},
-    "context": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["path", "sha256"],
-        "properties": {"path": {"type": "string"}, "sha256": {"type": "string"}},
-        "additionalProperties": false
-      }
-    },
-    "treatment": {
-      "type": "object",
-      "required": ["skill_path", "policy_payload"],
-      "properties": {
-        "skill_path": {"type": ["string", "null"]},
-        "policy_payload": {"type": ["string", "null"]}
-      },
-      "additionalProperties": false
-    },
+    "schema_version": {"const": 2},
+    "run_id": {"type": "string"},
+    "case_id": {"type": "string"},
+    "arm": {"enum": ["baseline", "installed-skill"]},
+    "attempt": {"type": "integer", "minimum": 1},
+    "started_at": {"type": "string"},
+    "finished_at": {"type": "string"},
+    "harness": {"type": "string"},
+    "model": {"type": "string"},
+    "reasoning_effort": {"enum": ["low", "medium", "high", "xhigh", "max", "ultra"]},
+    "routing_sha256": {"type": "string"},
+    "query": {"type": "string"},
+    "fixture": {"type": "object"},
+    "treatment": {"type": "object"},
     "raw_output": {"type": "string"},
     "tool_log": {"type": "string"},
     "worktree_before": {"type": "string"},
     "worktree_after": {"type": "string"},
     "diff": {"type": "string"},
-    "validation_output": {"type": "string"},
+    "files_before": {"type": "object"},
+    "files_after": {"type": "object"},
+    "changed_files": {"type": "array"},
+    "tool_events": {"type": "array"},
     "exit_status": {"type": ["integer", "null"]},
-    "excluded": {
-      "type": "object",
-      "required": ["value", "rule"],
-      "properties": {"value": {"type": "boolean"}, "rule": {"type": ["string", "null"]}},
-      "additionalProperties": false
-    },
-    "criteria": {"type": "array", "items": {"$ref": "#/$defs/criterion"}},
-    "forbidden": {"type": "array", "items": {"$ref": "#/$defs/forbidden"}},
-    "scorer": {"type": "string", "minLength": 1}
-  },
-  "$defs": {
-    "criterion": {
-      "type": "object",
-      "required": ["id", "passed", "evidence"],
-      "properties": {
-        "id": {"type": "string"}, "passed": {"type": "boolean"}, "evidence": {"type": "string"}
-      },
-      "additionalProperties": false
-    },
-    "forbidden": {
-      "type": "object",
-      "required": ["description", "occurred", "evidence"],
-      "properties": {
-        "description": {"type": "string"}, "occurred": {"type": "boolean"}, "evidence": {"type": "string"}
-      },
-      "additionalProperties": false
-    }
+    "excluded": {"type": "object"}
   },
   "additionalProperties": false
 }
