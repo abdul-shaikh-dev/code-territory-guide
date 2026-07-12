@@ -54,17 +54,22 @@ def evidence_view(record: dict) -> list[dict]:
         if event.get("type") in {"agent_message", "command_execution", "file_change"}:
             evidence.append(event)
     evidence.append({"type": "worktree_diff", "text": record["diff"]})
+    evidence.append({"type": "repository_before", "state": record["repository_before"]})
+    evidence.append({"type": "repository_after", "state": record["repository_after"]})
     return evidence
 
 
 def build_prompt(case: dict, baseline: dict, treatment: dict) -> str:
+    if baseline["query"] != treatment["query"]:
+        raise ValueError(f"paired prompts differ for {case['id']}")
     rubric = {
         "expected_behavior": case["expected_behavior"],
         "forbidden_behavior": case["forbidden_behavior"],
     }
     inputs = {
         "case_id": case["id"],
-        "user_query": case["query"],
+        "manifest_query": case["query"],
+        "recorded_full_query": baseline["query"],
         "rubric": rubric,
         "baseline": {
             "run_id": baseline["run_id"],
@@ -92,6 +97,20 @@ def build_prompt(case: dict, baseline: dict, treatment: dict) -> str:
     )
 
 
+def validate_pair(case_id: str, baseline: dict, treatment: dict) -> None:
+    if baseline["fixture"]["tree_sha256"] != treatment["fixture"]["tree_sha256"]:
+        raise ValueError(f"paired fixture hashes differ for {case_id}")
+    if baseline["routing_sha256"] != treatment["routing_sha256"]:
+        raise ValueError(f"paired routing snapshots differ for {case_id}")
+    if (baseline["model"], baseline["reasoning_effort"]) != (
+        treatment["model"], treatment["reasoning_effort"]
+    ):
+        raise ValueError(f"paired model routing differs for {case_id}")
+    payload = treatment["treatment"]
+    if payload.get("tree_sha256") != payload.get("tree_sha256_after"):
+        raise ValueError(f"treatment payload changed for {case_id}")
+
+
 def validate_judgment(case: dict, baseline: dict, treatment: dict, judgment: dict) -> None:
     if judgment["case_id"] != case["id"]:
         raise ValueError("judge returned the wrong case_id")
@@ -116,6 +135,7 @@ def judge_one(case: dict, attempt: int, force: bool) -> Path:
     route = ROUTING["judge"]
     baseline_path, baseline = select_run(case["id"], "baseline")
     treatment_path, treatment = select_run(case["id"], "installed-skill")
+    validate_pair(case["id"], baseline, treatment)
     prompt = build_prompt(case, baseline, treatment)
     stem = f"{case['id']}.attempt-{attempt}"
     output_record = JUDGMENT_ROOT / f"{stem}.json"

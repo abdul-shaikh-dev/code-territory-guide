@@ -6,7 +6,8 @@
     "schema_version", "run_id", "case_id", "arm", "attempt", "started_at", "finished_at",
     "harness", "model", "reasoning_effort", "routing_sha256", "query", "fixture",
     "treatment", "raw_output", "tool_log", "worktree_before", "worktree_after", "diff",
-    "files_before", "files_after", "changed_files", "tool_events", "exit_status", "excluded"
+    "files_before", "files_after", "changed_files", "tool_events", "repository_before",
+    "repository_after", "exit_status", "excluded"
   ],
   "properties": {
     "schema_version": {"const": 2},
@@ -17,6 +18,9 @@
     "started_at": {"type": "string"},
     "finished_at": {"type": "string"},
     "harness": {"type": "string"},
+    "harness_revision": {"type": "string"},
+    "execution_mode": {"type": "string"},
+    "execution_authorization": {"type": "object"},
     "model": {"type": "string"},
     "reasoning_effort": {"enum": ["low", "medium", "high", "xhigh", "max", "ultra"]},
     "routing_sha256": {"type": "string"},
@@ -32,6 +36,8 @@
     "files_after": {"type": "object"},
     "changed_files": {"type": "array"},
     "tool_events": {"type": "array"},
+    "repository_before": {"type": "object"},
+    "repository_after": {"type": "object"},
     "exit_status": {"type": ["integer", "null"]},
     "excluded": {"type": "object"}
   },

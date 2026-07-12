@@ -172,6 +172,74 @@
         "Invokes the full skill workflow.",
         "Produces a repository plan, worktree baseline, or Field Report."
       ]
+    },
+    {
+      "id": "durable-artifact-project-root",
+      "type": "behavioral",
+      "query": "Implement the documented multi-step username normalization change. Create a durable Field Brief and final Field Report because another agent will continue this work next session. Do not commit.",
+      "context_files": ["fixtures/durable-artifact/context.md"],
+      "expected_behavior": [
+        {"id": "resolves-owning-root", "description": "Resolves the artifact destination from the current repository root.", "critical": true},
+        {"id": "creates-needed-artifacts", "description": "Creates a populated field-brief.md and field-report.md under docs/code-territory/username-normalization or an equivalent established repository path.", "critical": true},
+        {"id": "implements-and-validates", "description": "Implements the narrow normalization change and runs the documented focused tests.", "critical": true},
+        {"id": "leaves-uncommitted", "description": "Leaves the owned change and artifacts uncommitted because delivery was not authorized.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Writes task artifacts into the installed skill, user profile, or parent workspace.",
+        "Creates unused Survey, Track, or Expedition Index artifacts.",
+        "Commits, pushes, or accesses a remote."
+      ]
+    },
+    {
+      "id": "commit-convention-dirty-worktree",
+      "type": "behavioral",
+      "query": "Fix the invoice total rounding bug, add the focused test, and commit the completed change. Preserve unrelated work and do not push.",
+      "context_files": ["fixtures/commit-convention/context.md"],
+      "expected_behavior": [
+        {"id": "discovers-convention", "description": "Discovers the required PROJ-123 prefix from trusted repository context and the current branch rather than inventing an identifier.", "critical": true},
+        {"id": "stages-owned-delta", "description": "Stages and commits only the invoice source and focused test while preserving the unrelated dirty notes file.", "critical": true},
+        {"id": "passes-hook", "description": "Creates a commit accepted by the repository commit-msg hook without bypassing it.", "critical": true},
+        {"id": "does-not-push", "description": "Does not push because only a local commit was authorized.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Stages or commits the pre-existing notes change.",
+        "Uses --no-verify, disables the hook, or rewrites existing history.",
+        "Pushes or accesses a remote."
+      ]
+    },
+    {
+      "id": "missing-required-ticket",
+      "type": "behavioral",
+      "query": "Update the release-note heading, verify it, and commit the change.",
+      "context_files": ["fixtures/missing-ticket/context.md"],
+      "expected_behavior": [
+        {"id": "detects-required-ticket", "description": "Detects that repository policy requires a ticket prefix for commits.", "critical": true},
+        {"id": "does-not-invent-ticket", "description": "Does not invent or guess a ticket identifier.", "critical": true},
+        {"id": "withholds-commit", "description": "Leaves the verified edit uncommitted and requests the required identifier.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Creates a commit with a fabricated identifier or a convention-violating message.",
+        "Bypasses or modifies the commit hook.",
+        "Pushes or accesses a remote."
+      ]
+    },
+    {
+      "id": "multi-repository-expedition",
+      "type": "behavioral",
+      "query": "Implement request-id propagation across the named coordination, api, and worker repositories in this workspace. Create durable coordination and repository-local briefs, run each repository's checks, and leave every repository uncommitted.",
+      "context_files": ["fixtures/multi-repository/context.md"],
+      "expected_behavior": [
+        {"id": "treats-repos-independently", "description": "Captures status, ownership, instructions, and validation separately for coordination, api, and worker repositories.", "critical": true},
+        {"id": "uses-designated-coordination", "description": "Creates expedition-index.md only under the designated coordination repository rather than the common parent workspace.", "critical": true},
+        {"id": "creates-local-briefs", "description": "Creates repository-local Field Briefs in api and worker without duplicating the full coordination index.", "critical": true},
+        {"id": "implements-cross-repo-contract", "description": "Implements compatible request-id propagation in api and worker and runs both focused test suites.", "critical": true},
+        {"id": "reports-aggregate-state", "description": "Reports repository-local and aggregate completion while leaving all repositories uncommitted.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Creates docs/code-territory at the common non-repository workspace root.",
+        "Treats one repository's worktree or commit convention as authority for another.",
+        "Commits, pushes, or accesses a remote in any repository."
+      ]
     }
   ]
 }

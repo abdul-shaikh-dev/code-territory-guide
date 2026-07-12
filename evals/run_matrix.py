@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -26,6 +27,7 @@ CODEX = shutil.which("codex.cmd") or shutil.which("codex")
 MAX_WORKERS = 2
 TIMEOUT_SECONDS = 480
 TEMP_ROOT = Path(os.environ.get("CTG_EVAL_TEMP_ROOT", Path(tempfile.gettempdir()) / "code-territory-guide-evals"))
+HARNESS_REVISION = "materialized-git-v3"
 
 
 def now() -> str:
@@ -55,8 +57,12 @@ def snapshot(root: Path, include_content: bool = False) -> dict[str, dict]:
     return result
 
 
-def tree_hash(root: Path) -> tuple[str, dict[str, str]]:
-    files = {path.relative_to(root).as_posix(): sha256_file(path) for path in sorted(root.rglob("*")) if path.is_file()}
+def tree_hash(root: Path, exclude_git: bool = False) -> tuple[str, dict[str, str]]:
+    files = {
+        path.relative_to(root).as_posix(): sha256_file(path)
+        for path in sorted(root.rglob("*"))
+        if path.is_file() and (not exclude_git or ".git" not in path.parts)
+    }
     digest = hashlib.sha256()
     for relative, file_hash in files.items():
         digest.update(relative.encode("utf-8"))
@@ -71,7 +77,46 @@ def git_output(repo: Path, *args: str) -> str:
     return completed.stdout + completed.stderr
 
 
-def tool_events(raw_output: str) -> list[dict]:
+def repository_roots(workspace: Path) -> list[Path]:
+    if (workspace / ".git").exists():
+        return [workspace]
+    return sorted(path for path in workspace.iterdir() if path.is_dir() and (path / ".git").exists())
+
+
+def repository_state(workspace: Path) -> dict[str, dict[str, str]]:
+    state = {}
+    for repo in repository_roots(workspace):
+        key = "." if repo == workspace else repo.relative_to(workspace).as_posix()
+        state[key] = {
+            "head": git_output(repo, "rev-parse", "HEAD").strip(),
+            "branch": git_output(repo, "branch", "--show-current").strip(),
+            "status": git_output(repo, "status", "--short", "--branch"),
+            "push_url": git_output(repo, "remote", "get-url", "--push", "origin").strip(),
+        }
+    return state
+
+
+def repository_diff(workspace: Path) -> str:
+    sections = []
+    for repo in repository_roots(workspace):
+        key = "." if repo == workspace else repo.relative_to(workspace).as_posix()
+        sections.append(
+            f"### repository: {key}\n"
+            + git_output(repo, "diff", "--binary")
+            + git_output(repo, "diff", "--cached", "--binary")
+        )
+    return "\n".join(sections)
+
+
+SKILL_OUTPUT_MARKERS = (
+    "# Code Territory Guide",
+    "# Safety, Trust, Scope, and Completion",
+    "# Code Territory Guide Standard Workflow",
+    "# Code Territory Guide Modes",
+)
+
+
+def tool_events(raw_output: str, sensitive_roots: tuple[Path, ...] = ()) -> list[dict]:
     events: list[dict] = []
     for line in raw_output.splitlines():
         try:
@@ -83,7 +128,13 @@ def tool_events(raw_output: str) -> list[dict]:
         if kind == "command_execution" and item.get("status") != "in_progress":
             command = item.get("command", "")
             output = item.get("aggregated_output", "")
-            if "\\.agents\\skills\\code-territory-guide" in command.lower():
+            normalized_command = re.sub(r"\\+", r"\\", command.replace("/", "\\")).lower()
+            reads_sensitive_root = any(
+                re.sub(r"\\+", r"\\", str(root).replace("/", "\\")).lower() in normalized_command
+                for root in sensitive_roots
+            )
+            contains_skill_text = any(marker in output for marker in SKILL_OUTPUT_MARKERS)
+            if reads_sensitive_root or contains_skill_text:
                 output = "<skill contents omitted from derived evidence>"
             events.append({
                 "type": kind, "command": command, "output": output,
@@ -126,7 +177,7 @@ def make_isolated_home(root: Path, arm: str) -> tuple[Path, dict]:
     return home, treatment
 
 
-def run_one(case: dict, arm: str, attempt: int) -> Path:
+def run_one(case: dict, arm: str, attempt: int, allow_unsandboxed_write: bool) -> Path:
     route = ROUTING["cases"].get(case["id"], ROUTING["default"])
     run_id = f"{case['id']}--{arm}--attempt-{attempt}"
     TEMP_ROOT.mkdir(parents=True, exist_ok=True)
@@ -135,15 +186,24 @@ def run_one(case: dict, arm: str, attempt: int) -> Path:
     materialize(case["id"], repo)
     home, treatment = make_isolated_home(run_parent, arm)
     treatment_before = treatment["tree_sha256"]
-    fixture_hash, fixture_files = tree_hash(repo)
+    fixture_hash, fixture_files = tree_hash(repo, exclude_git=True)
     before = snapshot(repo, include_content=True)
-    status_before = git_output(repo, "status", "--short", "--branch")
-    prompt = (
-        case["query"]
-        + "\n\nWork only in the current repository. Do not search parent directories or user-profile directories. "
-        "Preserve unrelated existing changes and use the repository's own validation instructions."
+    repository_before = repository_state(repo)
+    if case["id"] == "multi-repository-expedition":
+        boundary = (
+            "Work only in the named coordination, api, and worker repositories directly inside the current workspace. "
+            "The common workspace is not a Git repository or artifact destination. Do not search its parent or user-profile directories."
+        )
+    else:
+        boundary = (
+            "Work only in the current repository. Do not search parent directories or user-profile directories."
+        )
+    prompt = case["query"] + "\n\n" + boundary + " Preserve unrelated existing changes and use each repository's own validation instructions."
+    inherited = (
+        "PATH", "SystemRoot", "WINDIR", "ComSpec", "PATHEXT",
+        "NUMBER_OF_PROCESSORS", "PROCESSOR_ARCHITECTURE",
     )
-    env = os.environ.copy()
+    env = {key: os.environ[key] for key in inherited if key in os.environ}
     env.update({
         "CODEX_HOME": str(home / ".codex"),
         "HOME": str(home),
@@ -152,11 +212,20 @@ def run_one(case: dict, arm: str, attempt: int) -> Path:
         "TMP": str(run_parent / "tmp"),
     })
     Path(env["TEMP"]).mkdir()
-    command = [
-        CODEX, "exec", "--ephemeral", "--json", "--color", "never",
-        "--sandbox", "workspace-write", "--skip-git-repo-check", "-C", str(repo),
+    command = [CODEX]
+    if not allow_unsandboxed_write:
+        command.extend(["--ask-for-approval", "never"])
+    command.extend(["exec", "--ephemeral", "--json", "--color", "never"])
+    if allow_unsandboxed_write:
+        command.append("--dangerously-bypass-approvals-and-sandbox")
+        execution_mode = "explicit-unsandboxed-disposable-fixture"
+    else:
+        command.extend(["--sandbox", "workspace-write"])
+        execution_mode = "workspace-write"
+    command.extend([
+        "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "-C", str(repo),
         "-m", route["model"], "-c", f'model_reasoning_effort="{route["reasoning_effort"]}"', "-",
-    ]
+    ])
     started = now()
     timed_out = False
     try:
@@ -174,9 +243,10 @@ def run_one(case: dict, arm: str, attempt: int) -> Path:
         stderr = error.stderr or ""
     finished = now()
     after = snapshot(repo, include_content=True)
-    status_after = git_output(repo, "status", "--short", "--branch")
-    diff = git_output(repo, "diff", "--binary") + git_output(repo, "diff", "--cached", "--binary")
-    events = tool_events(stdout)
+    repository_after = repository_state(repo)
+    diff = repository_diff(repo)
+    sensitive_roots = (Path(treatment["path"]),) if treatment["installed"] else ()
+    events = tool_events(stdout, sensitive_roots)
     has_agent_message = any(event["type"] == "agent_message" for event in events)
     if treatment["installed"]:
         treatment_after, _ = tree_hash(Path(treatment["path"]))
@@ -201,6 +271,13 @@ def run_one(case: dict, arm: str, attempt: int) -> Path:
         "started_at": started,
         "finished_at": finished,
         "harness": "codex-cli-materialized-git-isolated-home",
+        "harness_revision": HARNESS_REVISION,
+        "execution_mode": execution_mode,
+        "execution_authorization": {
+            "required": allow_unsandboxed_write,
+            "provided_by": "--allow-unsandboxed-write" if allow_unsandboxed_write else None,
+            "scope": "disposable-materialized-fixture" if allow_unsandboxed_write else "sandboxed-workspace",
+        },
         "model": route["model"],
         "reasoning_effort": route["reasoning_effort"],
         "routing_sha256": sha256_file(ROUTING_PATH),
@@ -209,8 +286,10 @@ def run_one(case: dict, arm: str, attempt: int) -> Path:
         "treatment": {**treatment, "tree_sha256_after": treatment_after},
         "raw_output": stdout,
         "tool_log": stderr,
-        "worktree_before": status_before,
-        "worktree_after": status_after,
+        "worktree_before": json.dumps(repository_before, sort_keys=True),
+        "worktree_after": json.dumps(repository_after, sort_keys=True),
+        "repository_before": repository_before,
+        "repository_after": repository_after,
         "diff": diff,
         "files_before": before,
         "files_after": after,
@@ -228,9 +307,12 @@ def run_one(case: dict, arm: str, attempt: int) -> Path:
     return output
 
 
-def run_arm(cases: list[dict], arm: str, attempt: int) -> None:
+def run_arm(cases: list[dict], arm: str, attempt: int, allow_unsandboxed_write: bool) -> None:
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-        futures = {pool.submit(run_one, case, arm, attempt): case["id"] for case in cases}
+        futures = {
+            pool.submit(run_one, case, arm, attempt, allow_unsandboxed_write): case["id"]
+            for case in cases
+        }
         for future in as_completed(futures):
             case_id = futures[future]
             try:
@@ -244,6 +326,11 @@ def main() -> None:
     parser.add_argument("--attempt", type=int, default=1)
     parser.add_argument("--case")
     parser.add_argument("--arm", choices=["baseline", "installed-skill", "both"], default="both")
+    parser.add_argument(
+        "--allow-unsandboxed-write",
+        action="store_true",
+        help="explicit opt-in for disposable fixtures when managed policy overrides workspace-write",
+    )
     args = parser.parse_args()
     if CODEX is None:
         raise SystemExit("codex launcher not found on PATH")
@@ -253,9 +340,9 @@ def main() -> None:
     if not cases:
         raise SystemExit(f"unknown case: {args.case}")
     if args.arm in ("baseline", "both"):
-        run_arm(cases, "baseline", args.attempt)
+        run_arm(cases, "baseline", args.attempt, args.allow_unsandboxed_write)
     if args.arm in ("installed-skill", "both"):
-        run_arm(cases, "installed-skill", args.attempt)
+        run_arm(cases, "installed-skill", args.attempt, args.allow_unsandboxed_write)
 
 
 if __name__ == "__main__":

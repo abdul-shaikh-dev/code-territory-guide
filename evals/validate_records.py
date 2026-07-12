@@ -10,7 +10,8 @@ RUN_REQUIRED = {
     "schema_version", "run_id", "case_id", "arm", "attempt", "started_at", "finished_at",
     "harness", "model", "reasoning_effort", "routing_sha256", "query", "fixture", "treatment",
     "raw_output", "tool_log", "worktree_before", "worktree_after", "diff", "files_before",
-    "files_after", "changed_files", "tool_events", "exit_status", "excluded",
+    "files_after", "changed_files", "tool_events", "repository_before", "repository_after",
+    "exit_status", "excluded",
 }
 
 
@@ -41,6 +42,8 @@ def main() -> None:
         if record.get("schema_version") != 2:
             legacy_paths.append(path)
             continue
+        if path.stem != record.get("run_id"):
+            raise ValueError(f"filename/run_id mismatch in {path}")
         require(record, RUN_REQUIRED, path)
         run_paths.append(path)
         if record["treatment"].get("installed") and not record["treatment"].get("tree_sha256"):
@@ -52,6 +55,9 @@ def main() -> None:
     legacy_judgments = []
     for path in judge_candidates:
         record = load(path)
+        expected_prefix = f"{record.get('case_id')}.attempt-"
+        if not path.stem.startswith(expected_prefix):
+            raise ValueError(f"filename/case_id mismatch in {path}")
         if record.get("excluded", {}).get("value"):
             continue
         if not record.get("judgment"):

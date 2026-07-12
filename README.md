@@ -131,7 +131,7 @@ flowchart LR
     M[Manifest and fixtures] --> V[Deterministic validation]
     V --> B[Baseline runs]
     V --> T[Installed-skill runs]
-    B --> J[Independent judge]
+    B --> J[Separate-call judge]
     T --> J
     J --> R[Evidence report]
     R --> A[Adversarial audit]
