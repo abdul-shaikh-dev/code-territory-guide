@@ -14,11 +14,12 @@ REPO_ROOT = EVAL_ROOT.parent
 RESULT_ROOT = EVAL_ROOT / "results"
 ROUTING = json.loads((EVAL_ROOT / "model-routing.json").read_text(encoding="utf-8"))
 CODEX = shutil.which("codex.cmd") or shutil.which("codex")
-REPORT = RESULT_ROOT / "2026-07-12-recorded-matrix.md"
-FINAL = RESULT_ROOT / "2026-07-12-recorded-matrix-audit.md"
-RAW = RESULT_ROOT / "2026-07-12-recorded-matrix-audit.jsonl"
-STDERR = RESULT_ROOT / "2026-07-12-recorded-matrix-audit.stderr.txt"
-RECORD = RESULT_ROOT / "2026-07-12-recorded-matrix-audit.record.json"
+REPORT = RESULT_ROOT / "synthetic-evidence.md"
+GENERATED = RESULT_ROOT / "generated"
+FINAL = GENERATED / "synthetic-evidence-audit.md"
+RAW = GENERATED / "synthetic-evidence-audit.jsonl"
+STDERR = GENERATED / "synthetic-evidence-audit.stderr.txt"
+RECORD = GENERATED / "synthetic-evidence-audit.record.json"
 
 
 def now() -> str:
@@ -26,6 +27,7 @@ def now() -> str:
 
 
 def main() -> None:
+    GENERATED.mkdir(parents=True, exist_ok=True)
     if CODEX is None:
         raise SystemExit("codex launcher not found on PATH")
     if RECORD.exists():
@@ -39,7 +41,7 @@ Audit only these paths under evals/:
 - run_matrix.py, judge_matrix.py, build_report.py
 - results/runs/*.json
 - results/judgments/*
-- results/2026-07-12-recorded-matrix.md
+- results/synthetic-evidence.md
 
 Do not read the skill implementation or the older smoke/full/audit reports. Do not assume the new report is correct. Verify its counts and material claims against the raw records and structured judgments. Check provenance, exact prompts, fixture hashes, model/reasoning metadata, baseline/treatment separation, run selection, exclusions, judge independence, rubric completeness, pass-field consistency, raw-output preservation, retry preservation, contamination or skill-text leakage, and whether the harness actually exercises the behaviors claimed. Treat omitted evidence as absent. Distinguish a failure of the skill from a failure or limitation of the harness.
 
@@ -68,7 +70,7 @@ Do not edit files or run model sessions. Your final response is the audit docume
     STDERR.write_text(completed.stderr, encoding="utf-8")
     valid = completed.returncode == 0 and FINAL.is_file() and FINAL.stat().st_size > 0
     record = {
-        "audit_run_id": "recorded-matrix-audit--attempt-1",
+        "audit_run_id": "synthetic-evidence-audit--attempt-1",
         "started_at": started,
         "finished_at": finished,
         "model": route["model"],

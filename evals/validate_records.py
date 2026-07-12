@@ -6,12 +6,7 @@ from pathlib import Path
 
 EVAL_ROOT = Path(__file__).resolve().parent
 
-V1_REQUIRED = {
-    "run_id", "case_id", "arm", "seed", "started_at", "finished_at", "harness", "model",
-    "reasoning_effort", "query", "context", "treatment", "raw_output", "exit_status",
-    "excluded", "criteria", "forbidden", "scorer",
-}
-V2_REQUIRED = {
+RUN_REQUIRED = {
     "schema_version", "run_id", "case_id", "arm", "attempt", "started_at", "finished_at",
     "harness", "model", "reasoning_effort", "routing_sha256", "query", "fixture", "treatment",
     "raw_output", "tool_log", "worktree_before", "worktree_after", "diff", "files_before",
@@ -35,32 +30,46 @@ def require(record: dict, required: set[str], path: Path) -> None:
 
 
 def main() -> None:
-    for schema in ("run-record.schema.json", "run-record-v2.schema.json", "judge-output.schema.json"):
+    for schema in ("run-record.schema.json", "judge-output.schema.json"):
         load(EVAL_ROOT / schema)
 
-    v1_paths = sorted((EVAL_ROOT / "results" / "runs").glob("*.json"))
-    for path in v1_paths:
-        require(load(path), V1_REQUIRED, path)
-
-    v2_paths = sorted((EVAL_ROOT / "results" / "runs-v2").glob("*.json"))
-    for path in v2_paths:
+    candidates = sorted((EVAL_ROOT / "results" / "runs").glob("*.json"))
+    run_paths = []
+    legacy_paths = []
+    for path in candidates:
         record = load(path)
-        require(record, V2_REQUIRED, path)
-        if record["schema_version"] != 2:
-            raise ValueError(f"wrong schema_version in {path}")
+        if record.get("schema_version") != 2:
+            legacy_paths.append(path)
+            continue
+        require(record, RUN_REQUIRED, path)
+        run_paths.append(path)
         if record["treatment"].get("installed") and not record["treatment"].get("tree_sha256"):
             raise ValueError(f"missing treatment hash in {path}")
 
-    judge_paths = sorted((EVAL_ROOT / "results" / "judgments").glob("*.attempt-2.json"))
-    judge_paths = [path for path in judge_paths if not path.name.endswith(".judge-output.json")]
-    for path in judge_paths:
+    judge_candidates = sorted((EVAL_ROOT / "results" / "judgments").glob("*.attempt-*.json"))
+    judge_candidates = [path for path in judge_candidates if not path.name.endswith(".judge-output.json")]
+    judge_paths = []
+    legacy_judgments = []
+    for path in judge_candidates:
         record = load(path)
         if record.get("excluded", {}).get("value"):
-            raise ValueError(f"valid-judgment set contains exclusion: {path}")
+            continue
         if not record.get("judgment"):
             raise ValueError(f"missing judgment: {path}")
+        inputs = [EVAL_ROOT / relative for relative in record.get("input_records", [])]
+        if len(inputs) != 2 or not all(item.is_file() for item in inputs):
+            legacy_judgments.append(path)
+            continue
+        input_records = [load(item) for item in inputs]
+        if not all(item.get("schema_version") == 2 for item in input_records):
+            legacy_judgments.append(path)
+            continue
+        judge_paths.append(path)
 
-    print(f"validated schemas, {len(v1_paths)} v1 runs, {len(v2_paths)} v2 runs, and {len(judge_paths)} judgments")
+    print(
+        f"validated schemas, {len(run_paths)} canonical runs, and {len(judge_paths)} canonical judgments; "
+        f"ignored {len(legacy_paths)} legacy runs and {len(legacy_judgments)} legacy judgments"
+    )
 
 
 if __name__ == "__main__":

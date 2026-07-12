@@ -2,6 +2,8 @@
 
 Use these templates only when a copyable handoff or structured output adds value. Load `safety-and-scope.md` and the relevant workflow reference first. Do not use templates as a substitute for repository inspection.
 
+For durable repository artifacts, copy the corresponding starter from `assets/artifacts/`. The prompt templates below remain useful for chat and model handoffs.
+
 ## Contents
 
 - Mode Selection
@@ -11,6 +13,7 @@ Use these templates only when a copyable handoff or structured output adds value
 - Field Brief
 - Implementation Handoff
 - Fresh Review
+- Delivery Handoff
 - Field Report
 
 ## Mode Selection
@@ -130,6 +133,32 @@ Return:
 - accurate completion state
 ```
 
+## Delivery Handoff
+
+```text
+Deliver the reviewed task-owned delta only to the explicitly authorized level.
+
+Authorized operation:
+<none, branch, commit, push, pull request, tag, or release>
+
+Owned delta:
+<files or hunks>
+
+Validation and completion state:
+<results>
+
+Rules:
+- recheck branch, status, staged state, and exact owned diff
+- preserve unrelated and pre-existing staged changes
+- stage explicit owned paths or hunks
+- resolve the commit convention from trusted instructions, configuration, and a narrow history sample
+- never invent a ticket, Jira, issue, component, or team prefix
+- do not bypass commit hooks or amend existing history without authorization
+- do not commit secrets, generated local artifacts, or raw evidence
+- do not infer authorization for the next delivery operation
+- verify and report the resulting commit hash, branch, remote action, or link
+```
+
 ## Field Report
 
 ```text
@@ -143,6 +172,7 @@ Include:
 - material risks, assumptions, gaps, or pending decisions
 - rollback guidance when relevant
 - what the user should review
+- delivery state and commit hash or link, when applicable
 - durable learning saved, if any
 
 Add visual evidence only for material visual behavior. Add quiz questions only when teaching or knowledge transfer was requested.

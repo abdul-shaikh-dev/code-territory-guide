@@ -1,71 +1,169 @@
 from __future__ import annotations
 
-import hashlib
 import argparse
+import hashlib
 import json
 import os
 import shutil
 import subprocess
-import sys
 import tempfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
+from materialize_fixture import materialize
+
 
 EVAL_ROOT = Path(__file__).resolve().parent
 REPO_ROOT = EVAL_ROOT.parent
 SKILL_SOURCE = REPO_ROOT / "skills" / "code-territory-guide"
-SKILL_DEST = Path.home() / ".agents" / "skills" / "code-territory-guide"
 RUN_ROOT = EVAL_ROOT / "results" / "runs"
 MANIFEST = json.loads((EVAL_ROOT / "manifest.json").read_text(encoding="utf-8"))
-ROUTING = json.loads((EVAL_ROOT / "model-routing.json").read_text(encoding="utf-8"))
-MAX_WORKERS = 3
-TIMEOUT_SECONDS = 240
+ROUTING_PATH = EVAL_ROOT / "model-routing.json"
+ROUTING = json.loads(ROUTING_PATH.read_text(encoding="utf-8"))
+AUTH_SOURCE = Path.home() / ".codex" / "auth.json"
 CODEX = shutil.which("codex.cmd") or shutil.which("codex")
+MAX_WORKERS = 2
+TIMEOUT_SECONDS = 480
+TEMP_ROOT = Path(os.environ.get("CTG_EVAL_TEMP_ROOT", Path(tempfile.gettempdir()) / "code-territory-guide-evals"))
 
 
 def now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
-def sha256(path: Path) -> str:
+def sha256_bytes(value: bytes) -> str:
+    return hashlib.sha256(value).hexdigest()
+
+
+def sha256_file(path: Path) -> str:
+    return sha256_bytes(path.read_bytes())
+
+
+def snapshot(root: Path, include_content: bool = False) -> dict[str, dict]:
+    result: dict[str, dict] = {}
+    for path in sorted(item for item in root.rglob("*") if item.is_file() and ".git" not in item.parts):
+        relative = path.relative_to(root).as_posix()
+        data = path.read_bytes()
+        entry: dict[str, object] = {"sha256": sha256_bytes(data), "size": len(data)}
+        if include_content and len(data) <= 100_000:
+            try:
+                entry["text"] = data.decode("utf-8")
+            except UnicodeDecodeError:
+                pass
+        result[relative] = entry
+    return result
+
+
+def tree_hash(root: Path) -> tuple[str, dict[str, str]]:
+    files = {path.relative_to(root).as_posix(): sha256_file(path) for path in sorted(root.rglob("*")) if path.is_file()}
     digest = hashlib.sha256()
-    digest.update(path.read_bytes())
-    return digest.hexdigest()
+    for relative, file_hash in files.items():
+        digest.update(relative.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(file_hash.encode("ascii"))
+        digest.update(b"\n")
+    return digest.hexdigest(), files
 
 
-def build_prompt(case: dict) -> tuple[str, list[dict]]:
-    context_records: list[dict] = []
-    context_blocks: list[str] = []
-    for relative in case["context_files"]:
-        path = EVAL_ROOT / relative
-        context_records.append({"path": relative, "sha256": sha256(path)})
-        context_blocks.append(f'<context path="{relative}">\n{path.read_text(encoding="utf-8")}\n</context>')
-
-    parts = [case["query"]]
-    if context_blocks:
-        parts.append("Repository context supplied for this task:\n" + "\n\n".join(context_blocks))
-    parts.append("Do not inspect files outside the supplied context. Do not modify files. Respond exactly as you would to the user, including decisions, validation expectations, and the completion claim you would make.")
-    return "\n\n".join(parts), context_records
+def git_output(repo: Path, *args: str) -> str:
+    completed = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True, encoding="utf-8", errors="replace")
+    return completed.stdout + completed.stderr
 
 
-def run_one(case: dict, arm: str, seed: int) -> Path:
+def tool_events(raw_output: str) -> list[dict]:
+    events: list[dict] = []
+    for line in raw_output.splitlines():
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        item = event.get("item") or {}
+        kind = item.get("type")
+        if kind == "command_execution" and item.get("status") != "in_progress":
+            command = item.get("command", "")
+            output = item.get("aggregated_output", "")
+            if "\\.agents\\skills\\code-territory-guide" in command.lower():
+                output = "<skill contents omitted from derived evidence>"
+            events.append({
+                "type": kind, "command": command, "output": output,
+                "exit_code": item.get("exit_code"), "status": item.get("status"),
+            })
+        elif kind == "file_change" and item.get("status") != "in_progress":
+            events.append({"type": kind, "changes": item.get("changes", []), "status": item.get("status")})
+        elif kind == "agent_message":
+            events.append({"type": kind, "text": item.get("text", "")})
+    return events
+
+
+def changed_files(before: dict, after: dict) -> list[dict]:
+    changes = []
+    for relative in sorted(set(before) | set(after)):
+        old = before.get(relative)
+        new = after.get(relative)
+        if old != new:
+            changes.append({
+                "path": relative,
+                "kind": "add" if old is None else "delete" if new is None else "update",
+                "before": old,
+                "after": new,
+            })
+    return changes
+
+
+def make_isolated_home(root: Path, arm: str) -> tuple[Path, dict]:
+    home = root / "home"
+    codex_home = home / ".codex"
+    codex_home.mkdir(parents=True)
+    shutil.copy2(AUTH_SOURCE, codex_home / "auth.json")
+    treatment = {"installed": False, "path": None, "tree_sha256": None, "files": {}}
+    if arm == "installed-skill":
+        destination = codex_home / "skills" / "code-territory-guide"
+        destination.parent.mkdir(parents=True)
+        shutil.copytree(SKILL_SOURCE, destination)
+        digest, files = tree_hash(destination)
+        treatment = {"installed": True, "path": str(destination), "tree_sha256": digest, "files": files}
+    return home, treatment
+
+
+def run_one(case: dict, arm: str, attempt: int) -> Path:
     route = ROUTING["cases"].get(case["id"], ROUTING["default"])
-    run_id = f"{case['id']}--{arm}--seed-{seed}"
-    run_dir = Path(tempfile.mkdtemp(prefix=f"ctg-{run_id}-", dir=os.environ.get("TEMP") or os.environ.get("TMP") or None))
-    prompt, context_records = build_prompt(case)
-    started = now()
+    run_id = f"{case['id']}--{arm}--attempt-{attempt}"
+    TEMP_ROOT.mkdir(parents=True, exist_ok=True)
+    run_parent = Path(tempfile.mkdtemp(prefix=f"ctg-v2-{run_id}-", dir=TEMP_ROOT))
+    repo = run_parent / "repo"
+    materialize(case["id"], repo)
+    home, treatment = make_isolated_home(run_parent, arm)
+    treatment_before = treatment["tree_sha256"]
+    fixture_hash, fixture_files = tree_hash(repo)
+    before = snapshot(repo, include_content=True)
+    status_before = git_output(repo, "status", "--short", "--branch")
+    prompt = (
+        case["query"]
+        + "\n\nWork only in the current repository. Do not search parent directories or user-profile directories. "
+        "Preserve unrelated existing changes and use the repository's own validation instructions."
+    )
+    env = os.environ.copy()
+    env.update({
+        "CODEX_HOME": str(home / ".codex"),
+        "HOME": str(home),
+        "USERPROFILE": str(home),
+        "TEMP": str(run_parent / "tmp"),
+        "TMP": str(run_parent / "tmp"),
+    })
+    Path(env["TEMP"]).mkdir()
     command = [
         CODEX, "exec", "--ephemeral", "--json", "--color", "never",
-        "--sandbox", "read-only", "--skip-git-repo-check", "-C", str(run_dir),
-        "-m", route["model"], "-c", f'model_reasoning_effort="{route["reasoning_effort"]}"',
-        prompt,
+        "--sandbox", "workspace-write", "--skip-git-repo-check", "-C", str(repo),
+        "-m", route["model"], "-c", f'model_reasoning_effort="{route["reasoning_effort"]}"', "-",
     ]
-
+    started = now()
     timed_out = False
     try:
-        completed = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=TIMEOUT_SECONDS)
+        completed = subprocess.run(
+            command, input=prompt, capture_output=True, text=True, encoding="utf-8", errors="replace",
+            timeout=TIMEOUT_SECONDS, env=env,
+        )
         exit_status = completed.returncode
         stdout = completed.stdout
         stderr = completed.stderr
@@ -74,94 +172,90 @@ def run_one(case: dict, arm: str, seed: int) -> Path:
         exit_status = None
         stdout = error.stdout or ""
         stderr = error.stderr or ""
-
     finished = now()
-    has_agent_message = '"type":"agent_message"' in stdout or '"type": "agent_message"' in stdout
-    excluded = timed_out or (exit_status not in (0, None) and not has_agent_message) or not has_agent_message
-    if timed_out:
+    after = snapshot(repo, include_content=True)
+    status_after = git_output(repo, "status", "--short", "--branch")
+    diff = git_output(repo, "diff", "--binary") + git_output(repo, "diff", "--cached", "--binary")
+    events = tool_events(stdout)
+    has_agent_message = any(event["type"] == "agent_message" for event in events)
+    if treatment["installed"]:
+        treatment_after, _ = tree_hash(Path(treatment["path"]))
+    else:
+        treatment_after = None
+    contamination = treatment_before != treatment_after
+    excluded = timed_out or not has_agent_message or contamination
+    if contamination:
+        exclusion_rule = "treatment payload changed during run"
+    elif timed_out:
         exclusion_rule = "hard timeout before an evaluable agent response"
     elif not has_agent_message:
         exclusion_rule = "no evaluable agent response"
     else:
         exclusion_rule = None
-
     record = {
+        "schema_version": 2,
         "run_id": run_id,
         "case_id": case["id"],
         "arm": arm,
-        "seed": seed,
+        "attempt": attempt,
         "started_at": started,
         "finished_at": finished,
-        "harness": "codex-cli-0.144.1-ephemeral-read-only",
+        "harness": "codex-cli-materialized-git-isolated-home",
         "model": route["model"],
         "reasoning_effort": route["reasoning_effort"],
+        "routing_sha256": sha256_file(ROUTING_PATH),
         "query": prompt,
-        "context": context_records,
-        "treatment": {
-            "skill_path": str(SKILL_DEST) if arm == "installed-skill" else None,
-            "policy_payload": None
-        },
+        "fixture": {"tree_sha256": fixture_hash, "files": fixture_files},
+        "treatment": {**treatment, "tree_sha256_after": treatment_after},
         "raw_output": stdout,
         "tool_log": stderr,
-        "worktree_before": "",
-        "worktree_after": "",
-        "diff": "",
-        "validation_output": "",
+        "worktree_before": status_before,
+        "worktree_after": status_after,
+        "diff": diff,
+        "files_before": before,
+        "files_after": after,
+        "changed_files": changed_files(before, after),
+        "tool_events": events,
         "exit_status": exit_status,
         "excluded": {"value": excluded, "rule": exclusion_rule},
-        "criteria": [],
-        "forbidden": [],
-        "scorer": "unscored"
     }
     RUN_ROOT.mkdir(parents=True, exist_ok=True)
     output = RUN_ROOT / f"{run_id}.json"
+    if output.exists():
+        raise RuntimeError(f"refusing to overwrite {output}")
     output.write_text(json.dumps(record, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    shutil.rmtree(run_dir, ignore_errors=True)
+    shutil.rmtree(run_parent, ignore_errors=True)
     return output
 
 
-def run_arm(arm: str, seed: int, cases: list[dict] | None = None) -> None:
-    cases = cases or MANIFEST["cases"]
+def run_arm(cases: list[dict], arm: str, attempt: int) -> None:
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-        futures = {pool.submit(run_one, case, arm, seed): case["id"] for case in cases}
+        futures = {pool.submit(run_one, case, arm, attempt): case["id"] for case in cases}
         for future in as_completed(futures):
             case_id = futures[future]
             try:
                 print(f"completed {arm}: {case_id} -> {future.result()}", flush=True)
             except Exception as error:
-                print(f"runner error {arm}: {case_id}: {error}", file=sys.stderr, flush=True)
+                print(f"runner error {arm}: {case_id}: {error}", flush=True)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--retry-excluded", action="store_true")
-    parser.add_argument("--seed", type=int, default=1)
+    parser.add_argument("--attempt", type=int, default=1)
+    parser.add_argument("--case")
+    parser.add_argument("--arm", choices=["baseline", "installed-skill", "both"], default="both")
     args = parser.parse_args()
-
     if CODEX is None:
         raise SystemExit("codex launcher not found on PATH")
-    if SKILL_DEST.exists():
-        raise SystemExit(f"refusing to overwrite existing skill installation: {SKILL_DEST}")
-
-    if args.retry_excluded:
-        selected: dict[str, list[dict]] = {}
-        by_id = {case["id"]: case for case in MANIFEST["cases"]}
-        for arm in ("baseline", "installed-skill"):
-            selected[arm] = []
-            for case_id, case in by_id.items():
-                source = RUN_ROOT / f"{case_id}--{arm}--seed-1.json"
-                if source.is_file() and json.loads(source.read_text(encoding="utf-8"))["excluded"]["value"]:
-                    selected[arm].append(case)
-    else:
-        selected = {"baseline": MANIFEST["cases"], "installed-skill": MANIFEST["cases"]}
-
-    run_arm("baseline", seed=args.seed, cases=selected["baseline"])
-    SKILL_DEST.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copytree(SKILL_SOURCE, SKILL_DEST)
-    try:
-        run_arm("installed-skill", seed=args.seed, cases=selected["installed-skill"])
-    finally:
-        shutil.rmtree(SKILL_DEST, ignore_errors=True)
+    if not AUTH_SOURCE.is_file():
+        raise SystemExit("Codex auth.json not found")
+    cases = [case for case in MANIFEST["cases"] if not args.case or case["id"] == args.case]
+    if not cases:
+        raise SystemExit(f"unknown case: {args.case}")
+    if args.arm in ("baseline", "both"):
+        run_arm(cases, "baseline", args.attempt)
+    if args.arm in ("installed-skill", "both"):
+        run_arm(cases, "installed-skill", args.attempt)
 
 
 if __name__ == "__main__":

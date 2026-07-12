@@ -14,6 +14,7 @@ evals/results/runs-v2/
 evals/results/judgments/
 evals/results/real-repos/runs/
 evals/results/real-repos/judgments/
+evals/results/generated/
 evals/results/**/*.jsonl
 evals/results/**/*.stderr.txt
 evals/results/**/*.record.json

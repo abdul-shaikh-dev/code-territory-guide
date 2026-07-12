@@ -11,13 +11,9 @@ from pathlib import Path
 
 
 EVAL_ROOT = Path(__file__).resolve().parent
-RESULT_ROOT = EVAL_ROOT / "results" / "real-repos"
+RESULT_ROOT = EVAL_ROOT / "results" / "generated" / "real-repos"
 MANIFEST = json.loads((EVAL_ROOT / "real-repo-manifest.json").read_text(encoding="utf-8"))
 CODEX = shutil.which("codex.cmd") or shutil.which("codex")
-FINAL = RESULT_ROOT / "2026-07-12-audit.md"
-RAW = RESULT_ROOT / "2026-07-12-audit.jsonl"
-STDERR = RESULT_ROOT / "2026-07-12-audit.stderr.txt"
-RECORD = RESULT_ROOT / "2026-07-12-audit.record.json"
 
 
 def now() -> str:
@@ -25,6 +21,7 @@ def now() -> str:
 
 
 def main() -> None:
+    RESULT_ROOT.mkdir(parents=True, exist_ok=True)
     parser = argparse.ArgumentParser()
     parser.add_argument("--attempt", type=int, default=1)
     args = parser.parse_args()
@@ -45,7 +42,7 @@ Inspect only:
 - evals/results/real-repos/runs/*.json
 - evals/results/real-repos/judgments/simulator-capacity-zero-boundary--judge-attempt-4.json
 - evals/results/real-repos/judgments/cogstash-stale-superpowers-plan--judge-attempt-5.json
-- evals/results/real-repos/2026-07-12-report.md
+- evals/results/generated/real-repository-readonly.md
 
 Do not read the skill implementation or earlier synthetic reports. Verify run counts, exclusions, before/after repository state, disabled push URLs, treatment hashes, model metadata, rubric completeness, judge consistency, headline pass/outcome counts, and runtime/event/command metrics. Check for leaked expected answers, selection bias, unsupported claims, and whether preserved behavior is being overstated as improvement. Distinguish safety evidence from quality-uplift evidence.
 
