@@ -1,0 +1,20 @@
+{
+  "name": "code-territory-guide",
+  "interface": {
+    "displayName": "Code Territory Guide"
+  },
+  "plugins": [
+    {
+      "name": "code-territory-guide",
+      "source": {
+        "source": "url",
+        "url": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

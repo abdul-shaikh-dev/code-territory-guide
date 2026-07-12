@@ -1,0 +1,41 @@
+{
+  "name": "code-territory-guide",
+  "version": "0.1.0",
+  "description": "Evidence-led workflow for scoped, safe code changes across repositories and delivery stages.",
+  "author": {
+    "name": "Abdul Gaffar Shaikh",
+    "url": "https://github.com/abdul-shaikh-dev"
+  },
+  "homepage": "https://github.com/abdul-shaikh-dev/code-territory-guide",
+  "repository": "https://github.com/abdul-shaikh-dev/code-territory-guide",
+  "keywords": [
+    "skills",
+    "planning",
+    "debugging",
+    "code-review",
+    "delivery",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Code Territory Guide",
+    "shortDescription": "Scoped code changes and safe delivery",
+    "longDescription": "Guide non-trivial code changes through repository discovery, trusted-context handling, worktree ownership, scoped implementation, validation, artifacts, review, and explicitly authorized delivery.",
+    "developerName": "Abdul Gaffar Shaikh",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use Code Territory Guide to implement this change safely.",
+      "Inspect this repository and give me the smallest evidence-backed route."
+    ],
+    "websiteURL": "https://github.com/abdul-shaikh-dev/code-territory-guide",
+    "privacyPolicyURL": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement",
+    "termsOfServiceURL": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service",
+    "brandColor": "#2563EB",
+    "screenshots": []
+  }
+}
