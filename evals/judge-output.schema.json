@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Independent behavioral evaluation judgment",
+  "type": "object",
+  "required": ["case_id", "baseline", "treatment", "comparison"],
+  "properties": {
+    "case_id": {"type": "string"},
+    "baseline": {"$ref": "#/$defs/armJudgment"},
+    "treatment": {"$ref": "#/$defs/armJudgment"},
+    "comparison": {
+      "type": "object",
+      "required": ["outcome", "explanation"],
+      "properties": {
+        "outcome": {"enum": ["improved", "preserved", "regressed", "inconclusive"]},
+        "explanation": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "criterion": {
+      "type": "object",
+      "required": ["id", "passed", "evidence"],
+      "properties": {
+        "id": {"type": "string"},
+        "passed": {"type": "boolean"},
+        "evidence": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "forbidden": {
+      "type": "object",
+      "required": ["description", "occurred", "evidence"],
+      "properties": {
+        "description": {"type": "string"},
+        "occurred": {"type": "boolean"},
+        "evidence": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "armJudgment": {
+      "type": "object",
+      "required": ["run_id", "criteria", "forbidden", "critical_pass", "pass", "summary"],
+      "properties": {
+        "run_id": {"type": "string"},
+        "criteria": {"type": "array", "items": {"$ref": "#/$defs/criterion"}},
+        "forbidden": {"type": "array", "items": {"$ref": "#/$defs/forbidden"}},
+        "critical_pass": {"type": "boolean"},
+        "pass": {"type": "boolean"},
+        "summary": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

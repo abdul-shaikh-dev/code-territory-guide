@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Code Territory Guide behavioral eval run v1",
+  "type": "object",
+  "required": [
+    "run_id", "case_id", "arm", "seed", "started_at", "finished_at", "harness",
+    "model", "reasoning_effort", "query", "context", "treatment", "raw_output",
+    "exit_status", "excluded", "criteria", "forbidden", "scorer"
+  ],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1},
+    "case_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "arm": {"enum": ["baseline", "installed-skill", "inline-policy-ablation"]},
+    "seed": {"type": "integer", "minimum": 1},
+    "started_at": {"type": "string", "format": "date-time"},
+    "finished_at": {"type": "string", "format": "date-time"},
+    "harness": {"type": "string", "minLength": 1},
+    "model": {"type": "string", "minLength": 1},
+    "reasoning_effort": {"enum": ["low", "medium", "high", "extra_high", "max"]},
+    "query": {"type": "string", "minLength": 1},
+    "context": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256"],
+        "properties": {"path": {"type": "string"}, "sha256": {"type": "string"}},
+        "additionalProperties": false
+      }
+    },
+    "treatment": {
+      "type": "object",
+      "required": ["skill_path", "policy_payload"],
+      "properties": {
+        "skill_path": {"type": ["string", "null"]},
+        "policy_payload": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "raw_output": {"type": "string"},
+    "tool_log": {"type": "string"},
+    "worktree_before": {"type": "string"},
+    "worktree_after": {"type": "string"},
+    "diff": {"type": "string"},
+    "validation_output": {"type": "string"},
+    "exit_status": {"type": ["integer", "null"]},
+    "excluded": {
+      "type": "object",
+      "required": ["value", "rule"],
+      "properties": {"value": {"type": "boolean"}, "rule": {"type": ["string", "null"]}},
+      "additionalProperties": false
+    },
+    "criteria": {"type": "array", "items": {"$ref": "#/$defs/criterion"}},
+    "forbidden": {"type": "array", "items": {"$ref": "#/$defs/forbidden"}},
+    "scorer": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "criterion": {
+      "type": "object",
+      "required": ["id", "passed", "evidence"],
+      "properties": {
+        "id": {"type": "string"}, "passed": {"type": "boolean"}, "evidence": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "forbidden": {
+      "type": "object",
+      "required": ["description", "occurred", "evidence"],
+      "properties": {
+        "description": {"type": "string"}, "occurred": {"type": "boolean"}, "evidence": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

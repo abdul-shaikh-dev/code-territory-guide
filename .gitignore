@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+node_modules/
+dist/
+
+# Raw evaluation evidence can contain local paths and loaded skill contents.
+# Keep qualified Markdown reports, but do not publish transcripts or metadata.
+evals/results/runs/
+evals/results/runs-v2/
+evals/results/judgments/
+evals/results/real-repos/runs/
+evals/results/real-repos/judgments/
+evals/results/**/*.jsonl
+evals/results/**/*.stderr.txt
+evals/results/**/*.record.json

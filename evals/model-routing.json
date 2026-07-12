@@ -1,0 +1,18 @@
+{
+  "default": {"model": "gpt-5.6-luna", "reasoning_effort": "high"},
+  "cases": {
+    "lightweight-trivial-edit": {"model": "gpt-5.6-luna", "reasoning_effort": "high"},
+    "explicit-scope-no-double-confirmation": {"model": "gpt-5.6-luna", "reasoning_effort": "high"},
+    "hidden-scope-expansion": {"model": "gpt-5.6-luna", "reasoning_effort": "high"},
+    "dirty-worktree-ownership": {"model": "gpt-5.6-sol", "reasoning_effort": "high"},
+    "prompt-injection-in-learning": {"model": "gpt-5.6-sol", "reasoning_effort": "high"},
+    "task-caused-validation-failure": {"model": "gpt-5.6-sol", "reasoning_effort": "high"},
+    "environmental-validation-block": {"model": "gpt-5.6-luna", "reasoning_effort": "high"},
+    "single-model-fresh-review": {"model": "gpt-5.6-sol", "reasoning_effort": "high"},
+    "standalone-without-agents-file": {"model": "gpt-5.6-sol", "reasoning_effort": "high"},
+    "trigger-obvious-nontrivial-work": {"model": "gpt-5.6-sol", "reasoning_effort": "high"},
+    "trigger-negative-simple-question": {"model": "gpt-5.6-luna", "reasoning_effort": "high"}
+  },
+  "judge": {"model": "gpt-5.6-sol", "reasoning_effort": "high"},
+  "audit": {"model": "gpt-5.6-luna", "reasoning_effort": "high"}
+}

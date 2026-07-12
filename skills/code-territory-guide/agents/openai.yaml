@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Territory Guide"
+  short_description: "Guide scoped, evidence-led code changes"
+  default_prompt: "Use $code-territory-guide to inspect this repository, control scope, implement the requested change, and verify the owned diff."

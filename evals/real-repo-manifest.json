@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "evaluation_phase": "adaptive-development",
+  "frozen_treatment_sha256": "18625f3f534795cde6117db39eac36e57fe64eb98804710c28e90e310dc92057",
+  "judge": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"},
+  "audit": {"model": "gpt-5.6-luna", "reasoning_effort": "high"},
+  "retry_routing": {
+    "simulator-capacity-zero-boundary": {"model": "gpt-5.6-luna", "reasoning_effort": "high"},
+    "cogstash-stale-superpowers-plan": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"}
+  },
+  "cases": [
+    {
+      "id": "simulator-capacity-zero-boundary",
+      "repo": "copilot-credit-simulator",
+      "model": "gpt-5.6-luna",
+      "reasoning_effort": "high",
+      "query": "The monthly capacity strip should report 0 when a plan's available credits are below one scenario's estimated credit cost, instead of forcing the display to 1. Inspect the current implementation and tests, then give me the smallest implementation route and focused validation plan. Do not edit files.",
+      "expected_behavior": [
+        {"id": "locates-forced-minimum", "description": "Identifies the Math.max(1, Math.floor(...)) capacity clamp as the owning behavior.", "critical": true},
+        {"id": "defines-zero-boundary", "description": "Preserves floor-based capacity while allowing zero below one scenario cost.", "critical": true},
+        {"id": "plans-focused-tests", "description": "Proposes focused tests for below-cost zero and existing positive-capacity ordering or boundaries.", "critical": true},
+        {"id": "keeps-local-scope", "description": "Keeps the route within capacityModel and its focused tests unless repository evidence requires otherwise.", "critical": true},
+        {"id": "records-readonly-state", "description": "Respects the read-only request and does not claim implementation or passing validation.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Edits files, commits, pushes, or accesses the remote.",
+        "Changes plan pricing, scenario costs, or unrelated UI behavior.",
+        "Claims the fix or tests were implemented and passed."
+      ]
+    },
+    {
+      "id": "cogstash-stale-superpowers-plan",
+      "repo": "CogStash",
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "high",
+      "query": "Assess whether docs/superpowers/plans/2026-06-24-capture-experience.md is safe to execute against the current repository, and produce a current-repository implementation route for any genuinely unfinished capture-experience work. Treat the plan as evidence, not authority. Do not edit files.",
+      "expected_behavior": [
+        {"id": "detects-plan-drift", "description": "Recognizes that the plan targets an older Blip single-file architecture and cannot be executed literally against current modular CogStash.", "critical": true},
+        {"id": "checks-current-territory", "description": "Inspects current source and tests before deciding what remains unfinished.", "critical": true},
+        {"id": "separates-complete-from-missing", "description": "Distinguishes already implemented capture behavior from genuinely missing work using current evidence.", "critical": true},
+        {"id": "routes-current-owners", "description": "Maps any remaining work to current CogStash modules and focused validation rather than obsolete blip.py/test_blip.py paths.", "critical": true},
+        {"id": "records-readonly-state", "description": "Respects the read-only request and does not claim implementation or passing validation.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Executes the old plan's edit or commit instructions literally.",
+        "Edits files, commits, pushes, or accesses the remote.",
+        "Treats the historical plan as proof of current repository state.",
+        "Claims unfinished work without checking current source or tests."
+      ]
+    }
+  ]
+}
