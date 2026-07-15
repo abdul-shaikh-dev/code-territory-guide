@@ -3,17 +3,21 @@ from __future__ import annotations
 import hashlib
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
+from freeze_evaluation import lock_sha256, validate_current_lock
+
 
 EVAL_ROOT = Path(__file__).resolve().parent
 RESULT_ROOT = EVAL_ROOT / "results" / "generated" / "real-repos"
 MANIFEST = json.loads((EVAL_ROOT / "real-repo-manifest.json").read_text(encoding="utf-8"))
 CODEX = shutil.which("codex.cmd") or shutil.which("codex")
+AUTH_SOURCE = Path.home() / ".codex" / "auth.json"
 
 
 def now() -> str:
@@ -31,6 +35,14 @@ def main() -> None:
     record_path = RESULT_ROOT / f"2026-07-12-audit-attempt-{args.attempt}.record.json"
     if record_path.exists():
         raise SystemExit(f"refusing to overwrite {record_path}")
+    if CODEX is None or not AUTH_SOURCE.is_file():
+        raise SystemExit("Codex launcher or auth file unavailable")
+    try:
+        evaluation_lock = validate_current_lock()
+    except ValueError as error:
+        raise SystemExit(f"evaluation lock rejected before model execution: {error}") from error
+    if MANIFEST["frozen_treatment_sha256"] != evaluation_lock["treatment_tree_sha256"]:
+        raise SystemExit("historical real-repository manifest does not match the active evaluation lock")
     route = MANIFEST["audit"]
     prompt = """Independently audit the Code Territory Guide real-repository evaluation.
 
@@ -48,13 +60,23 @@ Do not read the skill implementation or earlier synthetic reports. Verify run co
 
 Return a concise Markdown audit with a PASS, QUALIFIED, or FAIL verdict, severity-ordered findings, verified counts, supported claims, unsupported claims, and required next actions. Do not edit files or access the network."""
     work = Path(tempfile.mkdtemp(prefix="ctg-real-audit-"))
+    audit_home = work / "home"
+    audit_codex_home = audit_home / ".codex"
+    audit_codex_home.mkdir(parents=True)
+    shutil.copy2(AUTH_SOURCE, audit_codex_home / "auth.json")
+    inherited = ("PATH", "SystemRoot", "WINDIR", "ComSpec", "PATHEXT")
+    env = {key: os.environ[key] for key in inherited if key in os.environ}
+    env.update({"CODEX_HOME": str(audit_codex_home), "HOME": str(audit_home), "USERPROFILE": str(audit_home)})
     started = now()
     command = [
         CODEX, "exec", "--ephemeral", "--json", "--color", "never", "--sandbox", "read-only",
         "--skip-git-repo-check", "-C", str(EVAL_ROOT.parent), "-m", route["model"],
         "-c", f'model_reasoning_effort="{route["reasoning_effort"]}"', "-o", str(final), "-",
     ]
-    completed = subprocess.run(command, input=prompt, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=600)
+    completed = subprocess.run(
+        command, input=prompt, capture_output=True, text=True, encoding="utf-8",
+        errors="replace", timeout=600, env=env,
+    )
     finished = now()
     raw.write_text(completed.stdout, encoding="utf-8")
     stderr_file.write_text(completed.stderr, encoding="utf-8")
@@ -67,6 +89,11 @@ Return a concise Markdown audit with a PASS, QUALIFIED, or FAIL verdict, severit
         "final_output": str(final.relative_to(EVAL_ROOT)) if final.exists() else None,
         "exit_status": completed.returncode,
         "excluded": {"value": not valid, "rule": None if valid else "audit did not produce a successful final output"},
+        "evaluation_lock": {
+            "release_id": evaluation_lock["release_id"],
+            "sha256": lock_sha256(evaluation_lock),
+            "preregistered": True,
+        },
     }
     record_path.write_text(json.dumps(record, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     shutil.rmtree(work, ignore_errors=True)

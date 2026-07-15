@@ -10,6 +10,12 @@ import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
+from freeze_evaluation import (
+    lock_sha256,
+    sha256_file as canonical_sha256_file,
+    validate_current_lock,
+)
+
 
 EVAL_ROOT = Path(__file__).resolve().parent
 REPO_ROOT = EVAL_ROOT.parent
@@ -28,7 +34,7 @@ def now() -> str:
 
 
 def sha256_file(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return canonical_sha256_file(path)
 
 
 def tree_hash(root: Path) -> tuple[str, dict[str, str]]:
@@ -98,7 +104,7 @@ def make_home(root: Path, arm: str) -> tuple[Path, dict]:
     return home, treatment
 
 
-def run_case(case: dict, arm: str, attempt: int) -> Path:
+def run_case(case: dict, arm: str, attempt: int, evaluation_lock: dict) -> Path:
     route = MANIFEST.get("retry_routing", {}).get(case["id"], case) if attempt > 1 else case
     repo = CLONE_ROOT / case["repo"]
     run_id = f"{case['id']}--{arm}--attempt-{attempt}"
@@ -165,6 +171,11 @@ def run_case(case: dict, arm: str, attempt: int) -> Path:
         "treatment": {**treatment, "tree_sha256_after": treatment_after},
         "raw_output": stdout, "tool_log": stderr, "events": events, "exit_status": exit_status,
         "excluded": {"value": excluded, "rule": rule},
+        "evaluation_lock": {
+            "release_id": evaluation_lock["release_id"],
+            "sha256": lock_sha256(evaluation_lock),
+            "preregistered": True,
+        },
     }
     RESULT_ROOT.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(record, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -180,10 +191,17 @@ def main() -> None:
     args = parser.parse_args()
     if CODEX is None or not AUTH_SOURCE.is_file():
         raise SystemExit("Codex launcher or auth file unavailable")
+    try:
+        evaluation_lock = validate_current_lock()
+    except ValueError as error:
+        raise SystemExit(f"evaluation lock rejected before model execution: {error}") from error
     source_hash, _ = tree_hash(SKILL_SOURCE)
-    if source_hash != MANIFEST["frozen_treatment_sha256"]:
+    if source_hash != evaluation_lock["treatment_tree_sha256"]:
+        raise SystemExit("skill tree differs from the active evaluation lock")
+    if MANIFEST["frozen_treatment_sha256"] != evaluation_lock["treatment_tree_sha256"]:
         raise SystemExit(
-            "skill tree differs from frozen_treatment_sha256; create a new evaluation version instead of silently changing treatment"
+            "real-repo manifest is historical and does not match the active lock; "
+            "create and review a new evaluation version before any model execution"
         )
     cases = [case for case in MANIFEST["cases"] if not args.case or case["id"] == args.case]
     if not cases:
@@ -191,7 +209,7 @@ def main() -> None:
     arms = ("baseline", "installed-skill") if args.arm == "both" else (args.arm,)
     for arm in arms:
         for case in cases:
-            print(f"completed {run_case(case, arm, args.attempt)}", flush=True)
+            print(f"completed {run_case(case, arm, args.attempt, evaluation_lock)}", flush=True)
 
 
 if __name__ == "__main__":

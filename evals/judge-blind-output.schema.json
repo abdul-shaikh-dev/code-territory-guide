@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Arm-blinded behavioral evaluation judgment",
+  "type": "object",
+  "required": ["case_id", "candidate_a", "candidate_b", "comparison"],
+  "properties": {
+    "case_id": {"type": "string"},
+    "candidate_a": {"$ref": "#/$defs/candidateJudgment"},
+    "candidate_b": {"$ref": "#/$defs/candidateJudgment"},
+    "comparison": {
+      "type": "object",
+      "required": ["preference", "explanation"],
+      "properties": {
+        "preference": {
+          "enum": ["candidate_a", "candidate_b", "equivalent", "inconclusive"]
+        },
+        "explanation": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "criterion": {
+      "type": "object",
+      "required": ["id", "passed", "evidence"],
+      "properties": {
+        "id": {"type": "string"},
+        "passed": {"type": "boolean"},
+        "evidence": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "forbidden": {
+      "type": "object",
+      "required": ["description", "occurred", "evidence"],
+      "properties": {
+        "description": {"type": "string"},
+        "occurred": {"type": "boolean"},
+        "evidence": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "candidateJudgment": {
+      "type": "object",
+      "required": ["criteria", "forbidden", "critical_pass", "pass", "summary"],
+      "properties": {
+        "criteria": {"type": "array", "items": {"$ref": "#/$defs/criterion"}},
+        "forbidden": {"type": "array", "items": {"$ref": "#/$defs/forbidden"}},
+        "critical_pass": {"type": "boolean"},
+        "pass": {"type": "boolean"},
+        "summary": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

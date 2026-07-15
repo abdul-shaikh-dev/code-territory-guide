@@ -3,11 +3,14 @@ from __future__ import annotations
 import hashlib
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
+
+from freeze_evaluation import lock_sha256, validate_lock
 
 
 EVAL_ROOT = Path(__file__).resolve().parent
@@ -15,6 +18,7 @@ REPO_ROOT = EVAL_ROOT.parent
 RESULT_ROOT = EVAL_ROOT / "results"
 ROUTING = json.loads((EVAL_ROOT / "model-routing.json").read_text(encoding="utf-8"))
 CODEX = shutil.which("codex.cmd") or shutil.which("codex")
+AUTH_SOURCE = Path.home() / ".codex" / "auth.json"
 REPORT = RESULT_ROOT / "synthetic-evidence.md"
 GENERATED = RESULT_ROOT / "generated"
 
@@ -33,8 +37,12 @@ def main() -> None:
     raw = GENERATED / f"{stem}.jsonl"
     stderr_path = GENERATED / f"{stem}.stderr.txt"
     record_path = GENERATED / f"{stem}.record.json"
-    if CODEX is None:
-        raise SystemExit("codex launcher not found on PATH")
+    if CODEX is None or not AUTH_SOURCE.is_file():
+        raise SystemExit("Codex launcher or auth file unavailable")
+    try:
+        evaluation_lock = validate_lock(args.attempt)
+    except ValueError as error:
+        raise SystemExit(f"evaluation lock rejected before model execution: {error}") from error
     if record_path.exists():
         raise SystemExit(f"refusing to overwrite preserved audit: {record_path}")
     route = ROUTING["audit"]
@@ -60,6 +68,13 @@ Write a concise Markdown audit containing:
 Do not edit files or run model sessions. Your final response is the audit document only."""
     started = now()
     run_dir = Path(tempfile.mkdtemp(prefix="ctg-evidence-audit-"))
+    audit_home = run_dir / "home"
+    audit_codex_home = audit_home / ".codex"
+    audit_codex_home.mkdir(parents=True)
+    shutil.copy2(AUTH_SOURCE, audit_codex_home / "auth.json")
+    inherited = ("PATH", "SystemRoot", "WINDIR", "ComSpec", "PATHEXT")
+    env = {key: os.environ[key] for key in inherited if key in os.environ}
+    env.update({"CODEX_HOME": str(audit_codex_home), "HOME": str(audit_home), "USERPROFILE": str(audit_home)})
     command = [
         CODEX, "exec", "--ephemeral", "--json", "--color", "never",
         "--sandbox", "read-only", "--skip-git-repo-check", "-C", str(REPO_ROOT),
@@ -68,7 +83,7 @@ Do not edit files or run model sessions. Your final response is the audit docume
     ]
     completed = subprocess.run(
         command, input=prompt, capture_output=True, text=True, encoding="utf-8", errors="replace",
-        timeout=600,
+        timeout=600, env=env,
     )
     finished = now()
     raw.write_text(completed.stdout, encoding="utf-8")
@@ -88,6 +103,11 @@ Do not edit files or run model sessions. Your final response is the audit docume
         "final_output": str(final.relative_to(EVAL_ROOT)) if final.exists() else None,
         "exit_status": completed.returncode,
         "excluded": {"value": not valid, "rule": None if valid else "audit did not produce a successful non-empty final output"},
+        "evaluation_lock": {
+            "release_id": evaluation_lock["release_id"],
+            "sha256": lock_sha256(evaluation_lock),
+            "preregistered": True,
+        },
     }
     record_path.write_text(json.dumps(record, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     shutil.rmtree(run_dir, ignore_errors=True)

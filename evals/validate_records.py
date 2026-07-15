@@ -3,8 +3,13 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from evaluation_integrity import judgment_issue
+from freeze_evaluation import LOCK_PATH, lock_sha256, validate_current_lock
+
 
 EVAL_ROOT = Path(__file__).resolve().parent
+MANIFEST = json.loads((EVAL_ROOT / "manifest.json").read_text(encoding="utf-8"))
+CASES = {case["id"]: case for case in MANIFEST["cases"]}
 
 RUN_REQUIRED = {
     "schema_version", "run_id", "case_id", "arm", "attempt", "started_at", "finished_at",
@@ -16,6 +21,7 @@ RUN_REQUIRED = {
 REPORTABLE_REQUIRED = {
     "harness_revision", "execution_mode", "execution_authorization", "routing"
 }
+V3_REQUIRED = REPORTABLE_REQUIRED | {"evaluation_lock"}
 
 
 def load(path: Path) -> dict:
@@ -34,7 +40,14 @@ def require(record: dict, required: set[str], path: Path) -> None:
 
 
 def main() -> None:
-    for schema in ("run-record.schema.json", "judge-output.schema.json"):
+    expected_lock = None
+    if LOCK_PATH.is_file():
+        expected_lock = lock_sha256(validate_current_lock())
+    for schema in (
+        "run-record.schema.json",
+        "judge-output.schema.json",
+        "judge-blind-output.schema.json",
+    ):
         load(EVAL_ROOT / schema)
 
     candidates = sorted((EVAL_ROOT / "results" / "runs").glob("*.json"))
@@ -42,12 +55,19 @@ def main() -> None:
     legacy_paths = []
     for path in candidates:
         record = load(path)
-        if record.get("schema_version") != 2:
+        if record.get("schema_version") not in {2, 3}:
             legacy_paths.append(path)
             continue
         if path.stem != record.get("run_id"):
             raise ValueError(f"filename/run_id mismatch in {path}")
         require(record, RUN_REQUIRED, path)
+        if record["schema_version"] == 3:
+            require(record, V3_REQUIRED, path)
+            lock = record["evaluation_lock"]
+            if not lock.get("preregistered") or not lock.get("sha256"):
+                raise ValueError(f"invalid evaluation lock in {path}")
+            if expected_lock and lock["sha256"] != expected_lock:
+                raise ValueError(f"run does not match active evaluation lock: {path}")
         run_paths.append(path)
         if record["treatment"].get("installed") and not record["treatment"].get("tree_sha256"):
             raise ValueError(f"missing treatment hash in {path}")
@@ -70,9 +90,24 @@ def main() -> None:
             legacy_judgments.append(path)
             continue
         input_records = [load(item) for item in inputs]
-        if not all(item.get("schema_version") == 2 for item in input_records):
+        if not all(item.get("schema_version") in {2, 3} for item in input_records):
             legacy_judgments.append(path)
             continue
+        case = CASES.get(record.get("case_id"))
+        if case is None:
+            raise ValueError(f"unknown judgment case: {path}")
+        issue = judgment_issue(
+            case,
+            record,
+            input_records[0],
+            input_records[1],
+            expected_lock,
+        )
+        if issue and (
+            any(item.get("schema_version") == 3 for item in input_records)
+            or record.get("blinding") is not None
+        ):
+            raise ValueError(f"{issue}: {path}")
         judge_paths.append(path)
 
     print(

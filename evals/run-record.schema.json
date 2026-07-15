@@ -10,7 +10,7 @@
     "repository_after", "exit_status", "excluded"
   ],
   "properties": {
-    "schema_version": {"const": 2},
+    "schema_version": {"enum": [2, 3]},
     "run_id": {"type": "string"},
     "case_id": {"type": "string"},
     "arm": {"enum": ["baseline", "installed-skill"]},
@@ -25,6 +25,16 @@
     "reasoning_effort": {"enum": ["low", "medium", "high", "xhigh", "max", "ultra"]},
     "routing": {"type": "object"},
     "routing_sha256": {"type": "string"},
+    "evaluation_lock": {
+      "type": "object",
+      "required": ["release_id", "sha256", "preregistered"],
+      "properties": {
+        "release_id": {"type": "string"},
+        "sha256": {"type": "string"},
+        "preregistered": {"const": true}
+      },
+      "additionalProperties": false
+    },
     "query": {"type": "string"},
     "fixture": {"type": "object"},
     "treatment": {"type": "object"},
@@ -42,5 +52,11 @@
     "exit_status": {"type": ["integer", "null"]},
     "excluded": {"type": "object"}
   },
+  "allOf": [
+    {
+      "if": {"properties": {"schema_version": {"const": 3}}},
+      "then": {"required": ["evaluation_lock", "harness_revision", "execution_mode", "execution_authorization", "routing"]}
+    }
+  ],
   "additionalProperties": false
 }

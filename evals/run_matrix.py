@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from materialize_fixture import materialize
+from freeze_evaluation import lock_sha256, sha256_file as canonical_sha256_file, validate_lock
 
 
 EVAL_ROOT = Path(__file__).resolve().parent
@@ -27,7 +28,7 @@ CODEX = shutil.which("codex.cmd") or shutil.which("codex")
 MAX_WORKERS = 2
 TIMEOUT_SECONDS = 480
 TEMP_ROOT = Path(os.environ.get("CTG_EVAL_TEMP_ROOT", Path(tempfile.gettempdir()) / "code-territory-guide-evals"))
-HARNESS_REVISION = "materialized-git-v3"
+HARNESS_REVISION = "materialized-git-v4-preregistered"
 
 
 def now() -> str:
@@ -39,7 +40,7 @@ def sha256_bytes(value: bytes) -> str:
 
 
 def sha256_file(path: Path) -> str:
-    return sha256_bytes(path.read_bytes())
+    return canonical_sha256_file(path)
 
 
 def snapshot(root: Path, include_content: bool = False) -> dict[str, dict]:
@@ -177,9 +178,18 @@ def make_isolated_home(root: Path, arm: str) -> tuple[Path, dict]:
     return home, treatment
 
 
-def run_one(case: dict, arm: str, attempt: int, allow_unsandboxed_write: bool) -> Path:
+def run_one(
+    case: dict,
+    arm: str,
+    attempt: int,
+    allow_unsandboxed_write: bool,
+    evaluation_lock: dict,
+) -> Path:
     route = ROUTING["cases"].get(case["id"], ROUTING["default"])
     run_id = f"{case['id']}--{arm}--attempt-{attempt}"
+    output = RUN_ROOT / f"{run_id}.json"
+    if output.exists():
+        raise RuntimeError(f"refusing to overwrite {output}")
     TEMP_ROOT.mkdir(parents=True, exist_ok=True)
     run_parent = Path(tempfile.mkdtemp(prefix=f"ctg-v2-{run_id}-", dir=TEMP_ROOT))
     repo = run_parent / "repo"
@@ -263,7 +273,7 @@ def run_one(case: dict, arm: str, attempt: int, allow_unsandboxed_write: bool) -
     else:
         exclusion_rule = None
     record = {
-        "schema_version": 2,
+        "schema_version": 3,
         "run_id": run_id,
         "case_id": case["id"],
         "arm": arm,
@@ -282,6 +292,11 @@ def run_one(case: dict, arm: str, attempt: int, allow_unsandboxed_write: bool) -
         "reasoning_effort": route["reasoning_effort"],
         "routing": route,
         "routing_sha256": sha256_file(ROUTING_PATH),
+        "evaluation_lock": {
+            "release_id": evaluation_lock["release_id"],
+            "sha256": lock_sha256(evaluation_lock),
+            "preregistered": True,
+        },
         "query": prompt,
         "fixture": {"tree_sha256": fixture_hash, "files": fixture_files},
         "treatment": {**treatment, "tree_sha256_after": treatment_after},
@@ -300,18 +315,29 @@ def run_one(case: dict, arm: str, attempt: int, allow_unsandboxed_write: bool) -
         "excluded": {"value": excluded, "rule": exclusion_rule},
     }
     RUN_ROOT.mkdir(parents=True, exist_ok=True)
-    output = RUN_ROOT / f"{run_id}.json"
-    if output.exists():
-        raise RuntimeError(f"refusing to overwrite {output}")
     output.write_text(json.dumps(record, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     shutil.rmtree(run_parent, ignore_errors=True)
     return output
 
 
-def run_arm(cases: list[dict], arm: str, attempt: int, allow_unsandboxed_write: bool) -> None:
+def run_arm(
+    cases: list[dict],
+    arm: str,
+    attempt: int,
+    allow_unsandboxed_write: bool,
+    evaluation_lock: dict,
+) -> None:
+    failures = []
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
         futures = {
-            pool.submit(run_one, case, arm, attempt, allow_unsandboxed_write): case["id"]
+            pool.submit(
+                run_one,
+                case,
+                arm,
+                attempt,
+                allow_unsandboxed_write,
+                evaluation_lock,
+            ): case["id"]
             for case in cases
         }
         for future in as_completed(futures):
@@ -320,6 +346,9 @@ def run_arm(cases: list[dict], arm: str, attempt: int, allow_unsandboxed_write: 
                 print(f"completed {arm}: {case_id} -> {future.result()}", flush=True)
             except Exception as error:
                 print(f"runner error {arm}: {case_id}: {error}", flush=True)
+                failures.append((case_id, str(error)))
+    if failures:
+        raise RuntimeError(f"{arm} failed for {failures}")
 
 
 def main() -> None:
@@ -340,10 +369,26 @@ def main() -> None:
     cases = [case for case in MANIFEST["cases"] if not args.case or case["id"] == args.case]
     if not cases:
         raise SystemExit(f"unknown case: {args.case}")
+    try:
+        evaluation_lock = validate_lock(args.attempt)
+    except ValueError as error:
+        raise SystemExit(str(error)) from error
     if args.arm in ("baseline", "both"):
-        run_arm(cases, "baseline", args.attempt, args.allow_unsandboxed_write)
+        run_arm(
+            cases,
+            "baseline",
+            args.attempt,
+            args.allow_unsandboxed_write,
+            evaluation_lock,
+        )
     if args.arm in ("installed-skill", "both"):
-        run_arm(cases, "installed-skill", args.attempt, args.allow_unsandboxed_write)
+        run_arm(
+            cases,
+            "installed-skill",
+            args.attempt,
+            args.allow_unsandboxed_write,
+            evaluation_lock,
+        )
 
 
 if __name__ == "__main__":

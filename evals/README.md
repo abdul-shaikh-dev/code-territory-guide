@@ -22,7 +22,7 @@ Each case has two arms:
 - **baseline** — a clean isolated agent home without the skill
 - **installed-skill** — the same materialized Git fixture with only Code Territory Guide installed
 
-A separate-call judge scores both arms against the manifest rubric. The evaluator may use the same model family as an arm, so this is process separation rather than guaranteed model independence. A separate auditor checks whether the generated report is supported by the preserved records.
+A separate-call judge scores both arms against the manifest rubric. For locked runs, the judge receives only sanitized opaque candidates, runs in an isolated Codex home without the treatment plugin, and is routed to the opposite configured model family. A separate auditor checks whether the generated report is supported by the preserved records.
 
 ```mermaid
 sequenceDiagram
@@ -30,14 +30,17 @@ sequenceDiagram
     participant H as Harness
     participant B as Baseline agent
     participant T as Skill agent
-    participant J as Separate-call judge
+    participant L as Evaluation lock
+    participant J as Blinded opposite-family judge
     participant A as Auditor
+    M->>L: Freeze treatment and harness hashes
+    L->>H: Validate before model execution
     M->>H: Case, fixture, rubric, routing
     H->>B: Materialized isolated repository
     H->>T: Matching repository plus frozen skill
     B-->>H: Transcript, commands, diff, status
     T-->>H: Transcript, commands, diff, status
-    H->>J: Sanitized observable evidence
+    H->>J: Opaque candidates with sanitized evidence
     J-->>H: Criterion-level comparison
     H->>A: Report plus preserved records
     A-->>H: PASS, QUALIFIED, or FAIL
@@ -46,6 +49,14 @@ sequenceDiagram
 ## When to run evaluations
 
 Run deterministic validation after any manifest, fixture, schema, routing, or harness change.
+
+Before a release-quality model run, freeze the exact treatment and harness. The runners reject missing, stale, or too-early locks before starting Codex:
+
+```powershell
+python evals/freeze_evaluation.py --release-id <release-id> --minimum-attempt <next-attempt>
+```
+
+The lock is prospective. Never describe evidence from an earlier attempt as preregistered by a later lock.
 
 Run focused baseline/treatment cases when a skill change could affect:
 
@@ -94,17 +105,18 @@ These commands do not launch model sessions:
 ```powershell
 python evals/validate_manifest.py
 python evals/validate_records.py
+python -m unittest discover -s evals/tests -v
 ```
 
 `validate_records.py` also succeeds when no ignored local run records exist; it validates the schemas and every record that is present.
 
 ## Run a focused synthetic comparison
 
-First inspect available IDs in `evals/manifest.json`. Then run one paired case:
+First inspect available IDs in `evals/manifest.json`, create or review `evals/evaluation-lock.json`, and use an attempt at or above its `preregistered_for_attempts_gte` value. Then run one paired case:
 
 ```powershell
 $env:CTG_EVAL_TEMP_ROOT = "$env:TEMP/code-territory-guide-evals"
-python evals/run_matrix.py --case hidden-scope-expansion --arm both --attempt 1
+python evals/run_matrix.py --case hidden-scope-expansion --arm both --attempt 20
 ```
 
 Useful options:
@@ -118,29 +130,29 @@ Useful options:
 Run all baselines before all treatments for a complete matrix:
 
 ```powershell
-python evals/run_matrix.py --arm baseline --attempt 1
-python evals/run_matrix.py --arm installed-skill --attempt 1
+python evals/run_matrix.py --arm baseline --attempt 20
+python evals/run_matrix.py --arm installed-skill --attempt 20
 ```
 
 Records are written beneath `evals/results/runs/` and remain ignored.
 
 ## Judge and report
 
-The judge requires a valid baseline and treatment record for every selected case. It receives the exact recorded full query used by both arms, including shared harness boundary text. Ensure Code Territory Guide is not installed in the normal user-level skill locations while judging, so the judge cannot discover the treatment.
+The judge requires a valid, lock-matching baseline and treatment record for every selected case. It receives the rubric, exact shared query, and sanitized observable evidence under deterministic `candidate_a` and `candidate_b` labels. It does not receive run IDs, arm labels, source-model metadata, or treatment contents. The process uses a clean temporary Codex home, so a normally installed Code Territory Guide plugin does not contaminate judging.
 
 ```powershell
-python evals/judge_matrix.py --case hidden-scope-expansion --attempt 1
-python evals/judge_matrix.py --attempt 1
+python evals/judge_matrix.py --case hidden-scope-expansion --attempt 20
+python evals/judge_matrix.py --attempt 20
 python evals/validate_records.py
 python evals/build_report.py
 ```
 
-Judgment artifacts are written beneath `evals/results/judgments/` and remain ignored. `build_report.py` selects a judgment only when it references the latest non-excluded baseline and treatment records, reports the selected attempt, preserves retry history, and updates `results/synthetic-evidence.md`.
+Judgment artifacts are written beneath `evals/results/judgments/` and remain ignored. `build_report.py` selects a judgment only when it references the latest non-excluded baseline and treatment records, reports the selected attempt, preserves retry history and the curated audit section, and updates `results/synthetic-evidence.md`. It reports same-treatment retry consistency and execution-environment coverage without turning either into a broader reliability claim.
 
 Run the optional independent evidence audit only after reviewing the generated report:
 
 ```powershell
-python evals/audit_evidence.py --attempt 1
+python evals/audit_evidence.py --attempt 20
 ```
 
 The audit is a real model session. Preserve its raw artifacts locally and commit a concise qualified conclusion only when the evidence supports it.
@@ -155,7 +167,7 @@ Before running:
 2. Create a local evaluation branch.
 3. Set each push URL to `DISABLED`.
 4. Confirm the task prompt forbids edits and network access.
-5. Update `real-repo-manifest.json` with the frozen treatment hash and approved routing.
+5. Freeze the evaluation, then update a new reviewed real-repository evaluation version so its treatment hash matches the active lock. Do not rewrite the manifest that anchors historical evidence.
 6. Read the scripts because clone locations and selected evidence are evaluation-specific.
 
 ```powershell
@@ -165,7 +177,13 @@ python evals/build_real_repo_report.py
 python evals/validate_real_repo_eval.py
 ```
 
-The builder writes its reproducible read-only report beneath `results/generated/`; it does not overwrite the curated release evidence. Do not run this path merely because local clones exist. It is a controlled experiment requiring a reviewed manifest and isolation setup.
+The runner validates the active lock before a model call and records that lock in every future run. If the current manifest is historical, it fails closed and asks for a new reviewed evaluation version. The builder writes its reproducible read-only report beneath `results/generated/`; it does not overwrite the curated release evidence. Do not run this path merely because local clones exist. It is a controlled experiment requiring a reviewed manifest and isolation setup.
+
+## Evidence boundaries
+
+The tracked reports distinguish four environments: synthetic unsandboxed disposable fixtures, synthetic ordinary workspace-write fixtures, read-only real repositories, and writable real-repository feature branches. Evidence in one row does not establish behavior in another.
+
+The current historical cohort may remain valid evidence while predating preregistration, opaque judging, or opposite-family judges. Validators preserve that history, while schema 3 records and future judgments must satisfy the stronger lock and blinding rules.
 
 ## Reading outcomes
 
