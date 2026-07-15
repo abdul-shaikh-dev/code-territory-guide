@@ -54,7 +54,9 @@ Survey and Track produce a target and then continue into Expedition. Prove conti
 7. Decide whether the task needs durable artifacts and announce the choice.
 8. Implement small patches and record material deviations when persistence is useful.
 9. Validate relevant behavior and classify failures.
-10. Review only the task-owned delta against the request and brief.
+10. Review only the task-owned delta against the request and brief. Make the
+    checkpoint observable; when no independent reviewer is used, explicitly
+    start a fresh, disconfirming same-model pass.
 11. Deliver only to the explicitly authorized level.
 12. Close reviewer and stakeholder unknowns with a proportional Field Report.
 

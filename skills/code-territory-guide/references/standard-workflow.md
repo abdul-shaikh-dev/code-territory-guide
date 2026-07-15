@@ -41,6 +41,23 @@ Capture the worktree baseline and define task-owned files or hunks. Stop if user
 
 End discovery when the owning seam, behavior to preserve, worktree state, and validation route are supported. Run another search or reread only to answer a named unresolved question that could change scope, implementation, or validation. Reuse existing evidence instead of repeating repository inventories, status checks, or already-settled file reads.
 
+Resolve requirement conflicts before implementation. When a task plan or
+documentation conflicts with current executable behavior, tests, or a public
+contract:
+
+1. name the conflict and the evidence on both sides
+2. do not rewrite or delete a test merely to make the newer text pass
+3. treat removing tested compatibility as a route-changing decision, not an
+   implied mechanical consequence of implementing the plan
+4. preserve the existing tested behavior when the requested addition can
+   coexist with it and the user asks for a conservative or compatible choice
+5. ask one targeted question when coexistence is impossible and the request
+   does not explicitly authorize the breaking change
+
+An explicit request for a breaking change, migration, or replacement can
+authorize changing the old contract. A generic instruction to implement a
+plan does not by itself erase contradictory tested behavior.
+
 For a narrow task, use at most three repository command batches after skill loading by default:
 
 1. repository instructions and worktree state
@@ -129,7 +146,26 @@ Compare only task-owned changes against:
 
 Check correctness, missed behavior, edge cases, scope creep, compatibility, security, reliability, data integrity, observability, accessibility, rollback, and avoidable complexity when relevant.
 
-Do not claim pre-existing work as part of the implementation. If an independent reviewer is unavailable, perform the fresh single-model checkpoint from `model-routing.md`.
+Do not claim pre-existing work as part of the implementation. Inspect the
+contents of task-created durable artifacts as part of the owned delta; verify
+that material notes record the unknown or conflict, evidence, decision,
+authorization, affected validation, and final state rather than trusting their
+filenames or the implementation summary.
+
+If an independent reviewer is unavailable or not being used, make the
+same-model fallback observable:
+
+1. state that implementation and validation are complete and a fresh review
+   pass is starting
+2. return to the original request, route or field brief, worktree baseline,
+   owned delta, and validation evidence
+3. look for disconfirming evidence, especially missed requirements, changed
+   compatibility, weakened tests, scope creep, and inaccurate artifact claims
+4. report concrete findings, or explicitly report that the fresh review found
+   none, before the Field Report or delivery step
+
+Do not let the final implementation summary substitute for this checkpoint.
+See `model-routing.md` for model assignment and independent-review guidance.
 
 ## 9. Deliver When Authorized
 
