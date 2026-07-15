@@ -17,6 +17,10 @@ They also cover collaborator-calibrated blind-spot teaching and a shareable
 stakeholder explainer that leads with the demonstrated outcome before technical
 review evidence.
 
+Resume and validation-depth cases cover re-entry from stale durable checkpoints
+and evidence selection for a public compatibility boundary with an existing
+consumer.
+
 Each case has two arms:
 
 - **baseline** — a clean isolated agent home without the skill

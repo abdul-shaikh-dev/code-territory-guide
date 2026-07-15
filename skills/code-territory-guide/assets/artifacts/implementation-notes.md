@@ -4,6 +4,14 @@ Use only for multi-session, delegated, or materially deviating implementation.
 Delete this file when its useful information has been absorbed into the final
 Field Report or durable project documentation.
 
+## Last verified checkpoint
+
+- Owning root, branch, commit, and worktree summary: <current repository evidence>
+- Completed owned work: <work supported by current source and artifacts>
+- Current validation evidence: <commands, results, and relevant boundaries>
+- Re-entry status: <current, stale, or superseded>
+- Next unfinished step: <next implementation or validation action>
+
 ## Approved route
 
 <Brief route or link to the Field Brief>
