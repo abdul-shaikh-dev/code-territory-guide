@@ -65,6 +65,10 @@ def validate_pair(case: dict, baseline: dict, treatment: dict) -> None:
         raise ValueError("baseline did not use workspace-write")
     if treatment["execution"]["sandbox"] != "workspace-write":
         raise ValueError("treatment did not use workspace-write")
+    if baseline["execution"].get("windows_sandbox") != "elevated":
+        raise ValueError("baseline did not use the elevated Windows sandbox")
+    if treatment["execution"].get("windows_sandbox") != "elevated":
+        raise ValueError("treatment did not use the elevated Windows sandbox")
     if baseline["treatment"]["installed"]:
         raise ValueError("baseline contains treatment")
     payload = treatment["treatment"]

@@ -39,6 +39,7 @@ def validate_manifest(manifest: dict) -> None:
         raise ValueError("writable manifest requires one case per repository")
     if manifest.get("execution") != {
         "sandbox": "workspace-write",
+        "windows_sandbox": "elevated",
         "approval_policy": "never",
         "network": "prohibited",
         "require_local_commit": True,
@@ -82,8 +83,10 @@ def main() -> None:
         if lock["treatment_tree_sha256"] != manifest["frozen_treatment_sha256"]:
             raise ValueError("active lock does not match writable manifest")
         expected_lock = lock_sha256(lock)
+        minimum_attempt = lock["preregistered_for_attempts_gte"]
     else:
         expected_lock = None
+        minimum_attempt = None
 
     cases = {case["id"]: case for case in manifest["cases"]}
     run_paths = sorted(RUN_ROOT.glob("*.json"))
@@ -121,8 +124,14 @@ def main() -> None:
             raise ValueError(f"model routing mismatch: {path}")
         if record["execution"]["sandbox"] != "workspace-write":
             raise ValueError(f"execution mode mismatch: {path}")
-        if expected_lock and record["evaluation_lock"]["sha256"] != expected_lock:
-            raise ValueError(f"evaluation lock mismatch: {path}")
+        prospective = (
+            minimum_attempt is not None and record["attempt"] >= minimum_attempt
+        )
+        if prospective:
+            if record["execution"].get("windows_sandbox") != "elevated":
+                raise ValueError(f"Windows sandbox backend mismatch: {path}")
+            if record["evaluation_lock"]["sha256"] != expected_lock:
+                raise ValueError(f"evaluation lock mismatch: {path}")
         if record["repository_after"]["fetch_url"] != "DISABLED":
             raise ValueError(f"fetch remote enabled: {path}")
         if record["repository_after"]["push_url"] != "DISABLED":

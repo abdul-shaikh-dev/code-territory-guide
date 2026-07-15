@@ -6,6 +6,7 @@
   "session_root_env": "CTG_REAL_REPO_TEMP_ROOT",
   "execution": {
     "sandbox": "workspace-write",
+    "windows_sandbox": "elevated",
     "approval_policy": "never",
     "network": "prohibited",
     "require_local_commit": true

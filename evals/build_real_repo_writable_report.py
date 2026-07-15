@@ -151,6 +151,7 @@ def main() -> None:
             "## Integrity and scope",
             "",
             "- Every selected arm started from the registered commit in a separate disposable local clone.",
+            "- Every selected arm requested workspace-write through the native elevated Windows sandbox backend.",
             "- Every selected arm retained disabled fetch and push URLs, produced exactly one local commit, left a clean worktree, and recorded the required validation commands.",
             "- Treatment payloads and provisioned dependency copies remained hash-stable during each selected run.",
             "- Judges received sanitized opaque candidates and used the configured opposite model family.",

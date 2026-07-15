@@ -11,6 +11,7 @@ EVAL_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(EVAL_ROOT))
 
 from run_real_repo_writable_eval import (  # noqa: E402
+    codex_command,
     exclusion_reasons,
     git,
     materialize_repository,
@@ -21,6 +22,16 @@ from validate_real_repo_writable_eval import validate_manifest  # noqa: E402
 
 
 class WritableRealRepoTests(unittest.TestCase):
+    def test_runner_requests_the_elevated_windows_sandbox(self) -> None:
+        manifest = __import__("json").loads(
+            (EVAL_ROOT / "real-repo-writable-manifest.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        command = codex_command(Path("repo"), manifest["cases"][0])
+        self.assertIn("workspace-write", command)
+        self.assertIn('windows.sandbox="elevated"', command)
+
     def test_resolved_child_rejects_escape(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

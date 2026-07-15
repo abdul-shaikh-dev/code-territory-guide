@@ -23,7 +23,7 @@ Create a preregistered, reproducible evaluation that compares baseline and Code 
 
 - Each arm starts from the exact manifest commit in a separate disposable local clone.
 - Fetch and push URLs are DISABLED before a model session starts.
-- Model sessions use ordinary workspace-write, approval policy never, isolated homes, and no network commands.
+- Model sessions use ordinary workspace-write through the registered native elevated Windows sandbox, approval policy never, isolated homes, and no network commands.
 - A run is excluded on seed mismatch, treatment mutation, boundary escape evidence, remote mutation, read-only downgrade, timeout, missing response, missing task delta, or missing required local commit.
 - Raw evidence remains ignored; only qualified summaries are tracked.
 
@@ -42,7 +42,7 @@ Create a preregistered, reproducible evaluation that compares baseline and Code 
 
 ## Risks and recovery
 
-- A managed host may silently downgrade nested sessions to read-only; the canary and run exclusion rules stop the cohort.
+- A managed host or missing native Windows backend may silently downgrade nested sessions to read-only; the runner explicitly requests the elevated backend and the exclusion rules stop the cohort.
 - Network prohibition is prompt- and evidence-enforced because Codex itself requires API access; observed network tool use excludes a run.
 - Disposable workspaces can be deleted after evidence is recorded; seed clones and original repositories remain unchanged.
 
