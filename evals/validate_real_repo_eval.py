@@ -12,6 +12,7 @@ REPORT = EVAL_ROOT / "results" / "generated" / "real-repository-readonly.md"
 
 sys.path.insert(0, str(EVAL_ROOT))
 from build_real_repo_report import SELECTED, validate_selected  # noqa: E402
+from freeze_evaluation import LOCK_PATH, load_lock  # noqa: E402
 from run_real_repo_eval import SKILL_SOURCE, tree_hash  # noqa: E402
 
 
@@ -23,6 +24,11 @@ def main() -> None:
     manifest = load(EVAL_ROOT / "real-repo-manifest.json")
     skill_hash, _ = tree_hash(SKILL_SOURCE)
     current_skill_matches_evidence = skill_hash == manifest["frozen_treatment_sha256"]
+    active_lock_matches_historical_evidence = False
+    if LOCK_PATH.is_file():
+        active_lock_matches_historical_evidence = (
+            load_lock()["treatment_tree_sha256"] == manifest["frozen_treatment_sha256"]
+        )
 
     runs = [load(path) for path in sorted(RUN_ROOT.glob("*.json"))]
     if len(runs) != 9:
@@ -65,7 +71,8 @@ def main() -> None:
     print(
         "validated frozen treatment hash against selected runs, 9 preserved runs, 4 selected arms, "
         "2 matched judgments, repository/push/treatment integrity, and qualified report claims; "
-        f"current skill matches historical treatment={current_skill_matches_evidence}"
+        f"current skill matches historical treatment={current_skill_matches_evidence}; "
+        f"active lock matches historical treatment={active_lock_matches_historical_evidence}"
     )
 
 

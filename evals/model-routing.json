@@ -23,6 +23,9 @@
     ,"calibrated-blind-spot-teaching": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"}
     ,"stakeholder-explainer-package": {"model": "gpt-5.6-luna", "reasoning_effort": "high"}
   },
-  "judge": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"},
+  "judge_by_source_model": {
+    "gpt-5.6-sol": {"model": "gpt-5.6-luna", "reasoning_effort": "high"},
+    "gpt-5.6-luna": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"}
+  },
   "audit": {"model": "gpt-5.6-luna", "reasoning_effort": "high"}
 }

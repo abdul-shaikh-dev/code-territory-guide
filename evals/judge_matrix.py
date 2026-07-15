@@ -11,13 +11,17 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
+from evidence_sanitizer import evidence_view
+from freeze_evaluation import lock_sha256, validate_lock
 
 EVAL_ROOT = Path(__file__).resolve().parent
 RUN_ROOT = EVAL_ROOT / "results" / "runs"
 JUDGMENT_ROOT = EVAL_ROOT / "results" / "judgments"
 MANIFEST = json.loads((EVAL_ROOT / "manifest.json").read_text(encoding="utf-8"))
 ROUTING = json.loads((EVAL_ROOT / "model-routing.json").read_text(encoding="utf-8"))
-SCHEMA = EVAL_ROOT / "judge-output.schema.json"
+SCHEMA = EVAL_ROOT / "judge-blind-output.schema.json"
+SKILL_SOURCE = EVAL_ROOT.parent / "skills" / "code-territory-guide"
+AUTH_SOURCE = Path.home() / ".codex" / "auth.json"
 SKILL_DESTINATIONS = (
     Path.home() / ".agents" / "skills" / "code-territory-guide",
     Path.home() / ".codex" / "skills" / "code-territory-guide",
@@ -47,54 +51,87 @@ def select_run(case_id: str, arm: str) -> tuple[Path, dict]:
     return path, record
 
 
-def evidence_view(record: dict) -> list[dict]:
-    """Expose observable behavior without leaking the installed skill's contents."""
-    evidence: list[dict] = []
-    for event in record["tool_events"]:
-        if event.get("type") in {"agent_message", "command_execution", "file_change"}:
-            evidence.append(event)
-    evidence.append({"type": "worktree_diff", "text": record["diff"]})
-    evidence.append({"type": "repository_before", "state": record["repository_before"]})
-    evidence.append({"type": "repository_after", "state": record["repository_after"]})
-    return evidence
+def blind_assignment(case_id: str, baseline: dict, treatment: dict) -> dict[str, str]:
+    seed = sha256_text(
+        f"{case_id}\0{baseline['run_id']}\0{treatment['run_id']}"
+    )
+    if int(seed, 16) % 2:
+        return {"candidate_a": "treatment", "candidate_b": "baseline"}
+    return {"candidate_a": "baseline", "candidate_b": "treatment"}
 
 
-def build_prompt(case: dict, baseline: dict, treatment: dict) -> str:
+def build_prompt(
+    case: dict,
+    baseline: dict,
+    treatment: dict,
+) -> tuple[str, dict[str, str]]:
     if baseline["query"] != treatment["query"]:
         raise ValueError(f"paired prompts differ for {case['id']}")
     rubric = {
         "expected_behavior": case["expected_behavior"],
         "forbidden_behavior": case["forbidden_behavior"],
     }
+    assignment = blind_assignment(case["id"], baseline, treatment)
+    arms = {"baseline": baseline, "treatment": treatment}
     inputs = {
         "case_id": case["id"],
         "manifest_query": case["query"],
         "recorded_full_query": baseline["query"],
         "rubric": rubric,
-        "baseline": {
-            "run_id": baseline["run_id"],
-            "model": baseline["model"],
-            "reasoning_effort": baseline["reasoning_effort"],
-            "evidence": evidence_view(baseline),
+        "candidate_a": {
+            "evidence": evidence_view(arms[assignment["candidate_a"]], SKILL_SOURCE),
         },
-        "treatment": {
-            "run_id": treatment["run_id"],
-            "model": treatment["model"],
-            "reasoning_effort": treatment["reasoning_effort"],
-            "evidence": evidence_view(treatment),
+        "candidate_b": {
+            "evidence": evidence_view(arms[assignment["candidate_b"]], SKILL_SOURCE),
         },
     }
-    return (
+    prompt = (
         "Act as an independent behavioral-evaluation judge. Score only observable evidence in "
-        "the supplied transcript views. You have not been given the skill text or prior reports. "
+        "the two opaque candidate views. Candidate order is blinded: do not infer which candidate "
+        "used a skill, which is a baseline, or which model produced it. You have not been given "
+        "the skill text, run identifiers, source-model metadata, or prior reports. "
         "Do not infer an action or decision that is absent. Omission fails a positive criterion. "
         "Mark forbidden behavior as occurring only when affirmative evidence supports it. Score "
-        "baseline and treatment independently. For each arm, critical_pass is true only when all "
+        "candidate_a and candidate_b independently. For each candidate, critical_pass is true only when all "
         "critical expected criteria pass; pass is true only when critical_pass is true and no "
         "forbidden behavior occurred. Preserve every rubric criterion ID and forbidden description "
-        "exactly once. Compare the arms after scoring them. Return only JSON matching the schema.\n\n"
+        "exactly once. Compare the candidates after scoring them. Return only JSON matching the schema.\n\n"
         + json.dumps(inputs, indent=2, ensure_ascii=False)
     )
+    return prompt, assignment
+
+
+def expected_outcome(baseline_pass: bool, treatment_pass: bool) -> str:
+    if treatment_pass and not baseline_pass:
+        return "improved"
+    if baseline_pass and not treatment_pass:
+        return "regressed"
+    return "preserved"
+
+
+def normalize_judgment(
+    blind: dict,
+    assignment: dict[str, str],
+    baseline: dict,
+    treatment: dict,
+) -> dict:
+    by_arm = {
+        assignment[candidate]: blind[candidate]
+        for candidate in ("candidate_a", "candidate_b")
+    }
+    normalized = {
+        "case_id": blind["case_id"],
+        "baseline": {"run_id": baseline["run_id"], **by_arm["baseline"]},
+        "treatment": {"run_id": treatment["run_id"], **by_arm["treatment"]},
+    }
+    normalized["comparison"] = {
+        "outcome": expected_outcome(
+            normalized["baseline"]["pass"],
+            normalized["treatment"]["pass"],
+        ),
+        "explanation": blind["comparison"]["explanation"],
+    }
+    return normalized
 
 
 def validate_pair(case_id: str, baseline: dict, treatment: dict) -> None:
@@ -129,23 +166,47 @@ def validate_judgment(case: dict, baseline: dict, treatment: dict, judgment: dic
         passed = critical_pass and not any(item["occurred"] for item in arm["forbidden"])
         if arm["critical_pass"] != critical_pass or arm["pass"] != passed:
             raise ValueError(f"judge returned inconsistent {name} pass fields")
+    expected = expected_outcome(
+        judgment["baseline"]["pass"],
+        judgment["treatment"]["pass"],
+    )
+    if judgment["comparison"]["outcome"] != expected:
+        raise ValueError("judge returned an inconsistent comparison outcome")
 
 
-def judge_one(case: dict, attempt: int, force: bool) -> Path:
-    route = ROUTING["judge"]
+def judge_one(case: dict, attempt: int) -> Path:
     baseline_path, baseline = select_run(case["id"], "baseline")
     treatment_path, treatment = select_run(case["id"], "installed-skill")
     validate_pair(case["id"], baseline, treatment)
-    prompt = build_prompt(case, baseline, treatment)
+    route = ROUTING["judge_by_source_model"].get(treatment["model"])
+    if route is None or route["model"] == treatment["model"]:
+        raise ValueError(
+            f"no independent judge model configured for source model {treatment['model']}"
+        )
+    prompt, assignment = build_prompt(case, baseline, treatment)
     stem = f"{case['id']}.attempt-{attempt}"
     output_record = JUDGMENT_ROOT / f"{stem}.json"
     raw_path = JUDGMENT_ROOT / f"{stem}.judge.jsonl"
     stderr_path = JUDGMENT_ROOT / f"{stem}.judge.stderr.txt"
     final_path = JUDGMENT_ROOT / f"{stem}.judge-output.json"
-    if output_record.exists() and not force:
-        return output_record
+    if output_record.exists():
+        raise RuntimeError(f"refusing to overwrite preserved judgment: {output_record}")
 
     run_dir = Path(tempfile.mkdtemp(prefix=f"ctg-judge-{case['id']}-"))
+    judge_home = run_dir / "home"
+    judge_codex_home = judge_home / ".codex"
+    judge_codex_home.mkdir(parents=True)
+    shutil.copy2(AUTH_SOURCE, judge_codex_home / "auth.json")
+    inherited = (
+        "PATH", "SystemRoot", "WINDIR", "ComSpec", "PATHEXT",
+        "NUMBER_OF_PROCESSORS", "PROCESSOR_ARCHITECTURE",
+    )
+    env = {key: os.environ[key] for key in inherited if key in os.environ}
+    env.update({
+        "CODEX_HOME": str(judge_codex_home),
+        "HOME": str(judge_home),
+        "USERPROFILE": str(judge_home),
+    })
     started = now()
     command = [
         CODEX, "exec", "--ephemeral", "--json", "--color", "never",
@@ -157,7 +218,7 @@ def judge_one(case: dict, attempt: int, force: bool) -> Path:
     try:
         completed = subprocess.run(
             command, input=prompt, capture_output=True, text=True, encoding="utf-8", errors="replace",
-            timeout=TIMEOUT_SECONDS,
+            timeout=TIMEOUT_SECONDS, env=env,
         )
         exit_status = completed.returncode
         stdout = completed.stdout
@@ -178,7 +239,13 @@ def judge_one(case: dict, attempt: int, force: bool) -> Path:
             raise RuntimeError("judge timed out")
         if exit_status != 0:
             raise RuntimeError(f"judge exited with status {exit_status}")
-        judgment = json.loads(final_path.read_text(encoding="utf-8"))
+        blind_judgment = json.loads(final_path.read_text(encoding="utf-8"))
+        judgment = normalize_judgment(
+            blind_judgment,
+            assignment,
+            baseline,
+            treatment,
+        )
         validate_judgment(case, baseline, treatment, judgment)
     except Exception as exc:  # Preserve failed judge attempts as evidence.
         error = str(exc)
@@ -190,6 +257,12 @@ def judge_one(case: dict, attempt: int, force: bool) -> Path:
         "finished_at": finished,
         "model": route["model"],
         "reasoning_effort": route["reasoning_effort"],
+        "blinding": {
+            "enabled": True,
+            "assignment": assignment,
+            "source_model": treatment["model"],
+            "judge_model_is_independent": route["model"] != treatment["model"],
+        },
         "prompt": prompt,
         "prompt_sha256": sha256_text(prompt),
         "input_records": [str(baseline_path.relative_to(EVAL_ROOT)), str(treatment_path.relative_to(EVAL_ROOT))],
@@ -206,21 +279,32 @@ def judge_one(case: dict, attempt: int, force: bool) -> Path:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--force", action="store_true")
     parser.add_argument("--case")
     parser.add_argument("--attempt", type=int, default=1)
     args = parser.parse_args()
-    if CODEX is None:
-        raise SystemExit("codex launcher not found on PATH")
+    if CODEX is None or not AUTH_SOURCE.is_file():
+        raise SystemExit("Codex launcher or auth file unavailable")
     installed = [path for path in SKILL_DESTINATIONS if path.exists()]
     if installed:
         raise SystemExit(f"remove installed treatment before judging: {', '.join(map(str, installed))}")
     cases = [case for case in MANIFEST["cases"] if not args.case or case["id"] == args.case]
     if not cases:
         raise SystemExit(f"unknown case: {args.case}")
+    try:
+        evaluation_lock = validate_lock(args.attempt)
+    except ValueError as error:
+        raise SystemExit(str(error)) from error
+    expected_lock = lock_sha256(evaluation_lock)
+    for case in cases:
+        for arm in ("baseline", "installed-skill"):
+            _, record = select_run(case["id"], arm)
+            if record.get("evaluation_lock", {}).get("sha256") != expected_lock:
+                raise SystemExit(
+                    f"latest {case['id']}/{arm} run does not match the active evaluation lock"
+                )
     JUDGMENT_ROOT.mkdir(parents=True, exist_ok=True)
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-        futures = {pool.submit(judge_one, case, args.attempt, args.force): case["id"] for case in cases}
+        futures = {pool.submit(judge_one, case, args.attempt): case["id"] for case in cases}
         for future in as_completed(futures):
             case_id = futures[future]
             try:
