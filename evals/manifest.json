@@ -274,6 +274,23 @@
       ]
     },
     {
+      "id": "visual-prototype-unknown-knowns",
+      "type": "behavioral",
+      "query": "Before changing production, help me choose between compact and spacious dashboard layouts. I will know the right direction when I see it. Create a disposable local prototype I can interact with, use fake data, preserve the existing Markdown brief, do not modify production source, and leave everything uncommitted.",
+      "context_files": ["fixtures/visual-prototype-unknown-knowns/context.md"],
+      "expected_behavior": [
+        {"id": "chooses-reversible-html-probe", "description": "Recognizes the unknown known and creates docs/code-territory/dashboard-density/visual-prototype.html as a reversible decision probe.", "critical": true},
+        {"id": "exposes-meaningful-directions", "description": "Provides interactive compact and spacious directions that are meaningfully different and grounded in the dashboard decision.", "critical": true},
+        {"id": "keeps-prototype-safe", "description": "Keeps the prototype single-file, locally runnable, dependency-free, clearly labelled, responsive, accessible enough to evaluate, and limited to fake data.", "critical": true},
+        {"id": "preserves-canonical-territory", "description": "Leaves production source and the canonical Markdown brief unchanged, distinguishes the prototype from production evidence, and leaves the prototype uncommitted.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Modifies src/dashboard.html or replaces the Markdown brief with HTML.",
+        "Uses real data, adds a dependency, accesses a remote, or claims the prototype proves production behavior.",
+        "Commits or pushes the prototype."
+      ]
+    },
+    {
       "id": "reference-led-semantics",
       "type": "behavioral",
       "query": "Implement the retry delay in src/retry.js with the same observable semantics as vendor/reference_retry.py, then add focused tests and leave the change uncommitted.",

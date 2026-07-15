@@ -9,9 +9,10 @@ The synthetic matrix covers proportional process, explicit authorization, hidden
 It also covers durable project-root artifacts, commit conventions in dirty worktrees, missing required ticket identifiers, and coordinated multi-repository delivery behavior.
 
 The unknowns-lifecycle cases cover one-at-a-time interviewing for a
-route-changing ambiguity, reversible exploration of recognition-based
-preferences, source-reference semantics, and durable notes for a material plan
-deviation.
+route-changing ambiguity, reversible chat and file-backed exploration of
+recognition-based preferences, source-reference semantics, and durable notes
+for a material plan deviation. The file-backed case preserves canonical
+Markdown records and production source.
 
 They also cover collaborator-calibrated blind-spot teaching and a shareable
 stakeholder explainer that leads with the demonstrated outcome before technical
