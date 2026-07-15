@@ -318,6 +318,80 @@ if __name__ == "__main__":
     unittest.main()
 """,
     },
+    "calibrated-blind-spot-teaching": {
+        "README.md": "# Identity service\n\nProvider adapters live under src/auth/providers. Shared callback validation is owned by src/auth/callback.py. Do not add a provider until its issuer, scopes, claims, and refresh behavior are documented.\n",
+        "src/auth/callback.py": """def validate_callback(query: dict, session: dict) -> bool:
+    return (
+        query.get("state") == session.get("state")
+        and bool(session.get("pkce_verifier"))
+        and bool(query.get("code"))
+    )
+""",
+        "src/auth/session.py": """# Sessions are stored in encrypted, HTTP-only cookies.
+SESSION_FIELDS = ("state", "nonce", "pkce_verifier", "refresh_token_version")
+""",
+        "src/auth/providers/base.py": """class Provider:
+    issuer: str
+    scopes: tuple[str, ...]
+    claim_mapping: dict[str, str]
+    rotates_refresh_tokens: bool
+""",
+        "tests/test_callback.py": """def test_callback_requires_state_and_pkce():
+    pass
+""",
+    },
+    "stakeholder-explainer-package": {
+        "README.md": "# Editor\n\nKeep task artifacts under docs/code-territory/editor-toolbar/.\n",
+        "docs/code-territory/editor-toolbar/spec.md": """# Spec
+
+Add a formatting toolbar above the editor. Preserve keyboard-first editing and
+do not add a backend dependency.
+""",
+        "docs/code-territory/editor-toolbar/prototype.html": """<main>
+  <div role="toolbar" aria-label="Formatting">
+    <button aria-pressed="false">Bold</button>
+  </div>
+  <textarea autofocus></textarea>
+</main>
+""",
+        "docs/code-territory/editor-toolbar/implementation-notes.md": """# Implementation Notes
+
+## Deviations
+
+- The prototype used a generic div; implementation uses a semantic toolbar.
+- Reason: keyboard navigation and accessibility review.
+- Validation affected: toolbar interaction and accessibility tests.
+""",
+        "docs/code-territory/editor-toolbar/field-report.md": """# Field Report
+
+## Completion
+
+Complete
+
+## Outcome
+
+The editor now exposes a keyboard-navigable formatting toolbar without backend changes.
+
+## Validation
+
+- node --test — 6 passed
+- npm run check:a11y — passed
+
+## Risks
+
+- Mobile overflow needs product review before adding more controls.
+
+## Delivery
+
+Uncommitted
+""",
+        "src/editor.js": """export function toolbar() {
+  return { role: "toolbar", controls: ["bold"], keyboardNavigation: true };
+}
+""",
+        "tests/editor.test.js": """// Six passing toolbar interaction tests are summarized in the field report.
+""",
+    },
 }
 
 

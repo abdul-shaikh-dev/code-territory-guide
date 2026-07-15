@@ -12,19 +12,21 @@ Use Survey when the request is vague, product-oriented, architectural, or has mu
 Goal: improve the map before implementation.
 
 1. Inspect relevant repository context before asking design questions.
-2. Classify material known knowns, known unknowns, unknown knowns, and unknown
+2. Capture supplied collaborator context and ask for one missing detail only
+   when it changes discovery or explanation.
+3. Classify material known knowns, known unknowns, unknown knowns, and unknown
    unknowns.
-3. Run a blind spot pass when the domain, quality bar, or repository territory
+4. Run a calibrated blind spot pass when the domain, quality bar, or repository territory
    is unfamiliar.
-4. Use a small brainstorm, prototype, or reference when the user is more likely
+5. Use a small brainstorm, prototype, or reference when the user is more likely
    to recognize success than describe it.
-5. Identify decisions that materially affect behavior, architecture, data,
+6. Identify decisions that materially affect behavior, architecture, data,
    security, compatibility, deployment, UX, testing, or scope.
-6. Ask one targeted question at a time for route-changing ambiguity that
+7. Ask one targeted question at a time for route-changing ambiguity that
    evidence cannot resolve.
-7. Present two or three viable approaches only when genuine alternatives exist,
+8. Present two or three viable approaches only when genuine alternatives exist,
    then recommend one with its principal tradeoff.
-8. Continue into Expedition only when route-changing unknowns are resolved,
+9. Continue into Expedition only when route-changing unknowns are resolved,
    explicitly deferred, or awaiting a named user decision.
 
 Do not implement during Survey.
@@ -39,6 +41,9 @@ Return:
 
 ### Territory inspected
 - <relevant evidence>
+
+### Collaborator context
+- <material familiarity, prior exploration, or quality-bar context; omit when irrelevant>
 
 ### Unknowns
 - Known knowns: <material explicit facts>

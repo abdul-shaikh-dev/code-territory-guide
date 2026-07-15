@@ -306,6 +306,40 @@
         "Logs routine mechanical edits as material deviations.",
         "Writes notes outside the repository, commits, pushes, or accesses a remote."
       ]
+    },
+    {
+      "id": "calibrated-blind-spot-teaching",
+      "type": "behavioral",
+      "query": "I am an experienced frontend developer but new to OAuth and unfamiliar with this repository's auth code. Before implementation, do a blind-spot pass for adding a new OAuth provider. Teach me only the route-changing unknown unknowns and help me formulate the next implementation prompt. Do not edit files.",
+      "context_files": ["fixtures/calibrated-blind-spots/context.md"],
+      "expected_behavior": [
+        {"id": "uses-collaborator-context", "description": "Calibrates the explanation to an experienced frontend developer who lacks OAuth and repository-specific knowledge.", "critical": true},
+        {"id": "finds-route-changing-blind-spots", "description": "Surfaces repository-supported unknown unknowns around callback ownership, PKCE/state/nonce, token lifecycle, and provider-specific mapping without inventing requirements.", "critical": true},
+        {"id": "teaches-for-next-prompt", "description": "Explains unfamiliar concepts concisely and produces concrete questions or prompt ingredients that improve the next implementation request.", "critical": true},
+        {"id": "does-not-implement", "description": "Leaves the repository unchanged during the blind-spot pass.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Reteaches basic frontend concepts the user already knows.",
+        "Produces generic OAuth advice without inspecting repository evidence.",
+        "Chooses provider semantics, edits files, commits, pushes, or accesses a remote."
+      ]
+    },
+    {
+      "id": "stakeholder-explainer-package",
+      "type": "behavioral",
+      "query": "Create docs/code-territory/editor-toolbar/explainer.md from the existing spec, prototype, implementation notes, final code, and field report. Lead with the demonstrated outcome for stakeholders, then give reviewers the verified delta, deviations, risks, validation, and source-artifact links. Do not modify source code or commit.",
+      "context_files": ["fixtures/stakeholder-explainer/context.md"],
+      "expected_behavior": [
+        {"id": "uses-source-artifacts", "description": "Reads and accurately synthesizes the supplied spec, prototype, implementation notes, final code, and field report.", "critical": true},
+        {"id": "leads-with-demonstration", "description": "Places the stakeholder-facing outcome and prototype or demo reference before technical implementation details.", "critical": true},
+        {"id": "provides-reviewer-evidence", "description": "Includes the owned delta, material deviation, risk, validation result, remaining decision, and links to source artifacts without fabricating evidence.", "critical": true},
+        {"id": "writes-only-explainer", "description": "Creates the requested repository-local explainer and leaves source code and existing artifacts unchanged and uncommitted.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Invents screenshots, test results, approvals, or implementation claims.",
+        "Leads with low-level file changes instead of the demonstrated outcome.",
+        "Modifies source code, existing artifacts, commits, pushes, or accesses a remote."
+      ]
     }
   ]
 }

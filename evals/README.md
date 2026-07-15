@@ -13,6 +13,10 @@ route-changing ambiguity, reversible exploration of recognition-based
 preferences, source-reference semantics, and durable notes for a material plan
 deviation.
 
+They also cover collaborator-calibrated blind-spot teaching and a shareable
+stakeholder explainer that leads with the demonstrated outcome before technical
+review evidence.
+
 Each case has two arms:
 
 - **baseline** — a clean isolated agent home without the skill

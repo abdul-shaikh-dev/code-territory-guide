@@ -4,6 +4,22 @@ Load this reference for vague, unfamiliar, product-facing, architecture-sensitiv
 multi-step, or reviewer-sensitive work. Use only the techniques needed to make
 material unknowns cheap to discover before they become expensive to reverse.
 
+## Collaborator Context
+
+Use context the user already supplied about their starting point. Ask for one
+missing item only when it would materially change discovery, explanation, or the
+route:
+
+- domain familiarity
+- repository familiarity
+- decisions or approaches already explored
+- current understanding of what good looks like
+
+Do not turn this into a standard intake questionnaire. Calibrate blind-spot
+explanations to the collaborator: connect unfamiliar territory to concepts they
+already know, avoid reteaching established knowledge, and give them language
+that improves the next prompt or decision.
+
 ## Unknown Matrix
 
 Classify the map-to-territory gap:
@@ -24,7 +40,8 @@ Choose the cheapest technique that can close the material gap:
 
 1. **Blind spot pass** — inspect the repository and domain for unknown unknowns.
    Explain the few findings that could change the route or help the user prompt
-   more precisely.
+   more precisely. Calibrate the explanation to the collaborator context when
+   known.
 2. **Brainstorm or prototype** — use when success is easier to recognize than
    describe. Produce small, reversible alternatives that expose preferences;
    do not build production infrastructure merely to obtain feedback.
@@ -77,3 +94,7 @@ Close the remaining reviewer and user unknowns proportionately:
 
 For substantial work, explain the result in the order its audience needs:
 outcome and demonstration first, technical evidence second.
+
+When one shareable approval artifact would reduce reviewer unknowns, copy
+assets/artifacts/explainer.md and package only the useful plan, prototype,
+material deviations, outcome, demonstration, risks, and reviewer evidence.

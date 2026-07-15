@@ -186,3 +186,15 @@ Add visual evidence only for material visual behavior. Add an explainer or quiz
 only when teaching, knowledge transfer, review preparation, or a
 demonstrated-understanding merge gate was requested.
 ```
+
+## Stakeholder Explainer
+
+```text
+Create one shareable approval artifact from the available plan, prototype,
+implementation notes, final behavior, and validation. Lead with the outcome or
+demo, explain why this direction was selected, then give reviewers the owned
+delta, material deviations, risks, validation, and remaining decision.
+
+Use only supplied and verified evidence. Remove empty sections and do not expose
+raw transcripts, secrets, or internal reasoning.
+```

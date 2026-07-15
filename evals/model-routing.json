@@ -20,6 +20,8 @@
     ,"prototype-unknown-knowns": {"model": "gpt-5.6-luna", "reasoning_effort": "high"}
     ,"reference-led-semantics": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"}
     ,"material-deviation-notes": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"}
+    ,"calibrated-blind-spot-teaching": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"}
+    ,"stakeholder-explainer-package": {"model": "gpt-5.6-luna", "reasoning_effort": "high"}
   },
   "judge": {"model": "gpt-5.6-sol", "reasoning_effort": "medium"},
   "audit": {"model": "gpt-5.6-luna", "reasoning_effort": "high"}

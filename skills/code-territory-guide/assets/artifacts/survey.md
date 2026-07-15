@@ -8,6 +8,13 @@
 
 - <Repository evidence, current behavior, or convention>
 
+## Collaborator context
+
+- Domain familiarity: <known, unknown, or omit>
+- Repository familiarity: <known, unknown, or omit>
+- Approaches already explored: <material history or omit>
+- Current quality-bar language: <what good means so far or omit>
+
 ## Unknown matrix
 
 - Known knowns: <explicit requirements and constraints>

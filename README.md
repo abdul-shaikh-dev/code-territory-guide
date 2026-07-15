@@ -15,14 +15,19 @@ flowchart TD
     B -->|Cause of failure| T[Track]
     B -->|Narrow testable behavior| P[Prove]
     B -->|Route is already clear| E[Expedition]
-    S -->|Target clarified| E
+    S --> SC[Use collaborator context]
+    SC --> U[Close route-changing unknowns]
+    U -->|Target clarified| E
     T -->|Root cause supported| E
     P -->|Test proves the gap| I[Smallest passing change]
     E --> R[Mark the route]
     R --> I
     I --> V[Validate and classify]
-    V --> O[Review task-owned delta]
-    O --> D{Delivery authorized?}
+    V --> O[Fresh review of task-owned delta]
+    O --> X{Shareable explainer useful?}
+    X -->|Yes| H[Outcome-first stakeholder explainer]
+    X -->|No| D{Delivery authorized?}
+    H --> D
     D -->|No| F[Field Report: uncommitted]
     D -->|Commit| C[Stage owned delta and commit]
     D -->|Push or PR| C
@@ -30,11 +35,16 @@ flowchart TD
     G --> F2[Field Report]
 ```
 
-- **Survey** clarifies incomplete product, design, or architecture maps.
+- **Survey** uses the collaborator's domain and repository familiarity to
+  clarify only the product, design, architecture, or quality-bar unknowns that
+  could change the route.
 - **Track** follows evidence to a supported root cause.
 - **Prove** defines a narrow behavior with a failing test before changing it.
 - **Expedition** plans, implements, validates, and reviews a clear scoped change.
 - **Field Report** distinguishes complete, incomplete, and blocked outcomes.
+  Substantial work can also produce one outcome-first explainer that packages
+  the demonstration, verified delta, deviations, risks, and source artifacts
+  for stakeholder approval.
 
 Tiny, obvious edits stay lightweight unless risk or ambiguity makes the full workflow useful.
 
