@@ -185,6 +185,8 @@ The v2 writable harness measures implementation behavior without changing the se
 
 This workflow must be launched from a normal PowerShell terminal that honors nested workspace-write. It does not use danger-full-access. Do not run it from a managed session known to silently downgrade nested execution to read-only.
 
+On native Windows, workspace-write also requires the native elevated sandbox backend. The runner supplies `windows.sandbox="elevated"` explicitly because its isolated model homes intentionally ignore user configuration. If elevated sandbox setup is unavailable, the canary must fail closed rather than fall back to an unregistered execution mode.
+
 ### 1. Prepare the local seeds
 
 The registered seed root contains CogStash, CogVest, and copilot-credit-simulator at the commits in `real-repo-writable-manifest.json`. Keep every seed clean. Provision dependencies before the model cohort so the model sessions do not need package-network access:
@@ -216,10 +218,10 @@ The seed and session roots must not overlap. The runner rejects dirty or wrong-c
 ### 3. Run and inspect one paired canary
 
 ```powershell
-python evals/run_real_repo_writable_eval.py --case simulator-zero-capacity --arm both --attempt 22 --keep-workspaces
+python evals/run_real_repo_writable_eval.py --case simulator-zero-capacity --arm both --attempt 24 --keep-workspaces
 
-$baseline = Get-Content evals/results/real-repos-writable/runs/simulator-zero-capacity--baseline--attempt-22.json | ConvertFrom-Json
-$treatment = Get-Content evals/results/real-repos-writable/runs/simulator-zero-capacity--installed-skill--attempt-22.json | ConvertFrom-Json
+$baseline = Get-Content evals/results/real-repos-writable/runs/simulator-zero-capacity--baseline--attempt-24.json | ConvertFrom-Json
+$treatment = Get-Content evals/results/real-repos-writable/runs/simulator-zero-capacity--installed-skill--attempt-24.json | ConvertFrom-Json
 $baseline | Select-Object run_id, changed_files, validation_observed, excluded
 $treatment | Select-Object run_id, changed_files, validation_observed, excluded
 ```
@@ -229,9 +231,9 @@ Continue only when both records show actual changed files, exactly one commit fr
 ### 4. Resume the cohort, judge, and report
 
 ```powershell
-python evals/run_real_repo_writable_eval.py --attempt 22 --resume
-python evals/judge_real_repo_writable_eval.py --run-attempt 22 --judge-attempt 22 --resume
-python evals/build_real_repo_writable_report.py --run-attempt 22 --judge-attempt 22
+python evals/run_real_repo_writable_eval.py --attempt 24 --resume
+python evals/judge_real_repo_writable_eval.py --run-attempt 24 --judge-attempt 24 --resume
+python evals/build_real_repo_writable_report.py --run-attempt 24 --judge-attempt 24
 python evals/validate_real_repo_writable_eval.py
 ```
 
@@ -240,7 +242,7 @@ Resume preserves successful records rather than rerunning them. The judge uses s
 The optional adversarial audit is another model call and should run only after the report and preserved records have been reviewed:
 
 ```powershell
-python evals/audit_real_repo_writable_eval.py --attempt 22
+python evals/audit_real_repo_writable_eval.py --attempt 24
 ```
 
 Raw records, transcripts, judgments, local paths, and disposable sessions remain ignored. Only the qualified Markdown report is suitable for version control. Network-capable commands are grounds for exclusion, but network denial is not independently OS-enforced because Codex itself requires API connectivity.

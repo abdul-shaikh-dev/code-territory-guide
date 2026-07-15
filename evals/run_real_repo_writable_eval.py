@@ -192,6 +192,33 @@ def make_home(session: Path, arm: str) -> tuple[Path, dict]:
     return home, treatment
 
 
+def codex_command(repo: Path, case: dict) -> list[str]:
+    return [
+        CODEX,
+        "--ask-for-approval",
+        "never",
+        "exec",
+        "--ephemeral",
+        "--json",
+        "--color",
+        "never",
+        "--sandbox",
+        "workspace-write",
+        "--ignore-user-config",
+        "--ignore-rules",
+        "--skip-git-repo-check",
+        "-C",
+        str(repo),
+        "-m",
+        case["model"],
+        "-c",
+        'windows.sandbox="elevated"',
+        "-c",
+        f'model_reasoning_effort="{case["reasoning_effort"]}"',
+        "-",
+    ]
+
+
 def repository_state(repo: Path, base_commit: str) -> dict:
     return {
         "head": git(repo, "rev-parse", "HEAD"),
@@ -363,28 +390,7 @@ def run_case(
             "PYTHONDONTWRITEBYTECODE": "1",
         }
     )
-    command = [
-        CODEX,
-        "--ask-for-approval",
-        "never",
-        "exec",
-        "--ephemeral",
-        "--json",
-        "--color",
-        "never",
-        "--sandbox",
-        "workspace-write",
-        "--ignore-user-config",
-        "--ignore-rules",
-        "--skip-git-repo-check",
-        "-C",
-        str(repo),
-        "-m",
-        case["model"],
-        "-c",
-        f'model_reasoning_effort="{case["reasoning_effort"]}"',
-        "-",
-    ]
+    command = codex_command(repo, case)
     started = now()
     timed_out = False
     try:
@@ -446,6 +452,7 @@ def run_case(
         "query": prompt,
         "execution": {
             "sandbox": "workspace-write",
+            "windows_sandbox": "elevated",
             "approval_policy": "never",
             "network_policy": "prohibited-and-observed",
             "workspace": str(repo),
