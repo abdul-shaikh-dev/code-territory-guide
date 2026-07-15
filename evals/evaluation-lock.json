@@ -2,9 +2,7 @@
   "files": {
     "audit_evidence.py": "daef18eb555983cbfc5ca60ba7beddb9939b2fc0a84a0344c44c5c4c09fbd5f2",
     "audit_real_repo_eval.py": "4713c28110ecc376a7d560d1bd6f9133f536aaf1814a4040aec0c2e36908796e",
-    "audit_real_repo_writable_eval.py": "ca26b0ebc89147f6d82f111e158bc22a97c0f865062ccccdf81c4cc542afb96f",
     "build_real_repo_report.py": "5c6afa2297f1d39bb1fbc8b55ca6009bced82366915cbbf02ca863c97770b5bb",
-    "build_real_repo_writable_report.py": "b5db173a1a8934f02818ba95630f815299c3a353bc454799c85834fd4b88e784",
     "build_report.py": "247f11b49b56a544885473b77b9a1da6934db97b11bbc46130e1513c7ec72034",
     "evaluation_integrity.py": "6e5949c1b9124f002c141159cfb1534e5a8ca5da1cc7e148ee814686fdc1f783",
     "evidence_sanitizer.py": "96a45ba9db4340afe62ccd9fe8ad166020af940d557d619b46ef8190ed0b46d2",
@@ -29,33 +27,28 @@
     "fixtures/standalone/context.md": "e134538052e7d24b17beac3c841b2c008049e87ade3a427e67df9202ffeff545",
     "fixtures/task-failure/context.md": "828f556f06d5e2c4c81a6876cba75dbfecc72ac2292524bae545861fe824dcab",
     "fixtures/trivial-edit/context.md": "5b822b2496b2d8a07f208e0ed93a6ce60b05088f689640cbc35130538063a88e",
-    "freeze_evaluation.py": "56a8d9356ccf2ed2345056b4388c572bdd48ea880777b6984308e86ee3ec7154",
+    "freeze_evaluation.py": "3c7e12d4e6640bcf1a28ec64991e7597e15ba62257f8bc00e0399bc27accfdfe",
     "judge-blind-output.schema.json": "6b8cc7682aa21363412b4994259ec12dbb92b5928ad0378108ef0d13aefe784b",
     "judge-output.schema.json": "4b42051085da977e472c213a462dfac01e8e961b218ed25c7aaab46a6834b946",
     "judge_matrix.py": "6060b66b9faae5e706ca507db5cc1507e0d3b15fbde7ae52b94605d9fd880355",
     "judge_real_repo_eval.py": "568df8111d7f8163602de976ba0f37784b0d4cf1dee29576f416ca754dbc52ba",
-    "judge_real_repo_writable_eval.py": "60861ccb06f81f15e81681aa8e132efc551160347a93e7a1c0057458a0529d5f",
     "manifest.json": "89c2d30a640d8ba6437c80b5d2a2c9ea97b99ff07556705f53947bffc9e5e9b0",
     "materialize_fixture.py": "7b2e97a1cca571dbdaa4e5d482339831c601e2ec2ec5a55b27a228f089e10080",
     "model-routing.json": "aca89b098c573bfc82cf6c75addeb3a0d400d81816c60478e3a0c308d7f1aa89",
     "real-repo-manifest.json": "cf2196e6c7e255541c99f18e6432743ab2b0f31386ec127b40e1f48b2f76d4fc",
-    "real-repo-writable-manifest.json": "bbcb37d52d10df6cde993398ecda634e309bf861664d6805348a0f88e732e337",
-    "real-repo-writable-run.schema.json": "bb93b12edd893656689562ddbee3e4b609b5fc4e2190a7e8b910b75dc0fc7e18",
     "run-record.schema.json": "1b14b77059423a66a31589281bff2c3de25506258dfd13aece200f885e58d768",
     "run_matrix.py": "1e07dd37e39aaea70dd83df0ec6836903961ce72dd9f01bc701fd33b45c5e0b9",
     "run_real_repo_eval.py": "d126134450e3272d4cd8ce55f98e8660f4b0206414365d150abf9b6e9bcc01c2",
-    "run_real_repo_writable_eval.py": "c37df23c25d09838f47dcca23f740711613c5bfdbc0d07e27eb657dcbe9e7b1e",
     "validate_manifest.py": "d2b1f2d77236b2673b751177803bcab057c15da6758c11aa4d1be6df14e4dbff",
     "validate_real_repo_eval.py": "fbdaaee65e77dcad8909cc3491af80f69238f64c506988495fd9e9ef654951a1",
-    "validate_real_repo_writable_eval.py": "78ac5631890a1db60bc44809ccac27979e1eba1d8205017f3479d6c2e440399d",
     "validate_records.py": "280fb824686ad917d6456944735df7e2c2caeca90b222d62da7767fa90e61002"
   },
   "historical_evidence": {
     "status": "not preregistered by this lock",
-    "through_attempt": 23
+    "through_attempt": 24
   },
-  "preregistered_for_attempts_gte": 24,
-  "release_id": "writable-real-repo-v2-windows",
+  "preregistered_for_attempts_gte": 25,
+  "release_id": "runnable-evals-v1",
   "schema_version": 1,
   "treatment_tree_sha256": "e6699fa1ef23e7afffbfe2efd6c4a0bb08461381d43ef06a5688b9c1399ac990"
 }

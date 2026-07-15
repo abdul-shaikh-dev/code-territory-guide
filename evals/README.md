@@ -179,77 +179,9 @@ python evals/validate_real_repo_eval.py
 
 The runner validates the active lock before a model call and records that lock in every future run. If the current manifest is historical, it fails closed and asks for a new reviewed evaluation version. The builder writes its reproducible read-only report beneath `results/generated/`; it does not overwrite the curated release evidence. Do not run this path merely because local clones exist. It is a controlled experiment requiring a reviewed manifest and isolation setup.
 
-## Writable real-repository evaluation
-
-The v2 writable harness measures implementation behavior without changing the seed clones or any remote. Each case and arm receives a separate disposable local clone at an exact registered commit. Before a model starts, both fetch and push URLs are set to DISABLED. A valid run must leave exactly one local fix commit, a clean worktree, a nonempty committed delta, stable provisioned dependencies, and observable execution of every registered validation command.
-
-This workflow must be launched from a normal PowerShell terminal that honors nested workspace-write. It does not use danger-full-access. Do not run it from a managed session known to silently downgrade nested execution to read-only.
-
-On native Windows, workspace-write also requires the native elevated sandbox backend. The runner supplies `windows.sandbox="elevated"` explicitly because its isolated model homes intentionally ignore user configuration. If elevated sandbox setup is unavailable, the canary must fail closed rather than fall back to an unregistered execution mode.
-
-### 1. Prepare the local seeds
-
-The registered seed root contains CogStash, CogVest, and copilot-credit-simulator at the commits in `real-repo-writable-manifest.json`. Keep every seed clean. Provision dependencies before the model cohort so the model sessions do not need package-network access:
-
-```powershell
-cd G:\Projects\2026\cool_projects\code-territory-guide-real-repos\CogStash
-uv sync --frozen --extra dev
-
-cd G:\Projects\2026\cool_projects\code-territory-guide-real-repos\CogVest
-npm ci
-```
-
-Dependency setup may use the network. The evaluated model sessions may not. The simulator has no provisioned dependency directory in this cohort.
-
-### 2. Set isolated roots and validate
-
-```powershell
-cd G:\Projects\2026\cool_projects\code-territory-guide
-
-$env:CTG_REAL_REPO_SEED_ROOT = "G:\Projects\2026\cool_projects\code-territory-guide-real-repos"
-$env:CTG_REAL_REPO_TEMP_ROOT = "$PWD\.real-eval-temp"
-
-python evals/validate_real_repo_writable_eval.py
-python -m unittest discover -s evals/tests -v
-```
-
-The seed and session roots must not overlap. The runner rejects dirty or wrong-commit seeds, symlink or junction seed roots, stale locks, enabled remotes, and missing provisioned dependencies before useful evidence can be accepted.
-
-### 3. Run and inspect one paired canary
-
-```powershell
-python evals/run_real_repo_writable_eval.py --case simulator-zero-capacity --arm both --attempt 24 --keep-workspaces
-
-$baseline = Get-Content evals/results/real-repos-writable/runs/simulator-zero-capacity--baseline--attempt-24.json | ConvertFrom-Json
-$treatment = Get-Content evals/results/real-repos-writable/runs/simulator-zero-capacity--installed-skill--attempt-24.json | ConvertFrom-Json
-$baseline | Select-Object run_id, changed_files, validation_observed, excluded
-$treatment | Select-Object run_id, changed_files, validation_observed, excluded
-```
-
-Continue only when both records show actual changed files, exactly one commit from the base, clean final status, disabled fetch and push URLs, all validation commands observed, and excluded.value equal to false. The runner aborts the cohort on the first excluded or failed arm.
-
-### 4. Resume the cohort, judge, and report
-
-```powershell
-python evals/run_real_repo_writable_eval.py --attempt 24 --resume
-python evals/judge_real_repo_writable_eval.py --run-attempt 24 --judge-attempt 24 --resume
-python evals/build_real_repo_writable_report.py --run-attempt 24 --judge-attempt 24
-python evals/validate_real_repo_writable_eval.py
-```
-
-Resume preserves successful records rather than rerunning them. The judge uses sanitized opaque candidates in a separate call and routes to the configured opposite model family. The builder refuses excluded, mismatched, unlocked, uncommitted, dirty, or incomplete evidence.
-
-The optional adversarial audit is another model call and should run only after the report and preserved records have been reviewed:
-
-```powershell
-python evals/audit_real_repo_writable_eval.py --attempt 24
-```
-
-Raw records, transcripts, judgments, local paths, and disposable sessions remain ignored. Only the qualified Markdown report is suitable for version control. Network-capable commands are grounds for exclusion, but network denial is not independently OS-enforced because Codex itself requires API connectivity.
-
 ## Evidence boundaries
 
-The tracked reports distinguish four environments: synthetic unsandboxed disposable fixtures, synthetic ordinary workspace-write fixtures, read-only real repositories, and writable real-repository feature branches. Evidence in one row does not establish behavior in another.
+The tracked reports distinguish synthetic fixture evidence from read-only real-repository evidence. Evidence in one environment does not establish behavior in the other.
 
 The current historical cohort may remain valid evidence while predating preregistration, opaque judging, or opposite-family judges. Validators preserve that history, while schema 3 records and future judgments must satisfy the stronger lock and blinding rules.
 
