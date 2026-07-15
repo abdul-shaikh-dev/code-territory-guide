@@ -89,6 +89,28 @@ Use the smallest useful set. Copy the relevant starter from `assets/artifacts/` 
 
 Resolve the destination from the owning Git root or explicitly supplied project root. For a multi-repository Expedition, maintain separate local artifacts and use a shared `expedition-index.md` only in the designated coordination repository.
 
+### Resume or re-enter durable work
+
+Treat existing briefs, notes, unknowns, and validation claims as potentially
+stale maps, not proof of current state. Before continuing interrupted,
+delegated, or multi-session work:
+
+1. Re-establish the owning project root, current request and instructions,
+   branch, HEAD, worktree, and owned delta.
+2. Compare durable artifacts and their open checklists with current source,
+   tests, contracts, and repository evidence.
+3. Classify material artifact content as current, stale, or superseded. Update
+   `implementation-notes.md` when a durable checkpoint remains useful; do not
+   create a separate resume artifact.
+4. Identify completed owned work from present evidence rather than repeating
+   work merely because an old checklist remains open.
+5. Treat recorded validation as stale when relevant territory has changed, and
+   reapply scope and authorization gates when drift changes behavior,
+   ownership, risk, or the route.
+
+Re-entry is complete only when present evidence establishes the current route,
+ownership boundary, last verified checkpoint, and next validation step.
+
 ## 5. Prepare a Field Brief
 
 Create a field brief when handing implementation to another model or person, or when complexity makes an explicit contract useful.
@@ -129,6 +151,22 @@ Run checks proportionate to the changed behavior:
 - type or lint checks
 - builds
 - focused manual or visual verification
+
+Use the highest changed boundary as the minimum starting point. Repository
+instructions and failure cost may require broader evidence.
+
+| Changed boundary | Minimum evidence |
+| --- | --- |
+| Documentation, metadata, or static configuration | Focused inspection plus an available parser, formatter, link, or configuration check |
+| Local pure behavior | Targeted behavioral tests covering changed and preserved cases |
+| Cross-module, process, or service boundary | Targeted tests plus the narrowest integration or contract check |
+| Public API, persisted format, or compatibility contract | Contract or compatibility checks for new and preserved consumers |
+| Data, migration, authentication, authorization, or security behavior | Positive and negative cases, failure-path evidence, and recovery or rollback validation where applicable |
+| Material visual or interactive behavior | Behavioral checks plus focused manual or captured visual evidence when reliable |
+
+Account for every changed boundary and acceptance criterion, record checks that
+cannot run, and never use a lower rung to claim a higher-risk boundary is
+proven.
 
 Classify every relevant failure as task-caused, pre-existing, or environmental. Enter Track for task-caused failures. Do not report Complete until required task-caused failures are resolved.
 

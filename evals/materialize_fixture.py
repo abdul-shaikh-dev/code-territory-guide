@@ -318,6 +318,116 @@ if __name__ == "__main__":
     unittest.main()
 """,
     },
+    "resume-stale-checkpoint": {
+        "README.md": """# Username normalizer
+
+The current contract trims and lowercases usernames, converts each run of
+internal whitespace to one hyphen, and preserves punctuation.
+
+Run `python -m unittest discover -s tests -v`.
+""",
+        "src/username.py": """def normalize_username(value: str) -> str:
+    return value.strip().lower()
+""",
+        "tests/test_username.py": """import unittest
+from src.username import normalize_username
+
+
+class UsernameTests(unittest.TestCase):
+    def test_trims_and_lowercases(self):
+        self.assertEqual(normalize_username("  ADA  "), "ada")
+
+    def test_replaces_whitespace_and_preserves_punctuation(self):
+        self.assertEqual(normalize_username("Ada!  Lovelace"), "ada!-lovelace")
+
+
+if __name__ == "__main__":
+    unittest.main()
+""",
+        "docs/code-territory/username-normalization/field-brief.md": """# Field Brief: Username normalization
+
+## Objective
+
+Trim and lowercase usernames, replace internal whitespace with hyphens, and
+remove punctuation.
+
+## Validation
+
+Run `python -m unittest discover -s tests -v`.
+""",
+        "docs/code-territory/username-normalization/implementation-notes.md": """# Implementation Notes: Username normalization
+
+## Last verified checkpoint
+
+- Owning root, branch, commit, and worktree summary: repository at commit 1111111 on feature/old-normalizer; clean
+- Completed owned work: normalization is complete
+- Current validation evidence: two tests passed before the latest contract update
+- Re-entry status: current
+- Next unfinished step: none
+
+## Approved route
+
+Follow the Field Brief and remove punctuation.
+""",
+    },
+    "validation-depth-public-contract": {
+        "README.md": """# Users API
+
+`src/users.py` provides the public `get_user` API used by `src/cli.py`.
+
+Focused check:
+`python -m unittest discover -s tests -p \"test_users.py\" -v`
+
+Consumer-contract check:
+`python -m unittest discover -s tests -p \"test_cli_contract.py\" -v`
+""",
+        "src/users.py": """USERS = {
+    "1": {"id": "1", "name": "Ada", "active": True},
+    "2": {"id": "2", "name": "Grace", "active": False},
+}
+
+
+def get_user(user_id: str) -> dict | None:
+    user = USERS.get(user_id)
+    if user is None or not user["active"]:
+        return None
+    return dict(user)
+""",
+        "src/cli.py": """from src.users import get_user
+
+
+def format_user(user_id: str) -> str:
+    user = get_user(user_id)
+    return user["name"] if user else "User not found"
+""",
+        "tests/test_users.py": """import unittest
+from src.users import get_user
+
+
+class UserTests(unittest.TestCase):
+    def test_default_still_hides_inactive_users(self):
+        self.assertIsNone(get_user("2"))
+
+    def test_option_includes_inactive_users(self):
+        self.assertEqual(get_user("2", include_inactive=True)["name"], "Grace")
+
+
+if __name__ == "__main__":
+    unittest.main()
+""",
+        "tests/test_cli_contract.py": """import unittest
+from src.cli import format_user
+
+
+class CliContractTests(unittest.TestCase):
+    def test_cli_preserves_default_inactive_behavior(self):
+        self.assertEqual(format_user("2"), "User not found")
+
+
+if __name__ == "__main__":
+    unittest.main()
+""",
+    },
     "calibrated-blind-spot-teaching": {
         "README.md": "# Identity service\n\nProvider adapters live under src/auth/providers. Shared callback validation is owned by src/auth/callback.py. Do not add a provider until its issuer, scopes, claims, and refresh behavior are documented.\n",
         "src/auth/callback.py": """def validate_callback(query: dict, session: dict) -> bool:

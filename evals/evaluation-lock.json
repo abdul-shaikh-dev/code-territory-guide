@@ -22,18 +22,20 @@
     "fixtures/prompt-injection/context.md": "b84afe26a07a39a1bd937071a6bb5b2c793e55e75aefaf76cbd739d900aebbe0",
     "fixtures/prototype-unknown-knowns/context.md": "5fe16fa8470d87dcce19bcbedf44df40879a70d33af277a64528b8b8468ab605",
     "fixtures/reference-led/context.md": "827fd42c97fe543472754131f1ecc7902ce0d987429e020f4fa1c3dbbe4c3cef",
+    "fixtures/resume-stale-checkpoint/context.md": "7354ec70a46d202822a051d087edaf69deb749374da8f6469e532ec61517d08a",
     "fixtures/single-model/context.md": "4d9cbd3072a71058a6f9e8da978c26bab1310450e2df0aeadf22a9986a09547c",
     "fixtures/stakeholder-explainer/context.md": "8f082e2a04ef8edf15fbb2ffba1664a9cb4951765e906bf58dd2d77f16fc434e",
     "fixtures/standalone/context.md": "e134538052e7d24b17beac3c841b2c008049e87ade3a427e67df9202ffeff545",
     "fixtures/task-failure/context.md": "828f556f06d5e2c4c81a6876cba75dbfecc72ac2292524bae545861fe824dcab",
     "fixtures/trivial-edit/context.md": "5b822b2496b2d8a07f208e0ed93a6ce60b05088f689640cbc35130538063a88e",
+    "fixtures/validation-depth-public-contract/context.md": "4b215ef77587d74621e753cd1bd4362215f7262cd715480877c0d50956bb32dd",
     "freeze_evaluation.py": "3c7e12d4e6640bcf1a28ec64991e7597e15ba62257f8bc00e0399bc27accfdfe",
     "judge-blind-output.schema.json": "6b8cc7682aa21363412b4994259ec12dbb92b5928ad0378108ef0d13aefe784b",
     "judge-output.schema.json": "4b42051085da977e472c213a462dfac01e8e961b218ed25c7aaab46a6834b946",
     "judge_matrix.py": "6060b66b9faae5e706ca507db5cc1507e0d3b15fbde7ae52b94605d9fd880355",
     "judge_real_repo_eval.py": "568df8111d7f8163602de976ba0f37784b0d4cf1dee29576f416ca754dbc52ba",
-    "manifest.json": "89c2d30a640d8ba6437c80b5d2a2c9ea97b99ff07556705f53947bffc9e5e9b0",
-    "materialize_fixture.py": "7b2e97a1cca571dbdaa4e5d482339831c601e2ec2ec5a55b27a228f089e10080",
+    "manifest.json": "151d0250fd16a90a27f705520b06df7b5da4039e486216773f0f588e1ec4384b",
+    "materialize_fixture.py": "b8b166995d7e22ffd6052b597cf38b8205912f38a201212556977f22ac70eabd",
     "model-routing.json": "aca89b098c573bfc82cf6c75addeb3a0d400d81816c60478e3a0c308d7f1aa89",
     "real-repo-manifest.json": "cf2196e6c7e255541c99f18e6432743ab2b0f31386ec127b40e1f48b2f76d4fc",
     "run-record.schema.json": "1b14b77059423a66a31589281bff2c3de25506258dfd13aece200f885e58d768",
@@ -48,7 +50,7 @@
     "through_attempt": 24
   },
   "preregistered_for_attempts_gte": 25,
-  "release_id": "runnable-evals-v1",
+  "release_id": "resume-validation-v1",
   "schema_version": 1,
-  "treatment_tree_sha256": "e6699fa1ef23e7afffbfe2efd6c4a0bb08461381d43ef06a5688b9c1399ac990"
+  "treatment_tree_sha256": "431debc75a9d47259d14114ee0ad8a2c949749e862c2f1892e8a3820dbb09401"
 }

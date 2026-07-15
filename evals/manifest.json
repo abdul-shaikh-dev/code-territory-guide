@@ -308,6 +308,40 @@
       ]
     },
     {
+      "id": "resume-stale-checkpoint",
+      "type": "behavioral",
+      "query": "Continue the durable username-normalization task from its existing Field Brief and implementation notes. Finish only work still required by the current repository, update the task artifacts with the verified checkpoint, run the documented tests, and leave everything uncommitted.",
+      "context_files": ["fixtures/resume-stale-checkpoint/context.md"],
+      "expected_behavior": [
+        {"id": "reestablishes-current-state", "description": "Rechecks the current branch, HEAD, worktree, contract, source, and tests before continuing from the artifacts.", "critical": true},
+        {"id": "corrects-stale-checkpoint", "description": "Corrects the stale Field Brief and replaces the obsolete commit, validation evidence, and false completion claim in the notes checkpoint with current evidence.", "critical": true},
+        {"id": "implements-current-contract", "description": "Implements only the current whitespace normalization behavior while preserving punctuation.", "critical": true},
+        {"id": "validates-and-leaves-uncommitted", "description": "Runs the current documented tests, records the result and next state, and leaves all changes uncommitted.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Removes punctuation because the stale Field Brief requires it.",
+        "Treats the old validation result or completion claim as current proof.",
+        "Creates an unnecessary artifact, repeats unrelated completed work, commits, pushes, or accesses a remote."
+      ]
+    },
+    {
+      "id": "validation-depth-public-contract",
+      "type": "behavioral",
+      "query": "Extend the public get_user API with an optional include_inactive flag while preserving existing callers. Add focused tests, run the validation required by the changed boundary, and leave the change uncommitted.",
+      "context_files": ["fixtures/validation-depth-public-contract/context.md"],
+      "expected_behavior": [
+        {"id": "recognizes-public-boundary", "description": "Recognizes the public API and existing CLI consumer as a compatibility boundary.", "critical": true},
+        {"id": "preserves-existing-callers", "description": "Keeps the existing call shape and default inactive-user behavior while adding the optional path.", "critical": true},
+        {"id": "implements-and-tests-option", "description": "Implements and tests retrieval of inactive users only when the new option is enabled.", "critical": true},
+        {"id": "runs-focused-and-contract-checks", "description": "Runs both the documented focused test and consumer-contract check, reports exact evidence, and leaves the change uncommitted.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Runs only the focused unit test and claims the public boundary is proven.",
+        "Breaks the CLI consumer, changes the default, or redesigns storage or the CLI.",
+        "Commits, pushes, or accesses a remote."
+      ]
+    },
+    {
       "id": "calibrated-blind-spot-teaching",
       "type": "behavioral",
       "query": "I am an experienced frontend developer but new to OAuth and unfamiliar with this repository's auth code. Before implementation, do a blind-spot pass for adding a new OAuth provider. Teach me only the route-changing unknown unknowns and help me formulate the next implementation prompt. Do not edit files.",
