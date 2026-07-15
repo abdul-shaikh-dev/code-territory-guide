@@ -34,6 +34,13 @@ PINNED_FILES = (
     "judge_real_repo_eval.py",
     "build_real_repo_report.py",
     "audit_real_repo_eval.py",
+    "real-repo-writable-manifest.json",
+    "real-repo-writable-run.schema.json",
+    "run_real_repo_writable_eval.py",
+    "judge_real_repo_writable_eval.py",
+    "build_real_repo_writable_report.py",
+    "validate_real_repo_writable_eval.py",
+    "audit_real_repo_writable_eval.py",
 )
 
 

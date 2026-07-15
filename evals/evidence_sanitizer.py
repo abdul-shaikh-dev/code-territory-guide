@@ -103,6 +103,12 @@ def sanitize_event(
 def evidence_view(record: dict, skill_root: Path) -> list[dict]:
     treatment_path = record.get("treatment", {}).get("path")
     sensitive = [Path.home()]
+    workspace_path = record.get("execution", {}).get("workspace")
+    seed_path = record.get("seed", {}).get("path")
+    if workspace_path:
+        sensitive.append(Path(workspace_path))
+    if seed_path:
+        sensitive.append(Path(seed_path))
     if treatment_path:
         treatment = Path(treatment_path)
         sensitive.extend((treatment, treatment.parent, treatment.parent.parent))
