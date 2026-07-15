@@ -233,18 +233,15 @@ code-territory-guide/
 
 ## Behavioral evaluation
 
-The evaluation suite compares clean baseline sessions with sessions that can discover the installed skill. Synthetic fixtures, read-only repository inspections, and writable disposable repository tasks remain distinct evidence classes.
+The evaluation suite compares clean baseline sessions with sessions that can discover the installed skill. Synthetic fixtures and read-only repository inspections remain distinct evidence classes.
 
 ```mermaid
 flowchart TD
     L[Frozen skill, harness, routing, and cases] --> V[Deterministic validation]
     V --> S[Synthetic fixtures]
     V --> RO[Read-only real repositories]
-    V --> RW[Writable disposable clones]
-    RW --> I[Exact seed and disabled remotes]
     S --> P[Matched baseline and skill arms]
     RO --> P
-    I --> P
     P --> J[Sanitized blinded opposite-family judge]
     J --> R[Qualified evidence report]
     R --> A[Adversarial audit]
@@ -255,9 +252,7 @@ Raw transcripts, judgments, local paths, and treatment contents remain ignored. 
 - [Synthetic behavioral evidence](evals/results/synthetic-evidence.md)
 - [Real-repository behavioral evidence](evals/results/real-repository-evidence.md)
 
-The writable real-repository harness records actual diffs, one local commit per arm, validation commands, repository state, and lock provenance. It never pushes and does not use danger-full-access. Its qualified report is created only after a complete, valid cohort.
-
-The evidence supports scoped, safety-conscious use. It does not prove universal quality uplift or performance across every repository and risk class. See [the evaluation guide](evals/README.md) for prerequisites, the external-terminal writable workflow, interpretation, and case-authoring rules.
+The evidence supports scoped, safety-conscious use. It does not prove universal quality uplift or performance across every repository and risk class. See [the evaluation guide](evals/README.md) for prerequisites, interpretation, and case-authoring rules.
 
 ## Contributing
 
