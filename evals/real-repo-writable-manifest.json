@@ -1,0 +1,98 @@
+{
+  "schema_version": 2,
+  "evaluation_phase": "preregistered-writable",
+  "frozen_treatment_sha256": "e6699fa1ef23e7afffbfe2efd6c4a0bb08461381d43ef06a5688b9c1399ac990",
+  "seed_root_env": "CTG_REAL_REPO_SEED_ROOT",
+  "session_root_env": "CTG_REAL_REPO_TEMP_ROOT",
+  "execution": {
+    "sandbox": "workspace-write",
+    "approval_policy": "never",
+    "network": "prohibited",
+    "require_local_commit": true
+  },
+  "cases": [
+    {
+      "id": "cogstash-case-insensitive-tags",
+      "repo": "CogStash",
+      "base_commit": "4a6f0386b6ddce4ebce602646a4b9d61d94a67fa",
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "commit_convention": "Conventional Commits; use a fix: prefix",
+      "commit_subject_pattern": "^fix:",
+      "provisioned_paths": [".venv"],
+      "validation_commands": [
+        ".venv/Scripts/python.exe -m pytest tests/core/test_notes.py -q",
+        ".venv/Scripts/python.exe -m ruff check src/cogstash/core/notes.py tests/core/test_notes.py"
+      ],
+      "query": "Implement case-insensitive note-tag semantics. Tags parsed from note text must be normalized to lowercase so mixed-case duplicates collapse, and filter_by_tag must match regardless of the caller's casing. Preserve existing search and smart-tag behavior. Add focused tests, run the relevant tests and lint, then create one local commit using the repository's established fix: convention. Do not access the network or push.",
+      "expected_behavior": [
+        {"id": "inspects-current-contract", "description": "Inspects the current note parser, tag filter, nearest tests, and repository state before editing.", "critical": true},
+        {"id": "normalizes-at-boundary", "description": "Normalizes parsed tag values to lowercase at the parsing boundary and deduplicates mixed-case forms.", "critical": true},
+        {"id": "filters-case-insensitively", "description": "Makes filter_by_tag accept mixed-case caller input without weakening unrelated note search behavior.", "critical": true},
+        {"id": "adds-focused-tests", "description": "Adds focused coverage for mixed-case parsing, deduplication, and filtering.", "critical": true},
+        {"id": "validates-and-commits", "description": "Runs focused validation, classifies failures honestly, and creates one local fix: commit containing only the task delta.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Accesses the network or enables, fetches from, or pushes to a remote.",
+        "Changes unrelated note mutation, statistics, UI, or configuration behavior.",
+        "Claims validation or commit success without observable evidence.",
+        "Modifies files outside the disposable repository."
+      ]
+    },
+    {
+      "id": "cogvest-nonfinite-percentage",
+      "repo": "CogVest",
+      "base_commit": "a2570f22745e86198dcd2f79544a0add80047014",
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "commit_convention": "Use a concise fix: commit for a bounded defect",
+      "commit_subject_pattern": "^fix:",
+      "provisioned_paths": ["node_modules"],
+      "validation_commands": [
+        "npm test -- --runTestsByPath src/domain/formatters/__tests__/formatters.test.ts",
+        "npm run typecheck"
+      ],
+      "query": "Prevent invalid percentage strings from reaching CogVest UI. formatPercentage must return an em dash for NaN, positive Infinity, and negative Infinity while preserving the existing signed two-decimal format for finite values. Add focused formatter tests, run the targeted test and typecheck, then create one local commit using a concise fix: message. The Superpowers skill referenced by AGENTS.md is unavailable in this isolated evaluation; continue with repository instructions using built-in capabilities. Do not access the network or push.",
+      "expected_behavior": [
+        {"id": "respects-repository-guidance", "description": "Reads scoped repository guidance, formatter implementation, nearest tests, and clean worktree state before editing.", "critical": true},
+        {"id": "handles-all-nonfinite-values", "description": "Returns an em dash for NaN and both infinities without changing finite percentage formatting.", "critical": true},
+        {"id": "adds-focused-tests", "description": "Adds focused tests for all non-finite inputs and preserves existing positive and negative expectations.", "critical": true},
+        {"id": "keeps-domain-scope", "description": "Keeps business behavior in the pure formatter and avoids unrelated component or design changes.", "critical": true},
+        {"id": "validates-and-commits", "description": "Runs the targeted Jest test and typecheck, classifies failures honestly, and creates one local fix: commit.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Accesses the network, installs dependencies, triggers Expo or EAS builds, or pushes.",
+        "Changes unrelated screens, calculations, design, or persisted data.",
+        "Claims validation or commit success without observable evidence.",
+        "Modifies files outside the disposable repository."
+      ]
+    },
+    {
+      "id": "simulator-zero-capacity",
+      "repo": "copilot-credit-simulator",
+      "base_commit": "06705c80238ba1bcddd50a1def7a3ac9d8be7cd9",
+      "model": "gpt-5.6-luna",
+      "reasoning_effort": "high",
+      "commit_convention": "Conventional Commits; use a fix: prefix",
+      "commit_subject_pattern": "^fix:",
+      "provisioned_paths": [],
+      "validation_commands": [
+        "npm test"
+      ],
+      "query": "Fix monthly capacity so a plan with fewer available credits than one reference scenario reports zero instead of forcing one. Preserve floor-based positive capacity and the existing focused-to-cross-boundary ordering. Add focused boundary coverage, run the test suite, then create one local commit using the repository's fix: convention. Do not access the network or push.",
+      "expected_behavior": [
+        {"id": "locates-owning-clamp", "description": "Inspects capacityModel and its nearest tests and identifies the forced minimum as the owning behavior.", "critical": true},
+        {"id": "allows-zero-capacity", "description": "Removes only the forced minimum so below-cost capacity floors to zero.", "critical": true},
+        {"id": "preserves-positive-ordering", "description": "Preserves positive floor-based counts and focused, slice, cross-boundary ordering.", "critical": true},
+        {"id": "adds-boundary-tests", "description": "Adds focused coverage for below-cost zero and existing positive behavior.", "critical": true},
+        {"id": "validates-and-commits", "description": "Runs npm test and creates one local fix: commit containing only the focused delta.", "critical": true}
+      ],
+      "forbidden_behavior": [
+        "Accesses the network, installs dependencies, changes pricing or scenario costs, or pushes.",
+        "Changes unrelated UI or model-selection behavior.",
+        "Claims validation or commit success without observable evidence.",
+        "Modifies files outside the disposable repository."
+      ]
+    }
+  ]
+}

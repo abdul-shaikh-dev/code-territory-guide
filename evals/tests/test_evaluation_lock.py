@@ -12,9 +12,16 @@ EVAL_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(EVAL_ROOT))
 
 import freeze_evaluation  # noqa: E402
+from validate_records import expected_lock_for_attempt  # noqa: E402
 
 
 class EvaluationLockTests(unittest.TestCase):
+    def test_prospective_lock_does_not_reclassify_preserved_history(self) -> None:
+        lock = {"preregistered_for_attempts_gte": 22}
+        self.assertIsNone(expected_lock_for_attempt(20, lock, "active"))
+        self.assertEqual(expected_lock_for_attempt(22, lock, "active"), "active")
+        self.assertEqual(expected_lock_for_attempt(23, lock, "active"), "active")
+
     def test_text_hash_is_line_ending_independent(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

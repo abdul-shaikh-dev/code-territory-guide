@@ -39,10 +39,23 @@ def require(record: dict, required: set[str], path: Path) -> None:
         raise ValueError(f"invalid exclusion in {path}")
 
 
+def expected_lock_for_attempt(
+    attempt: int,
+    active_lock: dict | None,
+    active_lock_sha256: str | None,
+) -> str | None:
+    if active_lock is None or active_lock_sha256 is None:
+        return None
+    minimum = active_lock["preregistered_for_attempts_gte"]
+    return active_lock_sha256 if attempt >= minimum else None
+
+
 def main() -> None:
+    active_lock = None
     expected_lock = None
     if LOCK_PATH.is_file():
-        expected_lock = lock_sha256(validate_current_lock())
+        active_lock = validate_current_lock()
+        expected_lock = lock_sha256(active_lock)
     for schema in (
         "run-record.schema.json",
         "judge-output.schema.json",
@@ -66,7 +79,12 @@ def main() -> None:
             lock = record["evaluation_lock"]
             if not lock.get("preregistered") or not lock.get("sha256"):
                 raise ValueError(f"invalid evaluation lock in {path}")
-            if expected_lock and lock["sha256"] != expected_lock:
+            record_lock = expected_lock_for_attempt(
+                record["attempt"],
+                active_lock,
+                expected_lock,
+            )
+            if record_lock and lock["sha256"] != record_lock:
                 raise ValueError(f"run does not match active evaluation lock: {path}")
         run_paths.append(path)
         if record["treatment"].get("installed") and not record["treatment"].get("tree_sha256"):
@@ -96,12 +114,17 @@ def main() -> None:
         case = CASES.get(record.get("case_id"))
         if case is None:
             raise ValueError(f"unknown judgment case: {path}")
+        pair_lock = expected_lock_for_attempt(
+            input_records[0]["attempt"],
+            active_lock,
+            expected_lock,
+        )
         issue = judgment_issue(
             case,
             record,
             input_records[0],
             input_records[1],
-            expected_lock,
+            pair_lock,
         )
         if issue and (
             any(item.get("schema_version") == 3 for item in input_records)

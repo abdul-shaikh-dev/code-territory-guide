@@ -19,6 +19,8 @@ def record(run_id: str, arm: str) -> dict:
         "arm": arm,
         "model": "gpt-source",
         "query": "shared query",
+        "execution": {"workspace": r"G:\private\session\repo"},
+        "seed": {"path": r"G:\private\seeds\repo"},
         "treatment": {"path": r"C:\private\skill" if arm == "installed-skill" else None},
         "tool_events": [
             {
@@ -48,6 +50,8 @@ class BlindingAndSanitizerTests(unittest.TestCase):
         self.assertNotIn("case--installed-skill--attempt-20", text)
         self.assertNotIn("gpt-source", text)
         self.assertNotIn(r"C:\private\skill", text)
+        self.assertNotIn(r"G:\private\session\repo", text)
+        self.assertNotIn(r"G:\private\seeds\repo", text)
         self.assertIn(REDACTED_TEXT, text)
         self.assertIn(REDACTED_COMMAND, text)
 
