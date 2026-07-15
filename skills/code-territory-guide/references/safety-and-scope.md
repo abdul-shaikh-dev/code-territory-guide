@@ -131,6 +131,38 @@ Create only the files the task needs:
 - `field-brief.md` for the implementation contract
 - `field-report.md` for verified outcome, validation, ownership, and delivery state
 - `expedition-index.md` for cross-repository ownership, sequencing, and aggregate status
+- `visual-prototype.html` for a disposable visual or interactive decision probe
+
+Markdown remains the canonical map for briefs, evidence, checkpoints,
+deviations, validation, and handoff. A visual prototype is an optional probe,
+not a replacement for those records or proof of production behavior.
+
+### Visual prototypes
+
+Create `docs/code-territory/<task-slug>/visual-prototype.html` only when it can
+materially expose a specific unknown or decision and at least one of these is
+true:
+
+- the user says they will recognize the right direction when they see it
+- two or more visual or interaction directions remain genuinely viable
+- state transitions, flows, or architecture are difficult to evaluate in prose
+- a stakeholder needs to interact with the direction before approval
+- a disposable prototype is cheaper than changing production code
+
+Copy `assets/artifacts/visual-prototype.html` as the starter. Keep the result:
+
+- single-file and locally runnable
+- dependency-free unless the repository already supplies the dependency
+- limited to fake or sanitized data
+- clearly labelled as a prototype rather than production behavior
+- accessible and responsive enough to evaluate the intended decision
+- focused on the named unknown instead of becoming a parallel application
+- temporary unless it retains review or teaching value
+- uncommitted unless delivery is separately authorized
+
+Use screenshots or GIFs as final visual evidence when reliable, and use
+production source as the exact behavioral or structural reference. Do not use a
+prototype to claim that production behavior is implemented or validated.
 
 Copy starter files from `assets/artifacts/` when applicable and remove unused placeholder sections. Do not create empty artifact directories or every artifact type by default.
 

@@ -29,13 +29,14 @@
     "fixtures/task-failure/context.md": "828f556f06d5e2c4c81a6876cba75dbfecc72ac2292524bae545861fe824dcab",
     "fixtures/trivial-edit/context.md": "5b822b2496b2d8a07f208e0ed93a6ce60b05088f689640cbc35130538063a88e",
     "fixtures/validation-depth-public-contract/context.md": "4b215ef77587d74621e753cd1bd4362215f7262cd715480877c0d50956bb32dd",
+    "fixtures/visual-prototype-unknown-knowns/context.md": "78177fa0386de0930ae4a0d28cf8d4e599b778411e4e233418a5fe4439d280c2",
     "freeze_evaluation.py": "3c7e12d4e6640bcf1a28ec64991e7597e15ba62257f8bc00e0399bc27accfdfe",
     "judge-blind-output.schema.json": "6b8cc7682aa21363412b4994259ec12dbb92b5928ad0378108ef0d13aefe784b",
     "judge-output.schema.json": "4b42051085da977e472c213a462dfac01e8e961b218ed25c7aaab46a6834b946",
     "judge_matrix.py": "6060b66b9faae5e706ca507db5cc1507e0d3b15fbde7ae52b94605d9fd880355",
     "judge_real_repo_eval.py": "568df8111d7f8163602de976ba0f37784b0d4cf1dee29576f416ca754dbc52ba",
-    "manifest.json": "151d0250fd16a90a27f705520b06df7b5da4039e486216773f0f588e1ec4384b",
-    "materialize_fixture.py": "b8b166995d7e22ffd6052b597cf38b8205912f38a201212556977f22ac70eabd",
+    "manifest.json": "4115a1e2841ceeedc955cd49902dc79f02d80b288a2a963af99fe9137ab248fc",
+    "materialize_fixture.py": "f938cbd83445a07a47d3fce58224f5c38d6bd40e3b1e4b765a7c7685624cb8d9",
     "model-routing.json": "aca89b098c573bfc82cf6c75addeb3a0d400d81816c60478e3a0c308d7f1aa89",
     "real-repo-manifest.json": "cf2196e6c7e255541c99f18e6432743ab2b0f31386ec127b40e1f48b2f76d4fc",
     "run-record.schema.json": "1b14b77059423a66a31589281bff2c3de25506258dfd13aece200f885e58d768",
@@ -47,10 +48,10 @@
   },
   "historical_evidence": {
     "status": "not preregistered by this lock",
-    "through_attempt": 24
+    "through_attempt": 25
   },
-  "preregistered_for_attempts_gte": 25,
-  "release_id": "resume-validation-v1",
+  "preregistered_for_attempts_gte": 26,
+  "release_id": "visual-prototype-v1",
   "schema_version": 1,
-  "treatment_tree_sha256": "431debc75a9d47259d14114ee0ad8a2c949749e862c2f1892e8a3820dbb09401"
+  "treatment_tree_sha256": "5fa992685df3cfd932008ee745bfb2a095cd3b108904c7210bd4afd5599441f3"
 }

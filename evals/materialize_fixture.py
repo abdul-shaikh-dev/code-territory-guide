@@ -271,6 +271,36 @@ def purge(account_id: str) -> None:
 </section>
 """,
     },
+    "visual-prototype-unknown-knowns": {
+        "README.md": """# Dashboard
+
+The production dashboard is rendered by `src/dashboard.html`. Keep durable task
+artifacts under `docs/code-territory/dashboard-density/`. The project has no
+frontend dependencies and uses only sanitized sample data in local examples.
+""",
+        "src/dashboard.html": """<main class="dashboard dashboard--balanced">
+  <header>
+    <h1>Operations overview</h1>
+    <p>Current production layout.</p>
+  </header>
+  <section class="metrics" aria-label="Key metrics">
+    <article><strong>42</strong><span>Open items</span></article>
+    <article><strong>7</strong><span>Needs review</span></article>
+  </section>
+</main>
+""",
+        "docs/code-territory/dashboard-density/field-brief.md": """# Field Brief: Dashboard density
+
+## Objective
+
+Choose a dashboard information-density direction before production implementation.
+
+## Constraints
+
+- Preserve the current production dashboard until a direction is approved.
+- Use sanitized examples during exploration.
+""",
+    },
     "reference-led-semantics": {
         "README.md": "# Retry\n\nRun node --test.\n",
         "vendor/reference_retry.py": """def retry_delay(attempt: int, base_ms: int = 100, cap_ms: int = 5000) -> int:
