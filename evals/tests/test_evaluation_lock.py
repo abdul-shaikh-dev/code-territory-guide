@@ -25,14 +25,16 @@ class EvaluationLockTests(unittest.TestCase):
     def test_text_hash_is_line_ending_independent(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            lf = root / "lf.md"
-            crlf = root / "crlf.md"
-            lf.write_bytes(b"one\ntwo\n")
-            crlf.write_bytes(b"one\r\ntwo\r\n")
-            self.assertEqual(
-                freeze_evaluation.sha256_file(lf),
-                freeze_evaluation.sha256_file(crlf),
-            )
+            for suffix in (".md", ".html"):
+                with self.subTest(suffix=suffix):
+                    lf = root / f"lf{suffix}"
+                    crlf = root / f"crlf{suffix}"
+                    lf.write_bytes(b"one\ntwo\n")
+                    crlf.write_bytes(b"one\r\ntwo\r\n")
+                    self.assertEqual(
+                        freeze_evaluation.sha256_file(lf),
+                        freeze_evaluation.sha256_file(crlf),
+                    )
 
     def test_tree_hash_is_independent_of_discovery_order(self) -> None:
         forward = {"SKILL.md": "first", "references/modes.md": "second"}

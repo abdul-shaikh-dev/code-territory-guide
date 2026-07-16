@@ -10,7 +10,7 @@ EVAL_ROOT = Path(__file__).resolve().parent
 REPO_ROOT = EVAL_ROOT.parent
 LOCK_PATH = EVAL_ROOT / "evaluation-lock.json"
 SKILL_ROOT = REPO_ROOT / "skills" / "code-territory-guide"
-TEXT_SUFFIXES = {".json", ".md", ".py", ".toml", ".txt", ".yaml", ".yml"}
+TEXT_SUFFIXES = {".html", ".json", ".md", ".py", ".toml", ".txt", ".yaml", ".yml"}
 PINNED_FILES = (
     "freeze_evaluation.py",
     "manifest.json",
