@@ -97,6 +97,26 @@ For work that spans sessions, agents, or substantial investigation, the skill ma
 
 Cross-repository features keep separate ownership, validation, completion, and delivery state per repository. A shared Expedition Index is created only in an explicitly designated coordination repository; otherwise coordination remains in chat.
 
+### Visual decision probes
+
+When a product or interaction preference is easier to recognize than describe,
+the skill can create an optional single-file
+`docs/code-territory/<task-slug>/visual-prototype.html`. The prototype uses fake
+or sanitized data and remains a decision probe rather than evidence that
+production behavior is complete.
+
+Agents copy the bundled starter, replace every placeholder, make at least two
+directions materially different, and run the static validator before reporting
+source completion:
+
+```text
+python <installed-skill-root>/scripts/validate_visual_prototype.py docs/code-territory/<task-slug>/visual-prototype.html
+```
+
+The validator checks structure, self-containment, responsive behavior,
+accessibility contracts, fake-data labeling, and placeholder removal. Visual
+quality still requires browser or human review.
+
 ## Installation
 
 Installation differs by agent harness. If you use more than one, install Code Territory Guide separately for each one. Every adapter loads the same canonical [`skills/code-territory-guide/`](skills/code-territory-guide/) directory.
@@ -173,6 +193,10 @@ Fetch and follow instructions from https://raw.githubusercontent.com/abdul-shaik
 
 See [the detailed OpenCode instructions](.opencode/INSTALL.md).
 
+The OpenCode adapter uses a Git-backed Bun package spec and follows the
+repository's default branch. The tagged URL above pins the installation
+instructions, not the commit OpenCode resolves.
+
 ### Pi
 
 ```bash
@@ -203,7 +227,10 @@ Use the harness-specific skills directory when it differs from `~/.agents/skills
 
 ### Updating
 
-Marketplace and Git-backed installations update through their harness. For a manual installation, pull this repository and recopy or refresh the symlink.
+Marketplace and unpinned Git-backed installations update through their harness.
+For a version-pinned Pi installation, replace the tag in the install command.
+For a manual installation, check out the intended tag or pull the desired
+branch, then recopy or refresh the symlink.
 
 ## Repository layout
 
@@ -213,7 +240,8 @@ code-territory-guide/
 │   ├── SKILL.md
 │   ├── agents/openai.yaml              # optional Codex metadata
 │   ├── assets/artifacts/
-│   └── references/
+│   ├── references/
+│   └── scripts/validate_visual_prototype.py
 ├── .claude-plugin/                     # Claude marketplace metadata
 ├── .codex-plugin/                      # Codex plugin metadata
 ├── .cursor-plugin/                     # Cursor plugin metadata

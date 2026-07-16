@@ -4,18 +4,17 @@
 
 ## Result
 
-- Cases judged: 21/21 manifest cases
-- Baseline passes: 15/21
-- Installed-skill passes: 21/21
-- Pairwise outcomes: 6 improved, 15 preserved, 0 regressed, 0 inconclusive
-- Blinded, opposite-model-family judgments: 0/21
+- Cases judged: 20/24 manifest cases
+- Baseline passes: 14/20
+- Installed-skill passes: 20/20
+- Pairwise outcomes: 6 improved, 14 preserved, 0 regressed, 0 inconclusive
+- Blinded, opposite-model-family judgments: 0/20
 
 | Case | Run attempt | Judge attempt | Baseline | Skill | Comparison | Evidence state |
 |---|---:|---:|---:|---:|---|---|
 | `calibrated-blind-spot-teaching` | 19 | 19 | pass | pass | preserved | scoreable |
 | `commit-convention-dirty-worktree` | 19 | 19 | pass | pass | preserved | scoreable |
 | `dirty-worktree-ownership` | 19 | 19 | pass | pass | preserved | scoreable |
-| `durable-artifact-project-root` | 19 | 19 | pass | pass | preserved | scoreable |
 | `environmental-validation-block` | 19 | 19 | pass | pass | preserved | scoreable |
 | `explicit-scope-no-double-confirmation` | 19 | 19 | pass | pass | preserved | scoreable |
 | `hidden-scope-expansion` | 19 | 19 | pass | pass | preserved | scoreable |
@@ -36,7 +35,7 @@
 
 ## Evidence integrity
 
-The active evaluation lock applies prospectively to synthetic attempt 20 and later. The selected historical cohort predates that lock and is not claimed as preregistered.
+The active evaluation lock applies prospectively to synthetic attempt 26 and later. The selected historical cohort predates that lock and is not claimed as preregistered.
 
 The selected treatment hash has 23 valid judged observations across 21 internally consistent cases; 2 cases have repeated observations. This describes observed retry consistency, not long-term reliability.
 
@@ -46,7 +45,7 @@ The selected treatment hash has 23 valid judged observations across 21 internall
 
 | Environment | Evidence | Scope of claim |
 |---|---|---|
-| Synthetic disposable fixtures, explicitly unsandboxed | 21 paired cases | Latest frozen historical cohort |
+| Synthetic disposable fixtures, explicitly unsandboxed | 20 paired cases | Latest frozen historical cohort |
 | Synthetic disposable fixtures, ordinary workspace-write sandbox | Not established | Future locked run required |
 | Real repositories, read-only | Preserved historical evidence | Two curated local-clone cases against an earlier treatment |
 | Real repositories, writable feature branches | Not established | Future locked, disabled-remote experiment required |

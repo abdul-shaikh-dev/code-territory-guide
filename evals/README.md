@@ -11,8 +11,9 @@ It also covers durable project-root artifacts, commit conventions in dirty workt
 The unknowns-lifecycle cases cover one-at-a-time interviewing for a
 route-changing ambiguity, reversible chat and file-backed exploration of
 recognition-based preferences, source-reference semantics, and durable notes
-for a material plan deviation. The file-backed case preserves canonical
-Markdown records and production source.
+for a material plan deviation. The file-backed cases preserve canonical
+Markdown records and production source, and cover a disposable HTML visual
+prototype when prose cannot expose the decision efficiently.
 
 They also cover collaborator-calibrated blind-spot teaching and a shareable
 stakeholder explainer that leads with the demonstrated outcome before technical
@@ -108,6 +109,7 @@ By default, temporary repositories use the operating system’s temporary direct
 These commands do not launch model sessions:
 
 ```powershell
+python evals/validate_package.py
 python evals/validate_manifest.py
 python evals/validate_records.py
 python skills/code-territory-guide/scripts/validate_visual_prototype.py --committed
@@ -122,7 +124,9 @@ First inspect available IDs in `evals/manifest.json`, create or review `evals/ev
 
 ```powershell
 $env:CTG_EVAL_TEMP_ROOT = "$env:TEMP/code-territory-guide-evals"
-python evals/run_matrix.py --case hidden-scope-expansion --arm both --attempt 20
+$minimumAttempt = (Get-Content evals/evaluation-lock.json | ConvertFrom-Json).preregistered_for_attempts_gte
+$attempt = $minimumAttempt # choose a higher unused number when this attempt already exists locally
+python evals/run_matrix.py --case hidden-scope-expansion --arm both --attempt $attempt
 ```
 
 Useful options:
@@ -136,8 +140,8 @@ Useful options:
 Run all baselines before all treatments for a complete matrix:
 
 ```powershell
-python evals/run_matrix.py --arm baseline --attempt 20
-python evals/run_matrix.py --arm installed-skill --attempt 20
+python evals/run_matrix.py --arm baseline --attempt $attempt
+python evals/run_matrix.py --arm installed-skill --attempt $attempt
 ```
 
 Records are written beneath `evals/results/runs/` and remain ignored.
@@ -147,8 +151,8 @@ Records are written beneath `evals/results/runs/` and remain ignored.
 The judge requires a valid, lock-matching baseline and treatment record for every selected case. It receives the rubric, exact shared query, and sanitized observable evidence under deterministic `candidate_a` and `candidate_b` labels. It does not receive run IDs, arm labels, source-model metadata, or treatment contents. The process uses a clean temporary Codex home, so a normally installed Code Territory Guide plugin does not contaminate judging.
 
 ```powershell
-python evals/judge_matrix.py --case hidden-scope-expansion --attempt 20
-python evals/judge_matrix.py --attempt 20
+python evals/judge_matrix.py --case hidden-scope-expansion --attempt $attempt
+python evals/judge_matrix.py --attempt $attempt
 python evals/validate_records.py
 python evals/build_report.py
 ```
@@ -158,7 +162,7 @@ Judgment artifacts are written beneath `evals/results/judgments/` and remain ign
 Run the optional independent evidence audit only after reviewing the generated report:
 
 ```powershell
-python evals/audit_evidence.py --attempt 20
+python evals/audit_evidence.py --attempt $attempt
 ```
 
 The audit is a real model session. Preserve its raw artifacts locally and commit a concise qualified conclusion only when the evidence supports it.

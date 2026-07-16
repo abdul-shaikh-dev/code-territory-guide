@@ -6,7 +6,11 @@ Code Territory Guide was exercised against isolated local clones of Copilot Cred
 
 This supports use on narrow repository work. It does not establish universal quality uplift, broad-refactor performance, or production-system safety.
 
-The recorded runs are historical evidence for the frozen treatment hash in `real-repo-manifest.json`. The skill has evolved since those runs; the artifact, delivery, multi-repository, and commit-convention changes on the current branch have not yet received fresh behavioral evaluation.
+The recorded runs are historical evidence for the frozen treatment hash in
+`real-repo-manifest.json`. The skill has evolved since those runs; the current
+`v0.2.1` artifact, delivery, multi-repository, commit-convention, resume,
+validation-depth, and visual-prototype behavior has not yet received fresh
+model-backed real-repository evaluation.
 
 ## Read-only comparisons
 

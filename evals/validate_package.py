@@ -31,6 +31,9 @@ JSON_FILES = (
     "package.json",
     ".claude-plugin/plugin.json",
     ".claude-plugin/marketplace.json",
+    ".codex-plugin/plugin.json",
+    ".cursor-plugin/plugin.json",
+    ".kimi-plugin/plugin.json",
     "evals/manifest.json",
     "evals/real-repo-manifest.json",
     "evals/model-routing.json",
@@ -91,6 +94,9 @@ def validate() -> None:
         "package.json": package.get("version"),
         ".claude-plugin/plugin.json": plugin.get("version"),
         ".claude-plugin/marketplace.json": marketplace_plugin.get("version"),
+        ".codex-plugin/plugin.json": parsed[".codex-plugin/plugin.json"].get("version"),
+        ".cursor-plugin/plugin.json": parsed[".cursor-plugin/plugin.json"].get("version"),
+        ".kimi-plugin/plugin.json": parsed[".kimi-plugin/plugin.json"].get("version"),
     }
     require(all(isinstance(value, str) for value in versions.values()), "all manifests must declare a version")
     require(len(set(versions.values())) == 1, f"manifest versions do not match: {versions}")
