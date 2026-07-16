@@ -10,7 +10,7 @@ EVAL_ROOT = Path(__file__).resolve().parent
 REPO_ROOT = EVAL_ROOT.parent
 LOCK_PATH = EVAL_ROOT / "evaluation-lock.json"
 SKILL_ROOT = REPO_ROOT / "skills" / "code-territory-guide"
-TEXT_SUFFIXES = {".json", ".md", ".py", ".toml", ".txt", ".yaml", ".yml"}
+TEXT_SUFFIXES = {".html", ".json", ".md", ".py", ".toml", ".txt", ".yaml", ".yml"}
 PINNED_FILES = (
     "freeze_evaluation.py",
     "manifest.json",
@@ -57,6 +57,8 @@ def tree_hash(root: Path) -> str:
         path.relative_to(root).as_posix(): sha256_file(path)
         for path in root.rglob("*")
         if path.is_file()
+        and "__pycache__" not in path.parts
+        and path.suffix.lower() != ".pyc"
     }
     return tree_hash_from_entries(files)
 

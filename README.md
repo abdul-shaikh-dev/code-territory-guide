@@ -168,7 +168,7 @@ copilot plugin install code-territory-guide@code-territory-guide
 Tell OpenCode:
 
 ```text
-Fetch and follow instructions from https://raw.githubusercontent.com/abdul-shaikh-dev/code-territory-guide/v0.2.0/.opencode/INSTALL.md
+Fetch and follow instructions from https://raw.githubusercontent.com/abdul-shaikh-dev/code-territory-guide/v0.2.1/.opencode/INSTALL.md
 ```
 
 See [the detailed OpenCode instructions](.opencode/INSTALL.md).
@@ -176,7 +176,7 @@ See [the detailed OpenCode instructions](.opencode/INSTALL.md).
 ### Pi
 
 ```bash
-pi install git:github.com/abdul-shaikh-dev/code-territory-guide@v0.2.0
+pi install git:github.com/abdul-shaikh-dev/code-territory-guide@v0.2.1
 ```
 
 For local development:
