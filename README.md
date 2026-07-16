@@ -168,7 +168,7 @@ copilot plugin install code-territory-guide@code-territory-guide
 Tell OpenCode:
 
 ```text
-Fetch and follow instructions from https://raw.githubusercontent.com/abdul-shaikh-dev/code-territory-guide/main/.opencode/INSTALL.md
+Fetch and follow instructions from https://raw.githubusercontent.com/abdul-shaikh-dev/code-territory-guide/v0.2.0/.opencode/INSTALL.md
 ```
 
 See [the detailed OpenCode instructions](.opencode/INSTALL.md).
@@ -176,7 +176,7 @@ See [the detailed OpenCode instructions](.opencode/INSTALL.md).
 ### Pi
 
 ```bash
-pi install git:github.com/abdul-shaikh-dev/code-territory-guide
+pi install git:github.com/abdul-shaikh-dev/code-territory-guide@v0.2.0
 ```
 
 For local development:
@@ -263,3 +263,7 @@ Keep `SKILL.md` as a router, put detailed policy in directly linked references, 
 3. Run only the affected behavioral cases first.
 4. Preserve every failed or excluded attempt.
 5. Update evidence claims only after independent judging and audit.
+
+## License
+
+Code Territory Guide is available under the [MIT License](LICENSE).

@@ -1,7 +1,8 @@
 {
   "name": "code-territory-guide",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Portable evidence-led coding workflow skill",
+  "license": "MIT",
   "type": "module",
   "main": ".opencode/plugins/code-territory-guide.js",
   "keywords": [
