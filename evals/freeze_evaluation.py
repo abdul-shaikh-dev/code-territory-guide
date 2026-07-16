@@ -55,11 +55,16 @@ def sha256_file(path: Path) -> str:
 def tree_hash(root: Path) -> str:
     files = {
         path.relative_to(root).as_posix(): sha256_file(path)
-        for path in sorted(root.rglob("*"))
+        for path in root.rglob("*")
         if path.is_file()
     }
+    return tree_hash_from_entries(files)
+
+
+def tree_hash_from_entries(files: dict[str, str]) -> str:
     digest = hashlib.sha256()
-    for relative, file_hash in files.items():
+    for relative in sorted(files):
+        file_hash = files[relative]
         digest.update(relative.encode("utf-8"))
         digest.update(b"\0")
         digest.update(file_hash.encode("ascii"))

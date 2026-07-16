@@ -34,6 +34,14 @@ class EvaluationLockTests(unittest.TestCase):
                 freeze_evaluation.sha256_file(crlf),
             )
 
+    def test_tree_hash_is_independent_of_discovery_order(self) -> None:
+        forward = {"SKILL.md": "first", "references/modes.md": "second"}
+        reverse = dict(reversed(tuple(forward.items())))
+        self.assertEqual(
+            freeze_evaluation.tree_hash_from_entries(forward),
+            freeze_evaluation.tree_hash_from_entries(reverse),
+        )
+
     def test_attempt_floor_and_snapshot_are_enforced(self) -> None:
         snapshot = {"treatment_tree_sha256": "skill", "files": {"a": "hash"}}
         lock = {
