@@ -44,6 +44,16 @@ class EvaluationLockTests(unittest.TestCase):
             freeze_evaluation.tree_hash_from_entries(reverse),
         )
 
+    def test_tree_hash_ignores_python_cache_files(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "SKILL.md").write_text("skill\n", encoding="utf-8")
+            expected = freeze_evaluation.tree_hash(root)
+            cache = root / "scripts" / "__pycache__"
+            cache.mkdir(parents=True)
+            (cache / "validator.cpython-312.pyc").write_bytes(b"generated")
+            self.assertEqual(freeze_evaluation.tree_hash(root), expected)
+
     def test_attempt_floor_and_snapshot_are_enforced(self) -> None:
         snapshot = {"treatment_tree_sha256": "skill", "files": {"a": "hash"}}
         lock = {

@@ -57,6 +57,8 @@ def tree_hash(root: Path) -> str:
         path.relative_to(root).as_posix(): sha256_file(path)
         for path in root.rglob("*")
         if path.is_file()
+        and "__pycache__" not in path.parts
+        and path.suffix.lower() != ".pyc"
     }
     return tree_hash_from_entries(files)
 

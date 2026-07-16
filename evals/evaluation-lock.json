@@ -30,7 +30,7 @@
     "fixtures/trivial-edit/context.md": "5b822b2496b2d8a07f208e0ed93a6ce60b05088f689640cbc35130538063a88e",
     "fixtures/validation-depth-public-contract/context.md": "4b215ef77587d74621e753cd1bd4362215f7262cd715480877c0d50956bb32dd",
     "fixtures/visual-prototype-unknown-knowns/context.md": "78177fa0386de0930ae4a0d28cf8d4e599b778411e4e233418a5fe4439d280c2",
-    "freeze_evaluation.py": "7bae1d79aafd31d43244a034cd15b18600e3184f6dc11c08f50274aebd02db01",
+    "freeze_evaluation.py": "b509b002c6c0d0c2303f5affd4e8710b46628c734abb5b9e8fa959cc1454ad65",
     "judge-blind-output.schema.json": "6b8cc7682aa21363412b4994259ec12dbb92b5928ad0378108ef0d13aefe784b",
     "judge-output.schema.json": "4b42051085da977e472c213a462dfac01e8e961b218ed25c7aaab46a6834b946",
     "judge_matrix.py": "6060b66b9faae5e706ca507db5cc1507e0d3b15fbde7ae52b94605d9fd880355",
@@ -53,5 +53,5 @@
   "preregistered_for_attempts_gte": 26,
   "release_id": "visual-prototype-v1",
   "schema_version": 1,
-  "treatment_tree_sha256": "d5004133d8cb14fe52921c2ecb752f8983815a8f1e6d99636f188b33be042b1e"
+  "treatment_tree_sha256": "ae02ad4e3eeca79ba71eba6b9a9919d3e69cf3cfe383424c005a712538a28a75"
 }
