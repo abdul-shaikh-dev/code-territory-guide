@@ -17,6 +17,7 @@ REQUIRED_SKILL_FILES = (
     "references/model-routing.md",
     "references/field-entry.md",
     "agents/openai.yaml",
+    "scripts/validate_visual_prototype.py",
     "assets/artifacts/survey.md",
     "assets/artifacts/track-report.md",
     "assets/artifacts/field-brief.md",

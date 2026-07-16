@@ -24,6 +24,9 @@ jobs:
       - name: Validate package and skill structure
         run: python evals/validate_package.py
 
+      - name: Validate committed visual prototypes
+        run: python skills/code-territory-guide/scripts/validate_visual_prototype.py --committed
+
       - name: Validate behavioral manifest
         run: python evals/validate_manifest.py
 

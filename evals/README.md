@@ -110,6 +110,7 @@ These commands do not launch model sessions:
 ```powershell
 python evals/validate_manifest.py
 python evals/validate_records.py
+python skills/code-territory-guide/scripts/validate_visual_prototype.py --committed
 python -m unittest discover -s evals/tests -v
 ```
 

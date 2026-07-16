@@ -160,6 +160,22 @@ Copy `assets/artifacts/visual-prototype.html` as the starter. Keep the result:
 - temporary unless it retains review or teaching value
 - uncommitted unless delivery is separately authorized
 
+A copied starter is not a completed prototype. Replace every placeholder and
+make each direction materially different in layout, interaction, density, or
+flow. Run the bundled static validator against the task copy:
+
+```text
+python <installed-skill-root>/scripts/validate_visual_prototype.py docs/code-territory/<task-slug>/visual-prototype.html
+```
+
+Do not report the prototype complete until the validator passes. The validator
+checks structural, responsive, accessibility, fake-data, self-containment, and
+placeholder requirements; it cannot establish that the directions are useful
+or aesthetically good. When browser or computer-use tools are available,
+render each direction at desktop and narrow widths and include the result in
+the handoff. Otherwise report source validation as complete and rendered
+behavior as unverified.
+
 Use screenshots or GIFs as final visual evidence when reliable, and use
 production source as the exact behavioral or structural reference. Do not use a
 prototype to claim that production behavior is implemented or validated.
