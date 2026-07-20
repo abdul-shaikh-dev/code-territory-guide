@@ -130,6 +130,9 @@ def validate() -> None:
     for relative in REQUIRED_SKILL_FILES:
         require((skill_root / relative).is_file(), f"missing required skill file: {relative}")
 
+    for relative in ("site/index.html", "site/.nojekyll", ".github/workflows/pages.yml"):
+        require((ROOT / relative).is_file(), f"missing visual explainer delivery file: {relative}")
+
     print(f"Validated package structure and aligned manifest version {version}.")
 
 

@@ -27,6 +27,9 @@ jobs:
       - name: Validate committed visual prototypes
         run: python skills/code-territory-guide/scripts/validate_visual_prototype.py --committed
 
+      - name: Validate production visual explainer
+        run: python evals/validate_site.py
+
       - name: Validate behavioral manifest
         run: python evals/validate_manifest.py
 
