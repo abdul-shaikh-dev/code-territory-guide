@@ -51,7 +51,7 @@
     "through_attempt": 25
   },
   "preregistered_for_attempts_gte": 26,
-  "release_id": "visual-prototype-v1",
+  "release_id": "progressive-disclosure-v1",
   "schema_version": 1,
-  "treatment_tree_sha256": "ae02ad4e3eeca79ba71eba6b9a9919d3e69cf3cfe383424c005a712538a28a75"
+  "treatment_tree_sha256": "f14efc8526758ccf00f836e4e45e2dbf39b7333373dd1e3f4902145d439cd114"
 }

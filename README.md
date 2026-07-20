@@ -82,12 +82,16 @@ flowchart TD
     K -->|Survey, Track, Prove| O[modes.md]
     K -->|Material unknowns| U[unknowns-lifecycle.md]
     K -->|Expedition| W[standard-workflow.md]
+    K -->|Durable artifacts or prototypes| A[artifacts.md]
+    K -->|Authorized Git delivery| D[delivery.md]
     K -->|Handoff prompts| T[templates.md]
     K -->|Model assignment| R[model-routing.md]
     K -->|Worked example| F[field-entry.md]
 ```
 
-The skill is self-contained. A companion `AGENTS.md` is not required.
+The installed skill is self-contained. This repository's root `AGENTS.md`
+provides a thin activation pointer for contributors without duplicating policy;
+consumer repositories do not require a companion file.
 
 `SKILL.md`, its references, and its artifact templates define the portable
 behavior. `agents/openai.yaml` adds optional Codex-facing presentation metadata;
@@ -236,6 +240,7 @@ branch, then recopy or refresh the symlink.
 
 ```text
 code-territory-guide/
+├── AGENTS.md                            # thin repository activation pointer
 ├── skills/code-territory-guide/       # canonical portable skill
 │   ├── SKILL.md
 │   ├── agents/openai.yaml              # optional Codex metadata

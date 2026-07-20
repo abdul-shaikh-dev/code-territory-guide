@@ -10,6 +10,8 @@ SEMVER_PATTERN = re.compile(r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$")
 EXPECTED_NAME = "code-territory-guide"
 REQUIRED_SKILL_FILES = (
     "references/safety-and-scope.md",
+    "references/artifacts.md",
+    "references/delivery.md",
     "references/modes.md",
     "references/unknowns-lifecycle.md",
     "references/standard-workflow.md",
@@ -115,6 +117,16 @@ def validate() -> None:
     require(bool(metadata.get("description")), "SKILL.md frontmatter requires a description")
 
     skill_root = ROOT / "skills" / EXPECTED_NAME
+    skill_text = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+    for reference in ("references/artifacts.md", "references/delivery.md"):
+        require(reference in skill_text, f"SKILL.md must directly route to {reference}")
+
+    agents_path = ROOT / "AGENTS.md"
+    require(agents_path.is_file(), "missing repository AGENTS.md bootstrap")
+    require(
+        "skills/code-territory-guide/SKILL.md" in agents_path.read_text(encoding="utf-8"),
+        "AGENTS.md must point to the canonical skill router",
+    )
     for relative in REQUIRED_SKILL_FILES:
         require((skill_root / relative).is_file(), f"missing required skill file: {relative}")
 
