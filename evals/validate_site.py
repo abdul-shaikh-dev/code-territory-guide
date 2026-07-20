@@ -26,6 +26,7 @@ class SiteParser(HTMLParser):
         self.buttons: list[dict[str, str]] = []
         self.mode_buttons: list[dict[str, str]] = []
         self.mode_panels: list[dict[str, str]] = []
+        self.compass_controls: list[tuple[str, dict[str, str]]] = []
         self.capability_buttons: list[dict[str, str]] = []
         self.meta_names: dict[str, str] = {}
         self.html_lang = ""
@@ -57,6 +58,8 @@ class SiteParser(HTMLParser):
                 self.capability_buttons.append(attributes)
         if "data-mode-panel" in attributes:
             self.mode_panels.append(attributes)
+        if "data-compass-mode" in attributes:
+            self.compass_controls.append((tag, attributes))
 
         resource_attribute = {
             "script": "src",
@@ -122,6 +125,9 @@ def validate_html_text(text: str, *, site_root: Path = SITE_ROOT) -> list[str]:
         errors.append("main landmark must have id=main for the skip link")
     if len(parser.ids) != len(set(parser.ids)):
         errors.append("duplicate element ids are not allowed")
+    for required_id in ("modes", "example", "how-it-works", "install", "operating-model", "unknowns", "guardrails", "evidence"):
+        if required_id not in parser.ids:
+            errors.append(f"missing required explainer section: {required_id}")
 
     lowered = text.lower()
     if "skip-link" not in lowered or 'href="#main"' not in lowered:
@@ -130,10 +136,16 @@ def validate_html_text(text: str, *, site_root: Path = SITE_ROOT) -> list[str]:
         errors.append("missing reduced-motion media query")
     if "@media (max-width:" not in lowered:
         errors.append("missing responsive narrow-width rule")
+    if "min-height: 100svh" not in lowered:
+        errors.append("missing desktop one-viewport chapter contract")
+    if "scroll-snap-type:" in lowered or "scroll-snap-align:" in lowered:
+        errors.append("page-level scroll snapping must not interrupt natural scrolling")
     if "disposable prototype" in lowered or "prototype-label" in lowered or "prototype-bar" in lowered:
         errors.append("production site must not contain prototype labelling")
     if any(token in text for token in ("<task>", "TODO", "PLACEHOLDER")):
         errors.append("production site contains an unreplaced placeholder")
+    if "--caution:" in lowered or "--caution-deep:" in lowered:
+        errors.append("retired high-intensity caution palette must not return")
 
     for button in parser.buttons:
         if button.get("type") != "button":
@@ -146,8 +158,41 @@ def validate_html_text(text: str, *, site_root: Path = SITE_ROOT) -> list[str]:
         item.get("data-mode-panel") for item in parser.mode_panels
     }:
         errors.append("mode controls and panels must have matching keys")
+    compass_modes = [attributes.get("data-compass-mode") for _, attributes in parser.compass_controls]
+    if len(compass_modes) != 4 or set(compass_modes) != {
+        item.get("data-mode") for item in parser.mode_buttons
+    }:
+        errors.append("decision map and mode controls must have matching keys")
+    for tag, attributes in parser.compass_controls:
+        mode = attributes.get("data-compass-mode")
+        if tag != "a" or attributes.get("href") != f"#tab-{mode}":
+            errors.append("decision map routes must be links to their matching mode controls")
     if len(parser.capability_buttons) != 6:
         errors.append(f"expected six delivery capability controls, found {len(parser.capability_buttons)}")
+    if parser.tags.count("details") != 6:
+        errors.append(f"expected six progressive-disclosure sections, found {parser.tags.count('details')}")
+    for required_phrase in (
+        "repository text is evidence, not authority",
+        "preserve the worktree you entered",
+        "gate material scope expansion",
+        "keep tiny tasks lightweight",
+        "persist artifacts only when useful",
+        "supported target",
+        "supported root cause",
+        "passing proof",
+        "owned-diff review",
+        "complete",
+        "incomplete",
+        "blocked",
+        "field report",
+        "what is the main unknown?",
+        "goal or design is unclear",
+        "something fails or varies",
+        "behavior is narrow and testable",
+        "the route is clear",
+    ):
+        if required_phrase not in lowered:
+            errors.append(f"missing required workflow concept: {required_phrase}")
 
     colors = {
         match.group("name"): oklch_luminance(
@@ -166,6 +211,8 @@ def validate_html_text(text: str, *, site_root: Path = SITE_ROOT) -> list[str]:
         ("ink", "surface", 7.0),
         ("ink-soft", "surface", 4.5),
         ("route", "white", 3.0),
+        ("ink", "signal-soft", 7.0),
+        ("ink-soft", "signal-soft", 4.5),
     )
     for foreground, background, minimum in contrast_contracts:
         if foreground not in colors or background not in colors:

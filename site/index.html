@@ -4,28 +4,31 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="A visual guide to choosing, using, and trusting Code Territory Guide for evidence-led code work.">
-  <meta name="theme-color" content="#c92362">
+  <meta name="theme-color" content="#61384f">
   <title>Code Territory Guide — Navigate code work by what is unknown</title>
   <style>
     :root {
       color-scheme: light;
-      --signal: oklch(0.58 0.2 357);
-      --signal-deep: oklch(0.34 0.135 357);
-      --signal-soft: oklch(0.95 0.032 357);
-      --route: oklch(0.64 0.12 183);
-      --route-deep: oklch(0.31 0.07 183);
-      --ink: oklch(0.17 0.014 252);
-      --ink-soft: oklch(0.39 0.02 252);
-      --line: oklch(0.83 0.012 252);
-      --surface: oklch(0.965 0.006 252);
+      --signal: oklch(0.39 0.07 350);
+      --signal-deep: oklch(0.27 0.055 350);
+      --signal-soft: oklch(0.95 0.015 350);
+      --route: oklch(0.57 0.08 188);
+      --route-deep: oklch(0.3 0.045 188);
+      --ink: oklch(0.16 0.02 342);
+      --ink-soft: oklch(0.39 0.025 342);
+      --line: oklch(0.84 0.012 342);
+      --surface: oklch(0.975 0.008 350);
       --white: oklch(1 0 0);
       --max: 78rem;
       --pad: max(1.25rem, calc((100vw - var(--max)) / 2));
       --radius-sm: 0.35rem;
       --radius-md: 0.75rem;
       --ease: cubic-bezier(0.22, 1, 0.36, 1);
-      font-family: "Segoe UI", Aptos, system-ui, sans-serif;
-      line-height: 1.55;
+      --font-display: Bahnschrift, "DIN Alternate", "Arial Narrow", sans-serif;
+      --font-body: "Atkinson Hyperlegible", "Trebuchet MS", "Segoe UI", sans-serif;
+      --font-data: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+      font-family: var(--font-body);
+      line-height: 1.62;
     }
 
     * { box-sizing: border-box; }
@@ -36,6 +39,8 @@
       margin: 0;
       background: var(--white);
       color: var(--ink);
+      font-size: 1.0625rem;
+      font-kerning: normal;
       text-rendering: optimizeLegibility;
     }
 
@@ -50,8 +55,9 @@
     h1, h2, h3, p { margin-top: 0; }
 
     h1, h2, h3 {
-      font-family: "Arial Narrow", "Aptos Display", "Segoe UI", sans-serif;
+      font-family: var(--font-display);
       font-stretch: condensed;
+      font-variation-settings: "wdth" 82;
       text-wrap: balance;
     }
 
@@ -91,7 +97,10 @@
       display: inline-flex;
       align-items: center;
       gap: 0.75rem;
-      font-weight: 800;
+      font-family: var(--font-display);
+      font-variation-settings: "wdth" 88;
+      font-weight: 680;
+      letter-spacing: 0.015em;
       text-decoration: none;
     }
 
@@ -125,9 +134,11 @@
       position: relative;
       display: grid;
       grid-template-columns: minmax(0, 1.1fr) minmax(19rem, 0.9fr);
-      min-height: min(52rem, 100svh);
+      min-height: 100svh;
+      align-items: center;
+      gap: clamp(3rem, 7vw, 6rem);
       overflow: hidden;
-      padding: clamp(8rem, 15vw, 12rem) var(--pad) clamp(4rem, 8vw, 7rem);
+      padding: clamp(6.5rem, 14vh, 8rem) var(--pad) clamp(3rem, 6vh, 4.5rem);
       background: var(--signal);
       color: var(--white);
     }
@@ -144,7 +155,7 @@
       pointer-events: none;
     }
 
-    .hero-copy { position: relative; z-index: 1; align-self: end; }
+    .hero-copy { position: relative; z-index: 1; }
 
     .hero-signal {
       display: inline-flex;
@@ -166,20 +177,31 @@
     .hero h1 {
       max-width: 11.5ch;
       margin-bottom: 1.5rem;
-      font-size: clamp(3.7rem, 7.8vw, 6rem);
-      font-weight: 820;
+      font-size: clamp(3.3rem, 6.2vw, 5.4rem);
+      font-weight: 720;
       line-height: 0.94;
-      letter-spacing: -0.035em;
+      letter-spacing: -0.025em;
     }
 
     .hero-copy > p {
       max-width: 48ch;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       font-size: clamp(1.08rem, 2vw, 1.28rem);
       line-height: 1.65;
     }
 
     .hero-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+
+    .hero-proof {
+      max-width: 58ch;
+      margin: 1.4rem 0 0;
+      padding-top: 1rem;
+      border-top: 1px solid color-mix(in oklch, var(--white) 38%, transparent);
+      color: color-mix(in oklch, var(--white) 86%, var(--signal));
+      font-size: 0.88rem;
+    }
+
+    .hero-proof a { text-underline-offset: 0.2em; }
 
     .button {
       display: inline-flex;
@@ -200,76 +222,66 @@
     .button-primary { border-color: var(--white); background: var(--white); color: var(--signal-deep); }
     .button-secondary { color: var(--white); }
 
-    .compass-wrap { position: relative; z-index: 1; align-self: center; justify-self: end; width: min(29rem, 100%); }
+    .decision-map { position: relative; z-index: 1; justify-self: end; width: min(32rem, 100%); margin: 0; }
 
-    .compass {
-      position: relative;
-      aspect-ratio: 1;
-      border: 1px solid color-mix(in oklch, var(--white) 62%, transparent);
-      border-radius: 50%;
-    }
+    .decision-map > figcaption { margin-bottom: 1.1rem; }
+    .decision-map > figcaption strong { display: block; margin-bottom: 0.25rem; font-family: var(--font-display); font-size: 1.35rem; }
+    .decision-map > figcaption span { color: color-mix(in oklch, var(--white) 78%, transparent); font-size: 0.88rem; }
 
-    .compass::before,
-    .compass::after {
-      content: "";
-      position: absolute;
-      inset: 12%;
-      border: 1px solid color-mix(in oklch, var(--white) 36%, transparent);
-      border-radius: 50%;
-    }
+    .mode-map { position: relative; aspect-ratio: 1.12; }
 
-    .compass::after {
-      inset: 31%;
-      background: var(--white);
-      border: 0;
-    }
+    .mode-map-lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .mode-map-lines line { stroke: color-mix(in oklch, var(--white) 44%, transparent); stroke-width: 0.45; }
+    .mode-map-lines circle { fill: var(--route); }
 
-    .compass-axis {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 76%;
-      height: 1px;
-      background: color-mix(in oklch, var(--white) 42%, transparent);
-      transform: translate(-50%, -50%) rotate(45deg);
-    }
-
-    .compass-axis:last-of-type { transform: translate(-50%, -50%) rotate(-45deg); }
-
-    .compass-mode {
+    .mode-route,
+    .mode-map-core {
       position: absolute;
       z-index: 2;
-      padding: 0.45rem 0.7rem;
-      background: var(--signal-deep);
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 800;
+      display: grid;
+      align-content: center;
+      border: 1px solid color-mix(in oklch, var(--white) 38%, transparent);
+      border-radius: var(--radius-sm);
     }
 
-    .compass-mode:nth-of-type(1) { top: 2%; left: 50%; transform: translateX(-50%); }
-    .compass-mode:nth-of-type(2) { top: 50%; right: -3%; transform: translateY(-50%); }
-    .compass-mode:nth-of-type(3) { bottom: 2%; left: 50%; transform: translateX(-50%); }
-    .compass-mode:nth-of-type(4) { top: 50%; left: -4%; transform: translateY(-50%); }
+    .mode-route {
+      width: 42%;
+      min-height: 24%;
+      padding: 1rem;
+      background: color-mix(in oklch, var(--signal-deep) 58%, transparent);
+      color: var(--white);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 180ms cubic-bezier(.22,1,.36,1), border-color 180ms cubic-bezier(.22,1,.36,1), transform 180ms cubic-bezier(.22,1,.36,1);
+    }
 
-    .compass-core {
-      position: absolute;
-      z-index: 3;
-      inset: 36%;
-      display: grid;
-      place-items: center;
-      color: var(--signal-deep);
-      font-weight: 850;
-      line-height: 1.05;
+    .mode-route span { color: color-mix(in oklch, var(--white) 74%, transparent); font-size: 0.76rem; line-height: 1.25; }
+    .mode-route strong { margin-top: 0.25rem; font-family: var(--font-display); font-size: 1.35rem; line-height: 1; }
+    .mode-route small {
+      margin-top: 0.65rem;
+      color: color-mix(in oklch, var(--white) 82%, transparent);
+      font-family: var(--font-data);
+      font-size: 0.66rem;
+      font-weight: 700;
+    }
+    .mode-route:hover { border-color: color-mix(in oklch, var(--white) 72%, transparent); transform: translateY(-2px); }
+    .mode-route[aria-current="true"] { border-color: var(--route); background: var(--signal-deep); }
+    .mode-route[aria-current="true"] small { color: var(--route); }
+    .mode-route[data-compass-mode="survey"] { top: 0; left: 0; }
+    .mode-route[data-compass-mode="track"] { top: 0; right: 0; }
+    .mode-route[data-compass-mode="prove"] { bottom: 0; left: 0; }
+    .mode-route[data-compass-mode="expedition"] { right: 0; bottom: 0; }
+
+    .mode-map-core {
+      inset: 34% 31%;
+      padding: 0.85rem;
+      background: var(--signal-soft);
+      color: var(--ink);
       text-align: center;
     }
 
-    .compass-caption {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 1rem;
-      color: color-mix(in oklch, var(--white) 80%, transparent);
-      font-size: 0.78rem;
-    }
+    .mode-map-core span { color: var(--signal-deep); font-family: var(--font-data); font-size: 0.7rem; font-weight: 800; }
+    .mode-map-core strong { margin-top: 0.3rem; font-size: 0.9rem; line-height: 1.15; }
 
     .section {
       padding: clamp(5rem, 10vw, 9rem) var(--pad);
@@ -282,11 +294,12 @@
       margin-bottom: clamp(3rem, 7vw, 6rem);
     }
 
-    .section-head h2 {
+    .section-head h2,
+    .section-head h3 {
       margin-bottom: 0;
       font-size: clamp(2.7rem, 5.4vw, 4.8rem);
       line-height: 0.98;
-      letter-spacing: -0.035em;
+      letter-spacing: -0.025em;
     }
 
     .section-head p {
@@ -333,8 +346,16 @@
 
     .mode-index { font-size: 0.8rem; opacity: 0.74; }
 
+    .mode-index,
+    .unknown-code,
+    .route-stop > strong,
+    code {
+      font-family: var(--font-data);
+      font-variant-ligatures: none;
+    }
+
     .mode-panel {
-      min-height: 27rem;
+      min-height: 22rem;
       padding: clamp(2rem, 6vw, 5rem);
     }
 
@@ -344,7 +365,7 @@
       margin-bottom: 1rem;
       font-size: clamp(2.5rem, 5vw, 4.5rem);
       line-height: 1;
-      letter-spacing: -0.035em;
+      letter-spacing: -0.025em;
     }
 
     .mode-panel > p { max-width: 60ch; color: var(--ink-soft); font-size: 1.1rem; }
@@ -360,31 +381,29 @@
     .mode-contract strong { display: block; margin-bottom: 0.4rem; color: var(--signal-deep); }
     .mode-contract span { color: var(--ink-soft); }
 
-    .unknowns { background: var(--ink); color: var(--white); }
+    .unknowns { border: 1px solid var(--line); background: var(--white); color: var(--ink); }
 
-    .unknowns .section-head p { color: oklch(0.76 0.012 252); }
 
     .unknown-matrix {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      border-top: 1px solid oklch(0.38 0.02 252);
-      border-left: 1px solid oklch(0.38 0.02 252);
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
     }
 
     .unknown-cell {
       min-height: 18rem;
       padding: clamp(1.5rem, 4vw, 3rem);
-      border-right: 1px solid oklch(0.38 0.02 252);
-      border-bottom: 1px solid oklch(0.38 0.02 252);
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
     }
 
-    .unknown-cell:nth-child(3) { background: var(--signal); }
-    .unknown-cell:nth-child(4) { background: oklch(0.22 0.027 252); }
+    .unknown-cell:nth-child(3) { background: var(--signal-soft); }
+    .unknown-cell:nth-child(4) { background: var(--surface); }
 
-    .unknown-code { display: block; margin-bottom: 3.5rem; color: var(--route); font-size: 0.78rem; font-weight: 850; }
-    .unknown-cell:nth-child(3) .unknown-code { color: var(--white); }
+    .unknown-code { display: block; margin-bottom: 3.5rem; color: var(--route-deep); font-size: 0.78rem; font-weight: 850; }
     .unknown-cell h3 { margin-bottom: 0.65rem; font-size: 1.55rem; }
-    .unknown-cell p { max-width: 46ch; margin-bottom: 0; color: inherit; opacity: 0.78; }
+    .unknown-cell p { max-width: 46ch; margin-bottom: 0; color: var(--ink-soft); }
 
     .route { overflow: hidden; }
 
@@ -396,11 +415,12 @@
 
     .route-intro { align-self: start; position: sticky; top: 2rem; }
 
-    .route-intro h2 {
+    .route-intro h2,
+    .route-intro h3 {
       margin-bottom: 1.2rem;
       font-size: clamp(2.8rem, 5.6vw, 4.8rem);
       line-height: 0.98;
-      letter-spacing: -0.035em;
+      letter-spacing: -0.025em;
     }
 
     .route-intro p { max-width: 38ch; color: var(--ink-soft); }
@@ -434,6 +454,130 @@
     .route-stop p { max-width: 54ch; margin-bottom: 0; color: var(--ink-soft); }
 
     .delivery { background: var(--signal-soft); }
+
+    .journey-nav { display: none; }
+
+    .field-example { background: var(--surface); }
+
+    .example-layout {
+      display: grid;
+      grid-template-columns: minmax(16rem, 0.7fr) minmax(0, 1.3fr);
+      gap: clamp(2rem, 7vw, 6rem);
+      align-items: start;
+    }
+
+    .example-request {
+      padding-top: 1.25rem;
+      border-top: 2px solid var(--signal);
+    }
+
+    .example-request strong { display: block; margin-bottom: 1rem; color: var(--signal-deep); }
+    .example-request blockquote { margin: 0; font-family: var(--font-display); font-size: clamp(1.7rem, 3vw, 2.6rem); font-weight: 700; line-height: 1.08; }
+
+    .example-route { border-top: 1px solid var(--ink); }
+
+    .example-step {
+      display: grid;
+      grid-template-columns: 3rem minmax(9rem, 0.34fr) minmax(0, 0.66fr);
+      gap: 1rem;
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .example-step > span { font-family: var(--font-data); color: var(--route-deep); font-size: 0.8rem; font-weight: 800; }
+    .example-step strong { color: var(--signal-deep); }
+    .example-step p { margin: 0; color: var(--ink-soft); }
+
+    .promises { background: var(--signal-soft); color: var(--ink); }
+    .promises .section-head p { color: var(--ink-soft); }
+    .promise-list { border-top: 1px solid var(--line); }
+
+    .promise-row {
+      display: grid;
+      grid-template-columns: 3rem minmax(12rem, 0.34fr) minmax(0, 0.66fr);
+      gap: 1.25rem;
+      padding: clamp(1.5rem, 3vw, 2.4rem) 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .promise-row > span { font-family: var(--font-data); color: var(--route-deep); font-size: 0.82rem; font-weight: 800; }
+    .promise-row h3 { margin: 0; font-size: clamp(1.35rem, 2.4vw, 2rem); }
+    .promise-row p { max-width: 62ch; margin: 0; color: var(--ink-soft); }
+
+    .operating-model { background: var(--surface); }
+    .operating-model .section-head { margin-bottom: clamp(2rem, 5vw, 4rem); }
+    .deep-dives { border-top: 1px solid var(--ink); }
+
+    .deep-dive { border-bottom: 1px solid var(--ink); }
+
+    .deep-dive summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 2rem;
+      align-items: center;
+      padding: 1.35rem 0;
+      color: var(--ink);
+      cursor: pointer;
+      font-family: var(--font-display);
+      font-size: clamp(1.35rem, 2.7vw, 2rem);
+      font-weight: 720;
+      line-height: 1.05;
+      list-style: none;
+    }
+
+    .deep-dive summary::-webkit-details-marker { display: none; }
+    .deep-dive summary::after { content: "+"; color: var(--signal-deep); font-family: var(--font-data); font-size: 1.3rem; }
+    .deep-dive[open] summary::after { content: "−"; }
+    .deep-dive[open] summary { color: var(--signal-deep); }
+    .deep-dive:target summary { color: var(--signal-deep); background: var(--signal-soft); }
+    .detail-field { margin-bottom: 1.5rem; padding: clamp(2rem, 5vw, 4rem); }
+    .detail-field > h3 { max-width: 24ch; margin-bottom: 2rem; font-size: clamp(1.7rem, 3.4vw, 2.8rem); }
+
+    .guardrails {
+      background: var(--signal-soft);
+      color: var(--ink);
+    }
+
+
+    .guardrail-manifest { border-top: 1px solid var(--ink); }
+
+    .guardrail-row {
+      display: grid;
+      grid-template-columns: 3.5rem minmax(12rem, 0.34fr) minmax(0, 0.66fr);
+      gap: 1.25rem;
+      align-items: start;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .guardrail-row > span {
+      font-family: var(--font-data);
+      color: var(--signal-deep);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .guardrail-row h3 { margin-bottom: 0; font-size: 1.35rem; }
+    .guardrail-row p { max-width: 62ch; margin-bottom: 0; color: var(--ink-soft); }
+
+    .completion {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: clamp(3rem, 7vw, 5rem);
+      border: 1px solid var(--ink);
+    }
+
+    .completion-state {
+      min-height: 11rem;
+      padding: 1.4rem;
+      border-right: 1px solid var(--ink);
+      background: var(--white);
+    }
+
+    .completion-state:last-child { border-right: 0; }
+    .completion-state strong { display: block; margin-bottom: 1.6rem; font-size: 1.2rem; }
+    .completion-state p { margin-bottom: 0; color: var(--ink-soft); }
+    .guardrail-footnote { max-width: 74ch; margin: 1.25rem 0 0; color: var(--signal-deep); font-weight: 700; }
 
     .capability-chain {
       display: grid;
@@ -505,7 +649,7 @@
     }
 
     .router-node strong { display: block; font-size: 1.45rem; }
-    .router-node span { display: block; color: oklch(0.76 0.014 252); }
+    .router-node span { display: block; color: oklch(0.78 0.02 342); }
 
     .reference-lines { display: grid; gap: 0.55rem; }
 
@@ -539,6 +683,8 @@
 
     .evidence-band strong { font-size: 1.1rem; }
     .evidence-band p { max-width: 68ch; margin-bottom: 0; color: oklch(0.87 0.02 183); }
+    .evidence-band a { text-decoration-color: var(--route); text-underline-offset: 0.18em; }
+    .evidence-band a:hover { text-decoration-thickness: 0.14em; }
 
     .install { text-align: center; }
 
@@ -547,7 +693,7 @@
       margin: 0 auto 1.25rem;
       font-size: clamp(3rem, 6vw, 5.4rem);
       line-height: 0.96;
-      letter-spacing: -0.035em;
+      letter-spacing: -0.025em;
     }
 
     .install > p { max-width: 62ch; margin: 0 auto 2.5rem; color: var(--ink-soft); }
@@ -562,18 +708,46 @@
       gap: 2rem;
       padding: 2rem var(--pad);
       background: var(--ink);
-      color: oklch(0.8 0.012 252);
+      color: oklch(0.8 0.018 342);
       font-size: 0.85rem;
     }
 
     .site-footer p { margin-bottom: 0; }
     .site-footer a { color: var(--white); }
 
+    @media (min-width: 801px) and (min-height: 650px) {
+      .hero,
+      .mode-lab,
+      .field-example,
+      .promises,
+      .install {
+        min-height: 100svh;
+      }
+
+      .mode-lab,
+      .field-example,
+      .promises,
+      .install {
+        display: grid;
+        align-content: center;
+        padding-top: clamp(3.5rem, 7vh, 5rem);
+        padding-bottom: clamp(3.5rem, 7vh, 5rem);
+      }
+
+      .mode-lab > .section-head,
+      .field-example > .section-head,
+      .promises > .section-head {
+        margin-bottom: clamp(2rem, 4vh, 3.5rem);
+      }
+
+      .mode-panel { min-height: 20rem; }
+    }
+
     @media (max-width: 800px) {
       .site-header { align-items: flex-start; }
       .site-nav a:not(.repo-link) { display: none; }
       .hero { grid-template-columns: 1fr; min-height: auto; gap: 4rem; }
-      .compass-wrap { justify-self: center; width: min(24rem, 84vw); }
+      .decision-map { justify-self: center; width: min(28rem, 92vw); }
       .section-head, .route-layout, .loading-map { grid-template-columns: 1fr; }
       .route-intro { position: static; }
       .mode-tool { grid-template-columns: 1fr; }
@@ -589,6 +763,21 @@
       .capability-chain button:nth-child(n+4) { border-top: 0; }
       .capability-chain button:nth-child(3)::after { display: none; }
       .evidence-band { grid-template-columns: 1fr; gap: 0.5rem; }
+      .example-layout { grid-template-columns: 1fr; }
+      .journey-nav {
+        position: sticky;
+        z-index: 4;
+        top: 0;
+        display: flex;
+        gap: 1.2rem;
+        overflow-x: auto;
+        padding: 0.8rem var(--pad);
+        border-bottom: 1px solid var(--line);
+        background: color-mix(in oklch, var(--white) 94%, transparent);
+        backdrop-filter: blur(0.5rem);
+        scrollbar-width: none;
+      }
+      .journey-nav a { flex: 0 0 auto; color: var(--ink); font-size: 0.82rem; font-weight: 800; text-decoration: none; }
     }
 
     @media (max-width: 520px) {
@@ -608,6 +797,13 @@
       .capability-chain button:nth-child(2n)::after { display: none; }
       .reference-row { grid-template-columns: 1fr; gap: 0.2rem; }
       .site-footer { flex-direction: column; }
+      .example-step, .promise-row { grid-template-columns: 2.5rem 1fr; }
+      .example-step p, .promise-row p { grid-column: 2; }
+      .guardrail-row { grid-template-columns: 2.5rem 1fr; }
+      .guardrail-row p { grid-column: 2; }
+      .completion { grid-template-columns: 1fr; }
+      .completion-state { min-height: auto; border-right: 0; border-bottom: 1px solid var(--ink); }
+      .completion-state:last-child { border-bottom: 0; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -631,6 +827,7 @@
     </a>
     <nav class="site-nav" aria-label="Primary navigation">
       <a href="#modes">Choose a mode</a>
+      <a href="#how-it-works">How it works</a>
       <a href="#evidence">Evidence</a>
       <a class="repo-link" href="https://github.com/abdul-shaikh-dev/code-territory-guide">View repository</a>
     </nav>
@@ -646,20 +843,33 @@
           <a class="button button-primary" href="#modes">Find your mode <span aria-hidden="true">↓</span></a>
           <a class="button button-secondary" href="https://github.com/abdul-shaikh-dev/code-territory-guide#installation">Install the skill</a>
         </div>
+        <p class="hero-proof">Deterministic integrity is verified. Fresh independent behavioral evaluation is still pending. <a href="#evidence">See the evidence boundary.</a></p>
       </div>
-      <figure class="compass-wrap">
-        <div class="compass" role="img" aria-label="Survey, Track, Prove, and Expedition arranged around the main uncertainty">
-          <span class="compass-axis" aria-hidden="true"></span>
-          <span class="compass-axis" aria-hidden="true"></span>
-          <span class="compass-mode">Survey</span>
-          <span class="compass-mode">Track</span>
-          <span class="compass-mode">Prove</span>
-          <span class="compass-mode">Expedition</span>
-          <span class="compass-core">Main<br>unknown</span>
+      <figure class="decision-map">
+        <figcaption><strong>Choose by the main unknown</strong><span>Start in the center, then follow the matching task condition.</span></figcaption>
+        <div class="mode-map">
+          <svg class="mode-map-lines" viewBox="0 0 100 90" aria-hidden="true">
+            <line x1="50" y1="45" x2="21" y2="12"></line>
+            <line x1="50" y1="45" x2="79" y2="12"></line>
+            <line x1="50" y1="45" x2="21" y2="78"></line>
+            <line x1="50" y1="45" x2="79" y2="78"></line>
+            <circle cx="50" cy="45" r="1.4"></circle>
+          </svg>
+          <a class="mode-route" href="#tab-survey" data-compass-mode="survey"><span>Goal or design is unclear</span><strong>Survey</strong><small>Open mode ↓</small></a>
+          <a class="mode-route" href="#tab-track" data-compass-mode="track"><span>Something fails or varies</span><strong>Track</strong><small>Open mode ↓</small></a>
+          <a class="mode-route" href="#tab-prove" data-compass-mode="prove"><span>Behavior is narrow and testable</span><strong>Prove</strong><small>Open mode ↓</small></a>
+          <a class="mode-route" href="#tab-expedition" data-compass-mode="expedition"><span>The route is clear</span><strong>Expedition</strong><small>Open mode ↓</small></a>
+          <div class="mode-map-core"><span>START HERE</span><strong>What is the main unknown?</strong></div>
         </div>
-        <figcaption class="compass-caption"><span>Choose lightly</span><span>Escalate with evidence</span></figcaption>
       </figure>
     </section>
+
+    <nav class="journey-nav" aria-label="Explainer sections">
+      <a href="#modes">Mode</a>
+      <a href="#example">Example</a>
+      <a href="#how-it-works">Approach</a>
+      <a href="#install">Install</a>
+    </nav>
 
     <section class="section mode-lab" id="modes" aria-labelledby="modes-title">
       <div class="section-head">
@@ -694,85 +904,149 @@
       </div>
     </section>
 
-    <section class="section unknowns" aria-labelledby="unknowns-title">
+    <section class="section field-example" id="example" aria-labelledby="example-title">
       <div class="section-head">
-        <h2 id="unknowns-title">Not every unknown needs a meeting.</h2>
-        <p>The taxonomy is a discovery checklist. It tells the agent whether to inspect, ask, prototype, or simply proceed.</p>
+        <h2 id="example-title">See the skill handle one real request.</h2>
+        <p>The policy becomes useful when it changes what an agent notices, edits, validates, and claims.</p>
       </div>
-      <div class="unknown-matrix">
-        <article class="unknown-cell"><span class="unknown-code">KNOWN / KNOWN</span><h3>Constraints</h3><p>Honor the explicit request, trusted instructions, and verified repository conventions.</p></article>
-        <article class="unknown-cell"><span class="unknown-code">KNOWN / UNKNOWN</span><h3>Questions</h3><p>Resolve only decisions that can materially change architecture, behavior, security, UX, or validation.</p></article>
-        <article class="unknown-cell"><span class="unknown-code">UNKNOWN / KNOWN</span><h3>Recognition</h3><p>Use a prototype or example when taste, density, or interaction is easier to recognize than describe.</p></article>
-        <article class="unknown-cell"><span class="unknown-code">UNKNOWN / UNKNOWN</span><h3>Blind spots</h3><p>Inspect coupling, ownership, compatibility, accessibility, deployment, and evidence quality.</p></article>
-      </div>
-    </section>
-
-    <section class="section route" aria-labelledby="route-title">
-      <div class="route-layout">
-        <div class="route-intro"><h2 id="route-title">One route. Observable checkpoints.</h2><p>Discovery stops when the owning seam, relevant contract, worktree state, and validation route are supported.</p></div>
-        <div class="route-line">
-          <article class="route-stop"><strong>01 · Orient</strong><div><h3>Enter the real repository</h3><p>Capture the branch, worktree baseline, trusted context, and task-owned files before changing anything.</p></div></article>
-          <article class="route-stop"><strong>02 · Route</strong><div><h3>Decide what could change the plan</h3><p>Classify the important unknowns and choose the cheapest technique that can close them.</p></div></article>
-          <article class="route-stop"><strong>03 · Change</strong><div><h3>Patch the smallest valuable surface</h3><p>Preserve unrelated work, avoid silent scope expansion, and record only material deviations.</p></div></article>
-          <article class="route-stop"><strong>04 · Verify</strong><div><h3>Classify validation honestly</h3><p>Separate task-caused failures, pre-existing failures, and environmental blockers.</p></div></article>
-          <article class="route-stop"><strong>05 · Review</strong><div><h3>Try to disconfirm the result</h3><p>Review the owned delta from the original request and evidence, not from the implementation's intent.</p></div></article>
-          <article class="route-stop"><strong>06 · Report</strong><div><h3>State the actual territory</h3><p>Hand off what changed, what passed, what remains uncertain, and exactly how far delivery was authorized.</p></div></article>
+      <div class="example-layout">
+        <div class="example-request"><strong>Incoming request</strong><blockquote>“The export action sometimes duplicates records. Fix it and open a pull request.”</blockquote></div>
+        <div class="example-route">
+          <article class="example-step"><span>01</span><strong>Enter the territory</strong><p>Capture the branch and existing changes. Leave unrelated work untouched.</p></article>
+          <article class="example-step"><span>02</span><strong>Choose Track</strong><p>The behavior is inconsistent, so follow evidence before selecting a fix.</p></article>
+          <article class="example-step"><span>03</span><strong>Support the cause</strong><p>Trace the duplicate to the owning retry boundary instead of patching the visible symptom.</p></article>
+          <article class="example-step"><span>04</span><strong>Change and prove</strong><p>Add the smallest guard and a focused regression test, then run surrounding checks.</p></article>
+          <article class="example-step"><span>05</span><strong>Review and deliver</strong><p>Try to disconfirm the result, report the evidence, then commit and open only the authorized pull request.</p></article>
         </div>
       </div>
     </section>
 
-    <section class="section delivery" aria-labelledby="delivery-title">
+    <section class="section promises" id="how-it-works" aria-labelledby="promises-title">
       <div class="section-head">
-        <h2 id="delivery-title">Delivery is a capability chain.</h2>
-        <p>Each step requires its own authorization. Select a capability to see what it permits—and what it does not.</p>
+        <h2 id="promises-title">Three operating promises.</h2>
+        <p>The deeper policies exist to uphold these outcomes—not to add ceremony to every task.</p>
       </div>
-      <div class="capability-chain" aria-label="Delivery capabilities">
-        <button type="button" aria-pressed="true" data-capability="edit">Edit</button>
-        <button type="button" aria-pressed="false" data-capability="commit">Commit</button>
-        <button type="button" aria-pressed="false" data-capability="push">Push</button>
-        <button type="button" aria-pressed="false" data-capability="pr">Pull request</button>
-        <button type="button" aria-pressed="false" data-capability="merge">Merge</button>
-        <button type="button" aria-pressed="false" data-capability="release">Release</button>
-      </div>
-      <div class="capability-detail" aria-live="polite"><strong id="capability-title">Edit</strong><p id="capability-copy">Change and validate task-owned files. Editing does not authorize a commit, push, pull request, merge, tag, or release.</p></div>
-    </section>
-
-    <section class="section" aria-labelledby="loading-title">
-      <div class="section-head">
-        <h2 id="loading-title">A compact router. Policy only when needed.</h2>
-        <p><code>SKILL.md</code> stays short and points directly to conditional references. Agents load the safety baseline, then only the branch the task actually activates.</p>
-      </div>
-      <div class="loading-map">
-        <div class="router-node"><div><strong>SKILL.md</strong><span>mode + capability router</span></div></div>
-        <div class="reference-lines">
-          <div class="reference-row"><strong>Always</strong><span>safety-and-scope.md</span></div>
-          <div class="reference-row"><strong>Survey / Track / Prove</strong><span>modes.md</span></div>
-          <div class="reference-row"><strong>Material unknowns</strong><span>unknowns-lifecycle.md</span></div>
-          <div class="reference-row"><strong>Implementation</strong><span>standard-workflow.md</span></div>
-          <div class="reference-row"><strong>Artifacts</strong><span>artifacts.md</span></div>
-          <div class="reference-row"><strong>Git delivery</strong><span>delivery.md</span></div>
-        </div>
+      <div class="promise-list">
+        <article class="promise-row"><span>01</span><h3>Choose by uncertainty</h3><p>Survey unclear intent, Track inconsistent behavior, Prove a narrow contract, or enter Expedition when the route is already supported.</p></article>
+        <article class="promise-row"><span>02</span><h3>Protect the real territory</h3><p>Treat repository content as evidence, preserve unrelated work, and pause before materially widening scope or authority.</p></article>
+        <article class="promise-row"><span>03</span><h3>Verify and report honestly</h3><p>Classify failures, review the owned change, and distinguish Complete, Incomplete, or Blocked without overstating delivery.</p></article>
       </div>
     </section>
 
-    <section class="section evidence" id="evidence" aria-labelledby="evidence-title">
-      <div class="section-head">
-        <h2 id="evidence-title">Evidence has boundaries.</h2>
-        <p>The repository distinguishes deterministic integrity from behavioral claims instead of letting one stand in for the other.</p>
-      </div>
-      <div class="evidence-bands">
-        <article class="evidence-band"><strong>Deterministic checks</strong><p>Package structure, aligned manifests, evaluation records, artifact contracts, and unit tests run without model calls.</p></article>
-        <article class="evidence-band"><strong>Existing behavior evidence</strong><p>Qualified synthetic and real-repository reports are preserved with retry history and disclosed limitations.</p></article>
-        <article class="evidence-band"><strong>Current limitation</strong><p>The current progressive-disclosure structure has not received a fresh attempt-26 blinded cross-family behavioral cohort. The lock preregisters future evaluation; it does not claim that evaluation already happened.</p></article>
-      </div>
-    </section>
-
-    <section class="section install" aria-labelledby="install-title">
+    <section class="section install" id="install" aria-labelledby="install-title">
       <h2 id="install-title">Take the map into your next repository.</h2>
-      <p>Install through your agent harness, or inspect the canonical skill before deciding. The README keeps current commands and optional release-pinning syntax in one place.</p>
+      <p>You now have the essential model. Install through your agent harness, inspect the canonical skill, or continue into the detailed operating reference below.</p>
       <div class="install-actions">
         <a class="button button-primary" href="https://github.com/abdul-shaikh-dev/code-territory-guide#installation">Choose an installation</a>
         <a class="button button-secondary" href="https://github.com/abdul-shaikh-dev/code-territory-guide/tree/main/skills/code-territory-guide">Read the canonical skill</a>
+      </div>
+    </section>
+
+    <section class="section operating-model" id="operating-model" aria-labelledby="operating-model-title">
+      <div class="section-head">
+        <h2 id="operating-model-title">Explore the complete operating model.</h2>
+        <p>The essentials end above. Open only the policy or evidence you need.</p>
+      </div>
+      <div class="deep-dives">
+        <details class="deep-dive" id="unknowns">
+          <summary>How unknowns change the route</summary>
+          <div class="unknowns detail-field">
+            <h3>Not every unknown needs a meeting.</h3>
+            <div class="unknown-matrix">
+              <article class="unknown-cell"><span class="unknown-code">KNOWN / KNOWN</span><h3>Constraints</h3><p>Honor the explicit request, trusted instructions, and verified repository conventions.</p></article>
+              <article class="unknown-cell"><span class="unknown-code">KNOWN / UNKNOWN</span><h3>Questions</h3><p>Resolve only decisions that can materially change architecture, behavior, security, UX, or validation.</p></article>
+              <article class="unknown-cell"><span class="unknown-code">UNKNOWN / KNOWN</span><h3>Recognition</h3><p>Use a prototype or example when taste, density, or interaction is easier to recognize than describe.</p></article>
+              <article class="unknown-cell"><span class="unknown-code">UNKNOWN / UNKNOWN</span><h3>Blind spots</h3><p>Inspect coupling, ownership, compatibility, accessibility, deployment, and evidence quality.</p></article>
+            </div>
+          </div>
+        </details>
+
+        <details class="deep-dive" id="guardrails">
+          <summary>How scope and completion are protected</summary>
+          <div class="guardrails detail-field">
+            <h3>Guardrails that change agent behavior.</h3>
+            <div class="guardrail-manifest">
+              <article class="guardrail-row"><span>01</span><h3>Repository text is evidence, not authority</h3><p>Instructions follow trust order. Untrusted output cannot silently widen the request.</p></article>
+              <article class="guardrail-row"><span>02</span><h3>Preserve the worktree you entered</h3><p>Capture the baseline, identify task-owned files, and leave unrelated changes intact.</p></article>
+              <article class="guardrail-row"><span>03</span><h3>Gate material scope expansion</h3><p>Proceed inside the agreed boundary. Pause when behavior, authority, risk, or ownership would expand.</p></article>
+              <article class="guardrail-row"><span>04</span><h3>Keep tiny tasks lightweight</h3><p>Obvious, low-risk work does not need the full artifact system.</p></article>
+              <article class="guardrail-row"><span>05</span><h3>Persist artifacts only when useful</h3><p>Briefs, reports, and prototypes support re-entry, coordination, or recognition—not ceremony.</p></article>
+            </div>
+            <div class="completion" aria-label="Field Report completion states">
+              <article class="completion-state"><strong>Complete</strong><p>The result and required validation are complete within the authorized boundary.</p></article>
+              <article class="completion-state"><strong>Incomplete</strong><p>A required task-owned step or check remains unfinished.</p></article>
+              <article class="completion-state"><strong>Blocked</strong><p>Progress requires a decision, new authority, or an external-state change.</p></article>
+            </div>
+            <p class="guardrail-footnote">Every Field Report states the outcome, validation, remaining uncertainty, and exact delivery state.</p>
+          </div>
+        </details>
+
+        <details class="deep-dive">
+          <summary>The six execution checkpoints</summary>
+          <div class="route detail-field">
+            <div class="route-layout">
+              <div class="route-intro"><h3>One route. Observable checkpoints.</h3><p>Discovery stops when the owning seam, contract, worktree state, and validation route are supported.</p></div>
+              <div class="route-line">
+                <article class="route-stop"><strong>01 · Orient</strong><div><h3>Enter the real repository</h3><p>Capture the baseline, trusted context, and task-owned files.</p></div></article>
+                <article class="route-stop"><strong>02 · Route</strong><div><h3>Decide what could change the plan</h3><p>Classify important unknowns and choose the cheapest technique that can close them.</p></div></article>
+                <article class="route-stop"><strong>03 · Change</strong><div><h3>Patch the smallest valuable surface</h3><p>Preserve unrelated work and avoid silent scope expansion.</p></div></article>
+                <article class="route-stop"><strong>04 · Verify</strong><div><h3>Classify validation honestly</h3><p>Separate task-caused, pre-existing, and environmental failures.</p></div></article>
+                <article class="route-stop"><strong>05 · Review</strong><div><h3>Try to disconfirm the result</h3><p>Review the owned delta from the original request and evidence.</p></div></article>
+                <article class="route-stop"><strong>06 · Report</strong><div><h3>State the actual territory</h3><p>Produce a proportionate Field Report and exact delivery state.</p></div></article>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="deep-dive">
+          <summary>Delivery authorization</summary>
+          <div class="delivery detail-field">
+            <h3>Delivery is a capability chain.</h3>
+            <p>Each step requires its own authorization. Select one to see its boundary.</p>
+            <div class="capability-chain" aria-label="Delivery capabilities">
+              <button type="button" aria-pressed="true" data-capability="edit">Edit</button>
+              <button type="button" aria-pressed="false" data-capability="commit">Commit</button>
+              <button type="button" aria-pressed="false" data-capability="push">Push</button>
+              <button type="button" aria-pressed="false" data-capability="pr">Pull request</button>
+              <button type="button" aria-pressed="false" data-capability="merge">Merge</button>
+              <button type="button" aria-pressed="false" data-capability="release">Release</button>
+            </div>
+            <div class="capability-detail" aria-live="polite"><strong id="capability-title">Edit</strong><p id="capability-copy">Change and validate task-owned files. Editing does not authorize a commit, push, pull request, merge, tag, or release.</p></div>
+          </div>
+        </details>
+
+        <details class="deep-dive">
+          <summary>Progressive reference loading</summary>
+          <div class="detail-field">
+            <h3>A compact router. Policy only when needed.</h3>
+            <div class="loading-map">
+              <div class="router-node"><div><strong>SKILL.md</strong><span>mode + capability router</span></div></div>
+              <div class="reference-lines">
+                <div class="reference-row"><strong>Always</strong><span>safety-and-scope.md</span></div>
+                <div class="reference-row"><strong>Survey / Track / Prove</strong><span>modes.md</span></div>
+                <div class="reference-row"><strong>Material unknowns</strong><span>unknowns-lifecycle.md</span></div>
+                <div class="reference-row"><strong>Implementation</strong><span>standard-workflow.md</span></div>
+                <div class="reference-row"><strong>Artifacts</strong><span>artifacts.md</span></div>
+                <div class="reference-row"><strong>Git delivery</strong><span>delivery.md</span></div>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="deep-dive" id="evidence">
+          <summary>What is verified today</summary>
+          <div class="evidence detail-field">
+            <div class="section-head">
+              <h3>Evidence has boundaries.</h3>
+              <p>Deterministic integrity and behavioral claims are reported separately.</p>
+            </div>
+            <div class="evidence-bands">
+              <article class="evidence-band"><strong>Deterministic checks</strong><p>Package structure, manifests, records, artifact contracts, and unit tests run without model calls.</p></article>
+              <article class="evidence-band"><strong>Existing behavior evidence</strong><p>Qualified reports preserve retry history and disclosed limitations.</p></article>
+              <article class="evidence-band"><strong>Current limitation</strong><p>The current architecture has not yet received a fresh independent behavioral evaluation. The <a href="https://github.com/abdul-shaikh-dev/code-territory-guide/tree/main/evals">evaluation records</a> make that boundary explicit.</p></article>
+            </div>
+          </div>
+        </details>
       </div>
     </section>
   </main>
@@ -787,6 +1061,19 @@
 
     const modeButtons = [...document.querySelectorAll("[data-mode]")];
     const modePanels = [...document.querySelectorAll("[data-mode-panel]")];
+    const modeRoutes = [...document.querySelectorAll("[data-compass-mode]")];
+    const modeSection = document.querySelector("#modes");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    function selectMapRoute(selectedMode) {
+      for (const route of modeRoutes) {
+        const selected = route.dataset.compassMode === selectedMode;
+        if (selected) route.setAttribute("aria-current", "true");
+        else route.removeAttribute("aria-current");
+        const action = route.querySelector("small");
+        if (action) action.textContent = selected ? "Selected mode ↓" : "Open mode ↓";
+      }
+    }
 
     function selectMode(selectedButton, moveFocus = false) {
       const selectedMode = selectedButton.dataset.mode;
@@ -798,6 +1085,7 @@
       for (const panel of modePanels) {
         panel.hidden = panel.dataset.modePanel !== selectedMode;
       }
+      selectMapRoute(selectedMode);
       if (moveFocus) selectedButton.focus();
     }
 
@@ -812,6 +1100,21 @@
       });
     }
     selectMode(modeButtons[0]);
+
+    for (const route of modeRoutes) {
+      route.addEventListener("click", (event) => {
+        const selectedButton = modeButtons.find((button) => button.dataset.mode === route.dataset.compassMode);
+        if (!selectedButton) return;
+        event.preventDefault();
+        selectMode(selectedButton);
+        window.history.pushState(null, "", route.hash);
+        selectedButton.focus({ preventScroll: true });
+        modeSection?.scrollIntoView({
+          behavior: reducedMotion.matches ? "auto" : "smooth",
+          block: "start"
+        });
+      });
+    }
 
     const capabilityCopy = {
       edit: ["Edit", "Change and validate task-owned files. Editing does not authorize a commit, push, pull request, merge, tag, or release."],
@@ -834,6 +1137,19 @@
         capabilityText.textContent = copy;
       });
     }
+
+    function revealDeepLink() {
+      const target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+      if (target?.matches("[data-mode]")) {
+        selectMode(target);
+      }
+      if (target instanceof HTMLDetailsElement) {
+        target.open = true;
+      }
+    }
+
+    window.addEventListener("hashchange", revealDeepLink);
+    revealDeepLink();
   </script>
 </body>
 </html>

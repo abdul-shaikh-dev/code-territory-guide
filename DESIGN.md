@@ -2,38 +2,38 @@
 name: Code Territory Guide
 description: A visual field instrument for evidence-led code work
 colors:
-  signal: "oklch(0.58 0.2 357)"
-  signal-deep: "oklch(0.34 0.135 357)"
-  signal-soft: "oklch(0.95 0.032 357)"
-  route: "oklch(0.64 0.12 183)"
-  route-deep: "oklch(0.31 0.07 183)"
-  ink: "oklch(0.17 0.014 252)"
-  ink-soft: "oklch(0.39 0.02 252)"
-  line: "oklch(0.83 0.012 252)"
-  surface: "oklch(0.965 0.006 252)"
+  signal: "oklch(0.39 0.07 350)"
+  signal-deep: "oklch(0.27 0.055 350)"
+  signal-soft: "oklch(0.95 0.015 350)"
+  route: "oklch(0.57 0.08 188)"
+  route-deep: "oklch(0.3 0.045 188)"
+  ink: "oklch(0.16 0.02 342)"
+  ink-soft: "oklch(0.39 0.025 342)"
+  line: "oklch(0.84 0.012 342)"
+  surface: "oklch(0.975 0.008 350)"
   white: "oklch(1 0 0)"
 typography:
   display:
-    fontFamily: "Arial Narrow, Aptos Display, Segoe UI, sans-serif"
+    fontFamily: "Bahnschrift, DIN Alternate, Arial Narrow, sans-serif"
     fontSize: "clamp(3.7rem, 7.8vw, 6rem)"
-    fontWeight: 820
+    fontWeight: 720
     lineHeight: 0.94
-    letterSpacing: "-0.035em"
+    letterSpacing: "-0.025em"
   body:
-    fontFamily: "Segoe UI, Aptos, system-ui, sans-serif"
-    fontSize: "1rem"
+    fontFamily: "Atkinson Hyperlegible, Trebuchet MS, Segoe UI, sans-serif"
+    fontSize: "1.0625rem"
     fontWeight: 400
-    lineHeight: 1.55
+    lineHeight: 1.62
 rounded:
   sm: "0.35rem"
   md: "0.75rem"
 spacing:
   control: "0.75rem 1rem"
-  section: "clamp(5rem, 10vw, 9rem)"
+  section: "clamp(3.5rem, 7vh, 5rem) for primary desktop chapters"
 components:
   button-primary:
-    backgroundColor: "{colors.signal}"
-    textColor: "{colors.white}"
+    backgroundColor: "{colors.white}"
+    textColor: "{colors.signal-deep}"
     rounded: "{rounded.sm}"
     padding: "{spacing.control}"
   button-secondary:
@@ -47,7 +47,7 @@ components:
 
 ## 1. Overview
 
-**Creative North Star: "The Evidence Compass"**
+**Creative North Star: "The Evidence Map"**
 
 The explainer feels like a precise field instrument opened on a clear
 workbench: curious enough to invite exploration, rigorous enough to support a
@@ -62,21 +62,23 @@ operational sequence harder to follow.
 
 **Key Characteristics:**
 
-- Rose-red orientation fields and blue-green evidence signals.
+- Muted berry orientation, restrained teal wayfinding, and neutral-dominant working surfaces.
 - Diagrammatic relationships that remain readable without animation.
-- Spacious narrative moments alternating with dense operational detail.
+- A short decision journey followed by optional operational depth.
 - Direct language and visible qualification of claims.
-- Dependency-free system typography and one self-contained HTML entry.
+- Dependency-free local-first typography and one self-contained HTML entry.
 
 ## 2. Colors
 
-The palette uses a committed signal color, a distinct route/evidence color, and
-near-neutral working surfaces. Token values in the frontmatter are normative.
+The palette uses a muted identity color, a restrained route/evidence color,
+and near-neutral working surfaces. Token values in the frontmatter are
+normative. Neutral surfaces do most of the work; color marks orientation or
+state instead of dividing every concept into a new visual world.
 
 ### Primary
 
-- **Territory Signal** (`signal`): large orientation surfaces, selected states,
-  and primary actions.
+- **Territory Signal** (`signal`): the hero, selected states, and a small number
+  of primary actions.
 - **Deep Coordinate** (`signal-deep`): readable text and structural detail
   related to the primary signal.
 - **Signal Wash** (`signal-soft`): delivery education and low-intensity context.
@@ -94,28 +96,32 @@ near-neutral working surfaces. Token values in the frontmatter are normative.
 - **Field Surface** (`surface`): alternating explanatory sections.
 - **True White** (`white`): primary canvas and text on saturated fills.
 
-**The Committed Signal Rule.** Rose-red carries the identity across purposeful
-surfaces; it is never reduced to a timid decorative accent.
+**The Quiet Signal Rule.** Muted berry anchors the hero and selected states.
+Supporting sections return to neutral surfaces instead of repeating saturated
+fields.
 
 **The Evidence Color Rule.** Blue-green always means route, focus, or evidence.
 It cannot become a second ornamental brand fill.
 
 ## 3. Typography
 
-**Display Font:** Arial Narrow with Aptos Display and Segoe UI fallbacks
+**Display Font:** Bahnschrift with DIN Alternate and Arial Narrow fallbacks
 
-**Body Font:** Segoe UI with Aptos and system UI fallbacks
+**Body Font:** Atkinson Hyperlegible with Trebuchet MS and Segoe UI fallbacks
+
+**Data Font:** Cascadia Code with SFMono-Regular and Consolas fallbacks
 
 **Character:** The condensed display stack behaves like a precise instrument
-heading, while the humanist body stack stays readable across platforms without
-network font dependencies.
+heading, while the humanist body stack stays readable across platforms. The
+monospace data face is reserved for indices, contracts, and route coordinates.
+All stacks remain useful without a network font dependency.
 
 ### Hierarchy
 
-- **Display** (820, fluid to 6rem, 0.94): hero and major orientation statements.
+- **Display** (720, fluid to 5.4rem, 0.94): hero and major orientation statements.
 - **Headline** (800, fluid to 4.8rem, 0.98): section decisions and transitions.
 - **Title** (700–800, 1.25–1.55rem): route stops and operational concepts.
-- **Body** (400, 1rem, 1.55): explanations, capped near 60–68 characters where practical.
+- **Body** (400, 1.0625rem, 1.62): explanations, capped near 60–68 characters where practical.
 - **Label** (780–850, 0.78–0.9rem): real modes, controls, indices, and evidence states.
 
 **The Instrument Label Rule.** Compact labels identify real controls, states,
@@ -135,15 +141,16 @@ the structure is not yet clear enough.
 ### Buttons
 
 - **Shape:** compact precision corners (`rounded.sm`).
-- **Primary:** Territory Signal fill with True White text and control spacing.
+- **Primary:** True White with Deep Coordinate text on the hero; Territory
+  Signal with white text on neutral installation surfaces.
 - **Hover / Focus:** two-pixel lift on hover; three-pixel Verified Route focus ring.
 - **Secondary:** transparent or white surface with a one-pixel semantic border.
 
 ### Chips
 
-- **Style:** full pill only for compass mode labels; Deep Coordinate fill and
-  white text.
-- **State:** pills identify modes but do not impersonate buttons unless interactive.
+- **Style:** compact pills are reserved for genuine state labels, not the mode
+  diagram.
+- **State:** pills identify state but do not impersonate buttons unless interactive.
 
 ### Cards / Containers
 
@@ -164,11 +171,34 @@ Navigation sits directly on the hero field with high-contrast text. Desktop
 shows learning anchors and repository access; narrow layouts preserve the brand
 and repository action while the page itself supplies the learning sequence.
 
-### Evidence Compass
+### Main-Unknown Decision Map
 
-The circular four-mode compass is the signature image. It communicates one
-main uncertainty surrounded by Survey, Track, Prove, and Expedition without
-pretending that the modes are a maturity ladder.
+The hero's signature diagram begins with one explicit question: "What is the
+main unknown?" Four visible spokes pair a recognizable task condition with
+Survey, Track, Prove, or Expedition. The map is not a maturity ladder and does
+not require visitors to infer meaning from position or decoration. Each route
+is a keyboard-accessible link that selects the matching mode explanation and
+retains useful anchor navigation when JavaScript is unavailable.
+
+### One-Viewport Chapters
+
+On desktop viewports at least 650 pixels tall, the hero, mode chooser, worked
+example, operating promises, and installation each occupy one screen.
+Viewport-relative vertical padding keeps the full chapter visible while
+scrolling remains natural; page-level snapping is avoided because it can fight
+wheel and trackpad input. Mobile content also remains naturally scrollable
+where forcing a single-screen height would clip text or controls.
+
+### Progressive Disclosure
+
+The primary journey contains only the promise, mode choice, worked example,
+three operating promises, and installation. Detailed taxonomy, guardrails,
+execution, delivery, loading, and evaluation policy use native `details`
+elements beneath a clearly labelled operating-model boundary.
+
+**The Essentials-End Rule.** A visitor can understand and install the skill
+without opening the operating-model disclosures. Expanded policy remains
+available for verification and existing-user reference.
 
 ## 6. Do's and Don'ts
 
@@ -179,6 +209,8 @@ pretending that the modes are a maturity ladder.
 - **Do** use asymmetric composition when it clarifies hierarchy.
 - **Do** provide visible focus and a complete reduced-motion alternative.
 - **Do** use exact canonical vocabulary from the skill and README.
+- **Do** demonstrate the workflow with one concrete request before exposing
+  the complete policy model.
 
 ### Don't:
 
@@ -188,3 +220,4 @@ pretending that the modes are a maturity ladder.
 - **Don't** use editorial-magazine layouts that obscure sequence or evidence.
 - **Don't** use gradient text, decorative glassmorphism, side-stripe accents, or wide ghost-card shadows.
 - **Don't** imply that deterministic validation is fresh behavioral evidence.
+- **Don't** make optional reference depth part of the required reading path.
