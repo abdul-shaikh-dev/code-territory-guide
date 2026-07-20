@@ -45,8 +45,8 @@ Choose the cheapest technique that can close the material gap:
 2. **Brainstorm or prototype** — use when success is easier to recognize than
    describe. Produce small, reversible alternatives that expose preferences;
    do not build production infrastructure merely to obtain feedback. When a
-   file-backed visual or interactive probe is justified, apply the visual
-   prototype policy in `safety-and-scope.md`.
+   file-backed visual or interactive probe is justified, load and apply the
+   visual prototype policy in `artifacts.md`.
 3. **Reference** — ask for or inspect an example when prose cannot efficiently
    specify the desired semantics or quality. Prefer source code for structural
    or behavioral fidelity; diagrams, documentation, screenshots, and recordings

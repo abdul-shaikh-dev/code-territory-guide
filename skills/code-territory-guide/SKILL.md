@@ -27,10 +27,14 @@ Then load only what the task needs:
 - Ambiguous, unfamiliar, product-facing, multi-step, or reviewer-sensitive work:
   `references/unknowns-lifecycle.md`
 - Expedition planning through handoff: `references/standard-workflow.md`
+- Durable artifacts, visual prototypes, resume, or multi-repository coordination:
+  `references/artifacts.md`
+- Commit, push, pull request, tag, release, merge, or other delivery operations:
+  `references/delivery.md`
 - Copyable planner, implementer, reviewer, or handoff prompts: `references/templates.md`
 - Model assignment or fallback: `references/model-routing.md`
 - A compact worked example: `references/field-entry.md`
-- Durable task documents: use the policy in `references/standard-workflow.md` and copy only the needed starter from `assets/artifacts/`
+- Durable task documents: use `references/artifacts.md` and copy only the needed starter from `assets/artifacts/`
 
 Do not execute a non-trivial task from this router alone.
 
@@ -69,6 +73,6 @@ high-impact question at a time when `references/safety-and-scope.md` requires
 confirmation or a material unknown cannot be resolved from the request,
 repository, or supplied references.
 
-This skill is self-contained. Its router and canonical references own the complete trust, scope, ownership, validation, review, artifact, and delivery policy; no companion `AGENTS.md` is required.
+This skill is self-contained. Its router and canonical references own the complete trust, scope, ownership, validation, review, artifact, and delivery policy. A repository `AGENTS.md` may point to the skill for activation, but is not required for the installed skill to operate.
 
-For work spanning multiple repositories, treat each repository as a separate boundary and load the multi-repository artifact and delivery rules in `references/safety-and-scope.md` and `references/standard-workflow.md`.
+For work spanning multiple repositories, treat each repository as a separate boundary and load `references/artifacts.md`; load `references/delivery.md` as well when delivery is authorized.

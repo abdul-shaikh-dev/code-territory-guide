@@ -82,12 +82,16 @@ flowchart TD
     K -->|Survey, Track, Prove| O[modes.md]
     K -->|Material unknowns| U[unknowns-lifecycle.md]
     K -->|Expedition| W[standard-workflow.md]
+    K -->|Durable artifacts or prototypes| A[artifacts.md]
+    K -->|Authorized Git delivery| D[delivery.md]
     K -->|Handoff prompts| T[templates.md]
     K -->|Model assignment| R[model-routing.md]
     K -->|Worked example| F[field-entry.md]
 ```
 
-The skill is self-contained. A companion `AGENTS.md` is not required.
+The installed skill is self-contained. This repository's root `AGENTS.md`
+provides a thin activation pointer for contributors without duplicating policy;
+consumer repositories do not require a companion file.
 
 `SKILL.md`, its references, and its artifact templates define the portable
 behavior. `agents/openai.yaml` adds optional Codex-facing presentation metadata;
@@ -188,19 +192,19 @@ copilot plugin install code-territory-guide@code-territory-guide
 Tell OpenCode:
 
 ```text
-Fetch and follow instructions from https://raw.githubusercontent.com/abdul-shaikh-dev/code-territory-guide/v0.2.1/.opencode/INSTALL.md
+Fetch and follow instructions from https://raw.githubusercontent.com/abdul-shaikh-dev/code-territory-guide/main/.opencode/INSTALL.md
 ```
 
 See [the detailed OpenCode instructions](.opencode/INSTALL.md).
 
 The OpenCode adapter uses a Git-backed Bun package spec and follows the
-repository's default branch. The tagged URL above pins the installation
-instructions, not the commit OpenCode resolves.
+repository's default branch. To install from a specific release, replace
+`main` in the instructions URL with the desired release tag.
 
 ### Pi
 
 ```bash
-pi install git:github.com/abdul-shaikh-dev/code-territory-guide@v0.2.1
+pi install git:github.com/abdul-shaikh-dev/code-territory-guide
 ```
 
 For local development:
@@ -228,7 +232,8 @@ Use the harness-specific skills directory when it differs from `~/.agents/skills
 ### Updating
 
 Marketplace and unpinned Git-backed installations update through their harness.
-For a version-pinned Pi installation, replace the tag in the install command.
+For a version-pinned Pi installation, append `@<release-tag>` to the install
+source.
 For a manual installation, check out the intended tag or pull the desired
 branch, then recopy or refresh the symlink.
 
@@ -236,6 +241,7 @@ branch, then recopy or refresh the symlink.
 
 ```text
 code-territory-guide/
+├── AGENTS.md                            # thin repository activation pointer
 ├── skills/code-territory-guide/       # canonical portable skill
 │   ├── SKILL.md
 │   ├── agents/openai.yaml              # optional Codex metadata
