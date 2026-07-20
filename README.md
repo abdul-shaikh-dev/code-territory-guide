@@ -4,6 +4,8 @@ Code Territory Guide is a portable Agent Skill for making non-trivial code chang
 
 Use it for ambiguous features, debugging, behavior changes, refactors, test-sensitive work, or any task where authorization, ownership, and completion claims need to stay explicit.
 
+[Explore the visual guide](https://abdul-shaikh-dev.github.io/code-territory-guide/) for an interactive introduction to modes, unknowns, delivery gates, progressive loading, and evidence boundaries.
+
 ## How it works
 
 The skill chooses the lightest mode that resolves the task’s main uncertainty.
@@ -254,6 +256,8 @@ code-territory-guide/
 ├── .kimi-plugin/                       # Kimi plugin metadata
 ├── .agents/plugins/marketplace.json    # compatible marketplace catalog
 ├── .opencode/                          # OpenCode adapter and instructions
+├── site/                               # GitHub Pages visual explainer
+├── .github/workflows/pages.yml         # static Pages deployment
 ├── package.json                        # Pi and Git-backed package metadata
 └── evals/
     ├── README.md

@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-21T00:00:00+05:30",
+  "title": "Design System: Code Territory Guide",
+  "extensions": {
+    "colorMeta": {
+      "signal": {
+        "role": "primary",
+        "displayName": "Territory Signal",
+        "canonical": "oklch(0.58 0.2 357)",
+        "tonalRamp": ["oklch(0.15 0.07 357)", "oklch(0.25 0.11 357)", "oklch(0.34 0.135 357)", "oklch(0.46 0.17 357)", "oklch(0.58 0.2 357)", "oklch(0.70 0.16 357)", "oklch(0.84 0.09 357)", "oklch(0.95 0.032 357)"]
+      },
+      "route": {
+        "role": "secondary",
+        "displayName": "Verified Route",
+        "canonical": "oklch(0.64 0.12 183)",
+        "tonalRamp": ["oklch(0.15 0.035 183)", "oklch(0.23 0.05 183)", "oklch(0.31 0.07 183)", "oklch(0.43 0.09 183)", "oklch(0.55 0.11 183)", "oklch(0.64 0.12 183)", "oklch(0.81 0.08 183)", "oklch(0.94 0.025 183)"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Instrument Ink",
+        "canonical": "oklch(0.17 0.014 252)",
+        "tonalRamp": ["oklch(0.12 0.01 252)", "oklch(0.17 0.014 252)", "oklch(0.28 0.018 252)", "oklch(0.39 0.02 252)", "oklch(0.54 0.018 252)", "oklch(0.68 0.015 252)", "oklch(0.83 0.012 252)", "oklch(0.965 0.006 252)"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Instrument Display", "purpose": "Hero and section orientation statements." },
+      "body": { "displayName": "Field Notes", "purpose": "Readable explanations and operational evidence." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "route-ease", "value": "cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "Short state changes and tactile button lift." }
+    ],
+    "breakpoints": [
+      { "name": "compact", "value": "520px" },
+      { "name": "narrow", "value": "800px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary navigation or installation action.",
+      "html": "<button class=\"ds-button-primary\" type=\"button\">Find your mode</button>",
+      "css": ".ds-button-primary { background: oklch(0.58 0.2 357); color: oklch(1 0 0); padding: .75rem 1rem; border: 1px solid oklch(0.58 0.2 357); border-radius: .35rem; font: 800 1rem/1.5 'Segoe UI', sans-serif; transition: transform 180ms cubic-bezier(.22,1,.36,1); } .ds-button-primary:hover { transform: translateY(-2px); } .ds-button-primary:focus-visible { outline: 3px solid oklch(0.64 0.12 183); outline-offset: 4px; }"
+    },
+    {
+      "name": "Mode Tab",
+      "kind": "button",
+      "description": "Selects the task statement closest to the main uncertainty.",
+      "html": "<button class=\"ds-mode-tab\" type=\"button\" aria-selected=\"true\"><span>01</span> The goal or design is unclear</button>",
+      "css": ".ds-mode-tab { display: grid; grid-template-columns: 2.3rem 1fr; min-height: 5rem; align-items: center; width: 100%; padding: 1rem 1.2rem; border: 0; border-bottom: 1px solid oklch(0.83 0.012 252); background: transparent; color: oklch(0.17 0.014 252); text-align: left; font: 780 1rem/1.5 'Segoe UI', sans-serif; } .ds-mode-tab[aria-selected='true'] { background: oklch(0.58 0.2 357); color: white; } .ds-mode-tab:focus-visible { outline: 3px solid oklch(0.64 0.12 183); outline-offset: -4px; }"
+    },
+    {
+      "name": "Capability Control",
+      "kind": "button",
+      "description": "Explains one independently authorized delivery level.",
+      "html": "<button class=\"ds-capability\" type=\"button\" aria-pressed=\"true\">Commit</button>",
+      "css": ".ds-capability { min-height: 7.5rem; padding: 1rem .65rem; border: 1px solid oklch(0.34 0.135 357); background: transparent; color: oklch(0.34 0.135 357); font: 850 1rem/1.4 'Segoe UI', sans-serif; } .ds-capability[aria-pressed='true'] { background: oklch(0.34 0.135 357); color: white; } .ds-capability:focus-visible { outline: 3px solid oklch(0.64 0.12 183); outline-offset: 4px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Evidence Compass",
+    "overview": "A precise field instrument: curious enough to invite exploration, rigorous enough to support a decision, and transparent about what is or is not known.",
+    "keyCharacteristics": ["Committed orientation surfaces", "Readable diagrammatic relationships", "Operational detail without dashboard styling", "Dependency-free delivery"],
+    "rules": [
+      { "name": "Committed Signal", "body": "Rose-red carries identity across purposeful surfaces.", "section": "colors" },
+      { "name": "Instrument Label", "body": "Labels identify real controls, states, or evidence.", "section": "typography" },
+      { "name": "Flat Evidence", "body": "Relationships are structural, not shadow-dependent.", "section": "elevation" }
+    ],
+    "dos": ["Make operational relationships interactive.", "Preserve readable fallback content.", "Provide visible focus and reduced motion."],
+    "donts": ["Do not use repetitive SaaS feature-card grids.", "Do not use fantasy-expedition cosplay.", "Do not imply deterministic checks are behavioral evidence."]
+  }
+}

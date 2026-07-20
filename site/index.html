@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A visual guide to choosing, using, and trusting Code Territory Guide for evidence-led code work.">
+  <meta name="theme-color" content="#c92362">
+  <title>Code Territory Guide — Navigate code work by what is unknown</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --signal: oklch(0.58 0.2 357);
+      --signal-deep: oklch(0.34 0.135 357);
+      --signal-soft: oklch(0.95 0.032 357);
+      --route: oklch(0.64 0.12 183);
+      --route-deep: oklch(0.31 0.07 183);
+      --ink: oklch(0.17 0.014 252);
+      --ink-soft: oklch(0.39 0.02 252);
+      --line: oklch(0.83 0.012 252);
+      --surface: oklch(0.965 0.006 252);
+      --white: oklch(1 0 0);
+      --max: 78rem;
+      --pad: max(1.25rem, calc((100vw - var(--max)) / 2));
+      --radius-sm: 0.35rem;
+      --radius-md: 0.75rem;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      font-family: "Segoe UI", Aptos, system-ui, sans-serif;
+      line-height: 1.55;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--white);
+      color: var(--ink);
+      text-rendering: optimizeLegibility;
+    }
+
+    button,
+    a { font: inherit; }
+
+    a { color: inherit; }
+
+    img,
+    svg { display: block; max-width: 100%; }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1, h2, h3 {
+      font-family: "Arial Narrow", "Aptos Display", "Segoe UI", sans-serif;
+      font-stretch: condensed;
+      text-wrap: balance;
+    }
+
+    p { text-wrap: pretty; }
+
+    .skip-link {
+      position: fixed;
+      z-index: 20;
+      top: 0.75rem;
+      left: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: var(--ink);
+      color: var(--white);
+      transform: translateY(-150%);
+    }
+
+    .skip-link:focus { transform: translateY(0); }
+
+    :focus-visible {
+      outline: 3px solid var(--route);
+      outline-offset: 4px;
+    }
+
+    .site-header {
+      position: absolute;
+      z-index: 5;
+      inset: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      padding: 1.25rem var(--pad);
+      color: var(--white);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 2rem;
+      height: 2rem;
+      place-items: center;
+      border: 1px solid color-mix(in oklch, var(--white) 58%, transparent);
+      border-radius: 50%;
+      font-size: 0.78rem;
+    }
+
+    .site-nav { display: flex; align-items: center; gap: 1.4rem; }
+
+    .site-nav a {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.35rem;
+    }
+
+    .site-nav .repo-link {
+      padding: 0.65rem 0.9rem;
+      border: 1px solid color-mix(in oklch, var(--white) 64%, transparent);
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+    }
+
+    .hero {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(19rem, 0.9fr);
+      min-height: min(52rem, 100svh);
+      overflow: hidden;
+      padding: clamp(8rem, 15vw, 12rem) var(--pad) clamp(4rem, 8vw, 7rem);
+      background: var(--signal);
+      color: var(--white);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, transparent 49.94%, color-mix(in oklch, var(--white) 22%, transparent) 50%, transparent 50.06%),
+        linear-gradient(0deg, transparent 49.94%, color-mix(in oklch, var(--white) 14%, transparent) 50%, transparent 50.06%);
+      background-size: 7rem 7rem;
+      mask-image: linear-gradient(to left, black, transparent 72%);
+      pointer-events: none;
+    }
+
+    .hero-copy { position: relative; z-index: 1; align-self: end; }
+
+    .hero-signal {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin-bottom: 1.75rem;
+      font-weight: 800;
+    }
+
+    .hero-signal::before {
+      content: "";
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 50%;
+      background: var(--route);
+      box-shadow: 0 0 0 0.32rem color-mix(in oklch, var(--route) 26%, transparent);
+    }
+
+    .hero h1 {
+      max-width: 11.5ch;
+      margin-bottom: 1.5rem;
+      font-size: clamp(3.7rem, 7.8vw, 6rem);
+      font-weight: 820;
+      line-height: 0.94;
+      letter-spacing: -0.035em;
+    }
+
+    .hero-copy > p {
+      max-width: 48ch;
+      margin-bottom: 2rem;
+      font-size: clamp(1.08rem, 2vw, 1.28rem);
+      line-height: 1.65;
+    }
+
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+
+    .button {
+      display: inline-flex;
+      min-height: 3rem;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid currentColor;
+      border-radius: var(--radius-sm);
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform 180ms var(--ease), background-color 180ms var(--ease);
+    }
+
+    .button:hover { transform: translateY(-2px); }
+
+    .button-primary { border-color: var(--white); background: var(--white); color: var(--signal-deep); }
+    .button-secondary { color: var(--white); }
+
+    .compass-wrap { position: relative; z-index: 1; align-self: center; justify-self: end; width: min(29rem, 100%); }
+
+    .compass {
+      position: relative;
+      aspect-ratio: 1;
+      border: 1px solid color-mix(in oklch, var(--white) 62%, transparent);
+      border-radius: 50%;
+    }
+
+    .compass::before,
+    .compass::after {
+      content: "";
+      position: absolute;
+      inset: 12%;
+      border: 1px solid color-mix(in oklch, var(--white) 36%, transparent);
+      border-radius: 50%;
+    }
+
+    .compass::after {
+      inset: 31%;
+      background: var(--white);
+      border: 0;
+    }
+
+    .compass-axis {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 76%;
+      height: 1px;
+      background: color-mix(in oklch, var(--white) 42%, transparent);
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .compass-axis:last-of-type { transform: translate(-50%, -50%) rotate(-45deg); }
+
+    .compass-mode {
+      position: absolute;
+      z-index: 2;
+      padding: 0.45rem 0.7rem;
+      background: var(--signal-deep);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .compass-mode:nth-of-type(1) { top: 2%; left: 50%; transform: translateX(-50%); }
+    .compass-mode:nth-of-type(2) { top: 50%; right: -3%; transform: translateY(-50%); }
+    .compass-mode:nth-of-type(3) { bottom: 2%; left: 50%; transform: translateX(-50%); }
+    .compass-mode:nth-of-type(4) { top: 50%; left: -4%; transform: translateY(-50%); }
+
+    .compass-core {
+      position: absolute;
+      z-index: 3;
+      inset: 36%;
+      display: grid;
+      place-items: center;
+      color: var(--signal-deep);
+      font-weight: 850;
+      line-height: 1.05;
+      text-align: center;
+    }
+
+    .compass-caption {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+      color: color-mix(in oklch, var(--white) 80%, transparent);
+      font-size: 0.78rem;
+    }
+
+    .section {
+      padding: clamp(5rem, 10vw, 9rem) var(--pad);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(13rem, 0.42fr) minmax(0, 0.58fr);
+      gap: clamp(2rem, 8vw, 8rem);
+      margin-bottom: clamp(3rem, 7vw, 6rem);
+    }
+
+    .section-head h2 {
+      margin-bottom: 0;
+      font-size: clamp(2.7rem, 5.4vw, 4.8rem);
+      line-height: 0.98;
+      letter-spacing: -0.035em;
+    }
+
+    .section-head p {
+      max-width: 58ch;
+      align-self: end;
+      margin-bottom: 0;
+      color: var(--ink-soft);
+      font-size: 1.08rem;
+    }
+
+    .mode-lab { background: var(--surface); }
+
+    .mode-tool {
+      display: grid;
+      grid-template-columns: minmax(14rem, 0.36fr) minmax(0, 0.64fr);
+      border-top: 1px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+    }
+
+    .mode-options { border-right: 1px solid var(--ink); }
+
+    .mode-options button {
+      display: grid;
+      width: 100%;
+      min-height: 5rem;
+      grid-template-columns: 2.3rem 1fr;
+      align-items: center;
+      padding: 1rem 1.2rem;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      font-weight: 780;
+      text-align: left;
+    }
+
+    .mode-options button:last-child { border-bottom: 0; }
+
+    .mode-options button[aria-selected="true"] {
+      background: var(--signal);
+      color: var(--white);
+    }
+
+    .mode-index { font-size: 0.8rem; opacity: 0.74; }
+
+    .mode-panel {
+      min-height: 27rem;
+      padding: clamp(2rem, 6vw, 5rem);
+    }
+
+    .mode-panel[hidden] { display: none; }
+
+    .mode-panel h3 {
+      margin-bottom: 1rem;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      line-height: 1;
+      letter-spacing: -0.035em;
+    }
+
+    .mode-panel > p { max-width: 60ch; color: var(--ink-soft); font-size: 1.1rem; }
+
+    .mode-contract {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .mode-contract div { padding-top: 0.85rem; border-top: 1px solid var(--line); }
+    .mode-contract strong { display: block; margin-bottom: 0.4rem; color: var(--signal-deep); }
+    .mode-contract span { color: var(--ink-soft); }
+
+    .unknowns { background: var(--ink); color: var(--white); }
+
+    .unknowns .section-head p { color: oklch(0.76 0.012 252); }
+
+    .unknown-matrix {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border-top: 1px solid oklch(0.38 0.02 252);
+      border-left: 1px solid oklch(0.38 0.02 252);
+    }
+
+    .unknown-cell {
+      min-height: 18rem;
+      padding: clamp(1.5rem, 4vw, 3rem);
+      border-right: 1px solid oklch(0.38 0.02 252);
+      border-bottom: 1px solid oklch(0.38 0.02 252);
+    }
+
+    .unknown-cell:nth-child(3) { background: var(--signal); }
+    .unknown-cell:nth-child(4) { background: oklch(0.22 0.027 252); }
+
+    .unknown-code { display: block; margin-bottom: 3.5rem; color: var(--route); font-size: 0.78rem; font-weight: 850; }
+    .unknown-cell:nth-child(3) .unknown-code { color: var(--white); }
+    .unknown-cell h3 { margin-bottom: 0.65rem; font-size: 1.55rem; }
+    .unknown-cell p { max-width: 46ch; margin-bottom: 0; color: inherit; opacity: 0.78; }
+
+    .route { overflow: hidden; }
+
+    .route-layout {
+      display: grid;
+      grid-template-columns: minmax(15rem, 0.38fr) minmax(0, 0.62fr);
+      gap: clamp(2rem, 8vw, 8rem);
+    }
+
+    .route-intro { align-self: start; position: sticky; top: 2rem; }
+
+    .route-intro h2 {
+      margin-bottom: 1.2rem;
+      font-size: clamp(2.8rem, 5.6vw, 4.8rem);
+      line-height: 0.98;
+      letter-spacing: -0.035em;
+    }
+
+    .route-intro p { max-width: 38ch; color: var(--ink-soft); }
+
+    .route-line { display: grid; }
+
+    .route-stop {
+      position: relative;
+      display: grid;
+      grid-template-columns: 7.5rem 1fr;
+      gap: 1.25rem;
+      padding: 0 0 3.5rem 2.4rem;
+      border-left: 1px solid var(--ink);
+    }
+
+    .route-stop::before {
+      content: "";
+      position: absolute;
+      top: 0.18rem;
+      left: -0.49rem;
+      width: 0.88rem;
+      height: 0.88rem;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background: var(--white);
+    }
+
+    .route-stop:last-child { padding-bottom: 0; border-left-color: transparent; }
+    .route-stop > strong { color: var(--signal-deep); }
+    .route-stop h3 { margin-bottom: 0.45rem; font-size: 1.25rem; }
+    .route-stop p { max-width: 54ch; margin-bottom: 0; color: var(--ink-soft); }
+
+    .delivery { background: var(--signal-soft); }
+
+    .capability-chain {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      margin-top: 3rem;
+    }
+
+    .capability-chain button {
+      position: relative;
+      min-height: 7.5rem;
+      padding: 1rem 0.65rem;
+      border: 0;
+      border-top: 1px solid var(--signal-deep);
+      border-bottom: 1px solid var(--signal-deep);
+      border-left: 1px solid var(--signal-deep);
+      background: transparent;
+      color: var(--signal-deep);
+      cursor: pointer;
+      font-weight: 850;
+    }
+
+    .capability-chain button:last-child { border-right: 1px solid var(--signal-deep); }
+
+    .capability-chain button::after {
+      content: "→";
+      position: absolute;
+      z-index: 1;
+      top: 50%;
+      right: -0.75rem;
+      display: grid;
+      width: 1.5rem;
+      height: 1.5rem;
+      place-items: center;
+      background: var(--signal-soft);
+      transform: translateY(-50%);
+    }
+
+    .capability-chain button:last-child::after { display: none; }
+
+    .capability-chain button[aria-pressed="true"] { background: var(--signal-deep); color: var(--white); }
+
+    .capability-detail {
+      min-height: 7rem;
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      background: var(--white);
+      border-radius: var(--radius-md);
+    }
+
+    .capability-detail strong { display: block; margin-bottom: 0.35rem; font-size: 1.1rem; }
+    .capability-detail p { max-width: 68ch; margin-bottom: 0; color: var(--ink-soft); }
+
+    .loading-map {
+      display: grid;
+      grid-template-columns: minmax(13rem, 0.35fr) minmax(0, 0.65fr);
+      gap: clamp(2rem, 7vw, 7rem);
+      align-items: center;
+    }
+
+    .router-node {
+      display: grid;
+      min-height: 16rem;
+      place-items: center;
+      padding: 2rem;
+      background: var(--ink);
+      border-radius: 50%;
+      color: var(--white);
+      text-align: center;
+    }
+
+    .router-node strong { display: block; font-size: 1.45rem; }
+    .router-node span { display: block; color: oklch(0.76 0.014 252); }
+
+    .reference-lines { display: grid; gap: 0.55rem; }
+
+    .reference-row {
+      display: grid;
+      grid-template-columns: minmax(10rem, 0.35fr) 1fr;
+      gap: 1rem;
+      align-items: center;
+      min-height: 4.25rem;
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .reference-row:first-child { border-top: 1px solid var(--line); }
+    .reference-row strong { color: var(--signal-deep); }
+    .reference-row span { color: var(--ink-soft); }
+
+    .evidence { background: var(--route-deep); color: var(--white); }
+
+    .evidence .section-head p { color: oklch(0.84 0.02 183); }
+
+    .evidence-bands { border-top: 1px solid oklch(0.52 0.07 183); }
+
+    .evidence-band {
+      display: grid;
+      grid-template-columns: 0.28fr 0.72fr;
+      gap: 2rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid oklch(0.52 0.07 183);
+    }
+
+    .evidence-band strong { font-size: 1.1rem; }
+    .evidence-band p { max-width: 68ch; margin-bottom: 0; color: oklch(0.87 0.02 183); }
+
+    .install { text-align: center; }
+
+    .install h2 {
+      max-width: 14ch;
+      margin: 0 auto 1.25rem;
+      font-size: clamp(3rem, 6vw, 5.4rem);
+      line-height: 0.96;
+      letter-spacing: -0.035em;
+    }
+
+    .install > p { max-width: 62ch; margin: 0 auto 2.5rem; color: var(--ink-soft); }
+
+    .install-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; }
+    .install .button-primary { background: var(--signal); border-color: var(--signal); color: var(--white); }
+    .install .button-secondary { color: var(--ink); }
+
+    .site-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+      padding: 2rem var(--pad);
+      background: var(--ink);
+      color: oklch(0.8 0.012 252);
+      font-size: 0.85rem;
+    }
+
+    .site-footer p { margin-bottom: 0; }
+    .site-footer a { color: var(--white); }
+
+    @media (max-width: 800px) {
+      .site-header { align-items: flex-start; }
+      .site-nav a:not(.repo-link) { display: none; }
+      .hero { grid-template-columns: 1fr; min-height: auto; gap: 4rem; }
+      .compass-wrap { justify-self: center; width: min(24rem, 84vw); }
+      .section-head, .route-layout, .loading-map { grid-template-columns: 1fr; }
+      .route-intro { position: static; }
+      .mode-tool { grid-template-columns: 1fr; }
+      .mode-options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        border-right: 0;
+        border-bottom: 1px solid var(--ink);
+      }
+      .mode-options button:nth-child(odd) { border-right: 1px solid var(--line); }
+      .capability-chain { grid-template-columns: repeat(3, 1fr); }
+      .capability-chain button:nth-child(3) { border-right: 1px solid var(--signal-deep); }
+      .capability-chain button:nth-child(n+4) { border-top: 0; }
+      .capability-chain button:nth-child(3)::after { display: none; }
+      .evidence-band { grid-template-columns: 1fr; gap: 0.5rem; }
+    }
+
+    @media (max-width: 520px) {
+      .hero h1 { font-size: clamp(3.1rem, 17vw, 4.2rem); }
+      .site-header { gap: 1rem; }
+      .brand span:last-child { max-width: 8rem; line-height: 1.15; }
+      .hero-actions, .install-actions { display: grid; }
+      .button { width: 100%; }
+      .unknown-matrix, .mode-contract { grid-template-columns: 1fr; }
+      .unknown-cell { min-height: 15rem; }
+      .mode-options { grid-template-columns: 1fr; }
+      .mode-options button:nth-child(odd) { border-right: 0; }
+      .route-stop { grid-template-columns: 1fr; gap: 0.4rem; }
+      .capability-chain { grid-template-columns: repeat(2, 1fr); }
+      .capability-chain button:nth-child(2n) { border-right: 1px solid var(--signal-deep); }
+      .capability-chain button:nth-child(n+3) { border-top: 0; }
+      .capability-chain button:nth-child(2n)::after { display: none; }
+      .reference-row { grid-template-columns: 1fr; gap: 0.2rem; }
+      .site-footer { flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .button:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to explainer</a>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Code Territory Guide, back to top">
+      <span class="brand-mark" aria-hidden="true">CT</span>
+      <span>Code Territory Guide</span>
+    </a>
+    <nav class="site-nav" aria-label="Primary navigation">
+      <a href="#modes">Choose a mode</a>
+      <a href="#evidence">Evidence</a>
+      <a class="repo-link" href="https://github.com/abdul-shaikh-dev/code-territory-guide">View repository</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="hero-signal">Navigate code work by what is unknown</div>
+        <h1 id="hero-title">The request is a map. The repository is the territory.</h1>
+        <p>Code Territory Guide helps agents discover the real task, protect unrelated work, make the smallest valuable change, and report only what the evidence supports.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#modes">Find your mode <span aria-hidden="true">↓</span></a>
+          <a class="button button-secondary" href="https://github.com/abdul-shaikh-dev/code-territory-guide#installation">Install the skill</a>
+        </div>
+      </div>
+      <figure class="compass-wrap">
+        <div class="compass" role="img" aria-label="Survey, Track, Prove, and Expedition arranged around the main uncertainty">
+          <span class="compass-axis" aria-hidden="true"></span>
+          <span class="compass-axis" aria-hidden="true"></span>
+          <span class="compass-mode">Survey</span>
+          <span class="compass-mode">Track</span>
+          <span class="compass-mode">Prove</span>
+          <span class="compass-mode">Expedition</span>
+          <span class="compass-core">Main<br>unknown</span>
+        </div>
+        <figcaption class="compass-caption"><span>Choose lightly</span><span>Escalate with evidence</span></figcaption>
+      </figure>
+    </section>
+
+    <section class="section mode-lab" id="modes" aria-labelledby="modes-title">
+      <div class="section-head">
+        <h2 id="modes-title">Start with the uncertainty—not the ceremony.</h2>
+        <p>Select the statement closest to your task. The mode changes the route, not the quality bar.</p>
+      </div>
+      <div class="mode-tool">
+        <div class="mode-options" role="tablist" aria-label="Task uncertainty">
+          <button type="button" role="tab" id="tab-survey" aria-selected="true" aria-controls="panel-survey" data-mode="survey"><span class="mode-index">01</span><span>The goal or design is unclear</span></button>
+          <button type="button" role="tab" id="tab-track" aria-selected="false" aria-controls="panel-track" data-mode="track"><span class="mode-index">02</span><span>Something is broken or inconsistent</span></button>
+          <button type="button" role="tab" id="tab-prove" aria-selected="false" aria-controls="panel-prove" data-mode="prove"><span class="mode-index">03</span><span>The behavior is narrow and testable</span></button>
+          <button type="button" role="tab" id="tab-expedition" aria-selected="false" aria-controls="panel-expedition" data-mode="expedition"><span class="mode-index">04</span><span>The route is already clear</span></button>
+        </div>
+        <div>
+          <section class="mode-panel" id="panel-survey" role="tabpanel" aria-labelledby="tab-survey" data-mode-panel="survey">
+            <h3>Survey</h3><p>Clarify the few product, design, architecture, or quality-bar unknowns that could change the implementation route.</p>
+            <div class="mode-contract"><div><strong>Use when</strong><span>Two or more meaningful directions remain viable.</span></div><div><strong>Exit with</strong><span>A supported target and an explicit definition of success.</span></div></div>
+          </section>
+          <section class="mode-panel" id="panel-track" role="tabpanel" aria-labelledby="tab-track" data-mode-panel="track">
+            <h3>Track</h3><p>Follow evidence from symptom to owning seam. A failing test, log, or report begins the investigation; it does not get to dictate the fix.</p>
+            <div class="mode-contract"><div><strong>Use when</strong><span>Behavior is failing, flaky, slow, regressed, or inconsistent.</span></div><div><strong>Exit with</strong><span>A supported root cause and the smallest responsible repair.</span></div></div>
+          </section>
+          <section class="mode-panel" id="panel-prove" role="tabpanel" aria-labelledby="tab-prove" data-mode-panel="prove">
+            <h3>Prove</h3><p>Define one expected behavior with a focused failing test, then make the smallest change that turns that evidence green.</p>
+            <div class="mode-contract"><div><strong>Use when</strong><span>The behavior is already understood and tightly bounded.</span></div><div><strong>Exit with</strong><span>A passing proof plus owned-diff review and validation.</span></div></div>
+          </section>
+          <section class="mode-panel" id="panel-expedition" role="tabpanel" aria-labelledby="tab-expedition" data-mode-panel="expedition">
+            <h3>Expedition</h3><p>Plan, implement, validate, and review a scoped change when the target and owning seam are clear enough to move.</p>
+            <div class="mode-contract"><div><strong>Use when</strong><span>The main uncertainty is execution rather than intent or cause.</span></div><div><strong>Exit with</strong><span>A verified result, explicit risks, and authorized delivery state.</span></div></div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="section unknowns" aria-labelledby="unknowns-title">
+      <div class="section-head">
+        <h2 id="unknowns-title">Not every unknown needs a meeting.</h2>
+        <p>The taxonomy is a discovery checklist. It tells the agent whether to inspect, ask, prototype, or simply proceed.</p>
+      </div>
+      <div class="unknown-matrix">
+        <article class="unknown-cell"><span class="unknown-code">KNOWN / KNOWN</span><h3>Constraints</h3><p>Honor the explicit request, trusted instructions, and verified repository conventions.</p></article>
+        <article class="unknown-cell"><span class="unknown-code">KNOWN / UNKNOWN</span><h3>Questions</h3><p>Resolve only decisions that can materially change architecture, behavior, security, UX, or validation.</p></article>
+        <article class="unknown-cell"><span class="unknown-code">UNKNOWN / KNOWN</span><h3>Recognition</h3><p>Use a prototype or example when taste, density, or interaction is easier to recognize than describe.</p></article>
+        <article class="unknown-cell"><span class="unknown-code">UNKNOWN / UNKNOWN</span><h3>Blind spots</h3><p>Inspect coupling, ownership, compatibility, accessibility, deployment, and evidence quality.</p></article>
+      </div>
+    </section>
+
+    <section class="section route" aria-labelledby="route-title">
+      <div class="route-layout">
+        <div class="route-intro"><h2 id="route-title">One route. Observable checkpoints.</h2><p>Discovery stops when the owning seam, relevant contract, worktree state, and validation route are supported.</p></div>
+        <div class="route-line">
+          <article class="route-stop"><strong>01 · Orient</strong><div><h3>Enter the real repository</h3><p>Capture the branch, worktree baseline, trusted context, and task-owned files before changing anything.</p></div></article>
+          <article class="route-stop"><strong>02 · Route</strong><div><h3>Decide what could change the plan</h3><p>Classify the important unknowns and choose the cheapest technique that can close them.</p></div></article>
+          <article class="route-stop"><strong>03 · Change</strong><div><h3>Patch the smallest valuable surface</h3><p>Preserve unrelated work, avoid silent scope expansion, and record only material deviations.</p></div></article>
+          <article class="route-stop"><strong>04 · Verify</strong><div><h3>Classify validation honestly</h3><p>Separate task-caused failures, pre-existing failures, and environmental blockers.</p></div></article>
+          <article class="route-stop"><strong>05 · Review</strong><div><h3>Try to disconfirm the result</h3><p>Review the owned delta from the original request and evidence, not from the implementation's intent.</p></div></article>
+          <article class="route-stop"><strong>06 · Report</strong><div><h3>State the actual territory</h3><p>Hand off what changed, what passed, what remains uncertain, and exactly how far delivery was authorized.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section delivery" aria-labelledby="delivery-title">
+      <div class="section-head">
+        <h2 id="delivery-title">Delivery is a capability chain.</h2>
+        <p>Each step requires its own authorization. Select a capability to see what it permits—and what it does not.</p>
+      </div>
+      <div class="capability-chain" aria-label="Delivery capabilities">
+        <button type="button" aria-pressed="true" data-capability="edit">Edit</button>
+        <button type="button" aria-pressed="false" data-capability="commit">Commit</button>
+        <button type="button" aria-pressed="false" data-capability="push">Push</button>
+        <button type="button" aria-pressed="false" data-capability="pr">Pull request</button>
+        <button type="button" aria-pressed="false" data-capability="merge">Merge</button>
+        <button type="button" aria-pressed="false" data-capability="release">Release</button>
+      </div>
+      <div class="capability-detail" aria-live="polite"><strong id="capability-title">Edit</strong><p id="capability-copy">Change and validate task-owned files. Editing does not authorize a commit, push, pull request, merge, tag, or release.</p></div>
+    </section>
+
+    <section class="section" aria-labelledby="loading-title">
+      <div class="section-head">
+        <h2 id="loading-title">A compact router. Policy only when needed.</h2>
+        <p><code>SKILL.md</code> stays short and points directly to conditional references. Agents load the safety baseline, then only the branch the task actually activates.</p>
+      </div>
+      <div class="loading-map">
+        <div class="router-node"><div><strong>SKILL.md</strong><span>mode + capability router</span></div></div>
+        <div class="reference-lines">
+          <div class="reference-row"><strong>Always</strong><span>safety-and-scope.md</span></div>
+          <div class="reference-row"><strong>Survey / Track / Prove</strong><span>modes.md</span></div>
+          <div class="reference-row"><strong>Material unknowns</strong><span>unknowns-lifecycle.md</span></div>
+          <div class="reference-row"><strong>Implementation</strong><span>standard-workflow.md</span></div>
+          <div class="reference-row"><strong>Artifacts</strong><span>artifacts.md</span></div>
+          <div class="reference-row"><strong>Git delivery</strong><span>delivery.md</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section evidence" id="evidence" aria-labelledby="evidence-title">
+      <div class="section-head">
+        <h2 id="evidence-title">Evidence has boundaries.</h2>
+        <p>The repository distinguishes deterministic integrity from behavioral claims instead of letting one stand in for the other.</p>
+      </div>
+      <div class="evidence-bands">
+        <article class="evidence-band"><strong>Deterministic checks</strong><p>Package structure, aligned manifests, evaluation records, artifact contracts, and unit tests run without model calls.</p></article>
+        <article class="evidence-band"><strong>Existing behavior evidence</strong><p>Qualified synthetic and real-repository reports are preserved with retry history and disclosed limitations.</p></article>
+        <article class="evidence-band"><strong>Current limitation</strong><p>The current progressive-disclosure structure has not received a fresh attempt-26 blinded cross-family behavioral cohort. The lock preregisters future evaluation; it does not claim that evaluation already happened.</p></article>
+      </div>
+    </section>
+
+    <section class="section install" aria-labelledby="install-title">
+      <h2 id="install-title">Take the map into your next repository.</h2>
+      <p>Install through your agent harness, or inspect the canonical skill before deciding. The README keeps current commands and optional release-pinning syntax in one place.</p>
+      <div class="install-actions">
+        <a class="button button-primary" href="https://github.com/abdul-shaikh-dev/code-territory-guide#installation">Choose an installation</a>
+        <a class="button button-secondary" href="https://github.com/abdul-shaikh-dev/code-territory-guide/tree/main/skills/code-territory-guide">Read the canonical skill</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Code Territory Guide · MIT licensed</p>
+    <p><a href="https://github.com/abdul-shaikh-dev/code-territory-guide">Source and documentation</a></p>
+  </footer>
+
+  <script>
+    document.documentElement.dataset.enhanced = "true";
+
+    const modeButtons = [...document.querySelectorAll("[data-mode]")];
+    const modePanels = [...document.querySelectorAll("[data-mode-panel]")];
+
+    function selectMode(selectedButton, moveFocus = false) {
+      const selectedMode = selectedButton.dataset.mode;
+      for (const button of modeButtons) {
+        const selected = button === selectedButton;
+        button.setAttribute("aria-selected", String(selected));
+        button.tabIndex = selected ? 0 : -1;
+      }
+      for (const panel of modePanels) {
+        panel.hidden = panel.dataset.modePanel !== selectedMode;
+      }
+      if (moveFocus) selectedButton.focus();
+    }
+
+    for (const button of modeButtons) {
+      button.addEventListener("click", () => selectMode(button));
+      button.addEventListener("keydown", (event) => {
+        if (!["ArrowDown", "ArrowUp", "ArrowRight", "ArrowLeft"].includes(event.key)) return;
+        event.preventDefault();
+        const direction = ["ArrowDown", "ArrowRight"].includes(event.key) ? 1 : -1;
+        const next = modeButtons[(modeButtons.indexOf(button) + direction + modeButtons.length) % modeButtons.length];
+        selectMode(next, true);
+      });
+    }
+    selectMode(modeButtons[0]);
+
+    const capabilityCopy = {
+      edit: ["Edit", "Change and validate task-owned files. Editing does not authorize a commit, push, pull request, merge, tag, or release."],
+      commit: ["Commit", "Create one local commit containing only the reviewed, explicitly owned delta. A commit does not authorize publishing it."],
+      push: ["Push", "Publish the authorized branch to the verified remote. Pushing does not authorize opening or merging a pull request."],
+      pr: ["Pull request", "Open a reviewable proposal against the verified base branch. A pull request does not authorize merging it."],
+      merge: ["Merge", "Integrate an approved pull request using the repository's permitted strategy. Merging does not authorize a release."],
+      release: ["Release", "Tag or publish only the verified intended commit, after the release operation itself has been authorized."]
+    };
+
+    const capabilityButtons = [...document.querySelectorAll("[data-capability]")];
+    const capabilityTitle = document.querySelector("#capability-title");
+    const capabilityText = document.querySelector("#capability-copy");
+
+    for (const button of capabilityButtons) {
+      button.addEventListener("click", () => {
+        for (const candidate of capabilityButtons) candidate.setAttribute("aria-pressed", String(candidate === button));
+        const [title, copy] = capabilityCopy[button.dataset.capability];
+        capabilityTitle.textContent = title;
+        capabilityText.textContent = copy;
+      });
+    }
+  </script>
+</body>
+</html>
