@@ -192,19 +192,19 @@ copilot plugin install code-territory-guide@code-territory-guide
 Tell OpenCode:
 
 ```text
-Fetch and follow instructions from https://raw.githubusercontent.com/abdul-shaikh-dev/code-territory-guide/v0.2.1/.opencode/INSTALL.md
+Fetch and follow instructions from https://raw.githubusercontent.com/abdul-shaikh-dev/code-territory-guide/main/.opencode/INSTALL.md
 ```
 
 See [the detailed OpenCode instructions](.opencode/INSTALL.md).
 
 The OpenCode adapter uses a Git-backed Bun package spec and follows the
-repository's default branch. The tagged URL above pins the installation
-instructions, not the commit OpenCode resolves.
+repository's default branch. To install from a specific release, replace
+`main` in the instructions URL with the desired release tag.
 
 ### Pi
 
 ```bash
-pi install git:github.com/abdul-shaikh-dev/code-territory-guide@v0.2.1
+pi install git:github.com/abdul-shaikh-dev/code-territory-guide
 ```
 
 For local development:
@@ -232,7 +232,8 @@ Use the harness-specific skills directory when it differs from `~/.agents/skills
 ### Updating
 
 Marketplace and unpinned Git-backed installations update through their harness.
-For a version-pinned Pi installation, replace the tag in the install command.
+For a version-pinned Pi installation, append `@<release-tag>` to the install
+source.
 For a manual installation, check out the intended tag or pull the desired
 branch, then recopy or refresh the symlink.
 
