@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Territory Guide"
+  short_description: "Discover unknowns, scope changes, and deliver safely"
+  default_prompt: "Use $code-territory-guide to surface material unknowns, inspect the real repository, implement and verify the smallest safe change, and deliver only to the explicitly authorized level."

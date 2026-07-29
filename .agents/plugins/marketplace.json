@@ -7,8 +7,8 @@
     {
       "name": "code-territory-guide",
       "source": {
-        "source": "url",
-        "url": "./"
+        "source": "local",
+        "path": "./plugins/code-territory-guide"
       },
       "policy": {
         "installation": "AVAILABLE",
