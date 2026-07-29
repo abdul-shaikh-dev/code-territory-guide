@@ -64,12 +64,10 @@ docs, evaluations, site sources, and development configuration.
 
 ## Delivery
 
-- State: draft pull request authorized; final commit and PR identifiers are
-  reported in the PR and completion handoff because this file is committed
-  before the PR exists.
-- Commit or link: reported in the completion handoff
-- Commit convention: Conventional Commit-style `feat:` subject from repository
-  history
+- State: pull request updated and ready for review.
+- Commit or link:
+  <https://github.com/abdul-shaikh-dev/code-territory-guide/pull/18>
+- Commit convention: Conventional Commit-style subject from repository history
 - Intentionally uncommitted: none planned
 
 ## Review and recovery
