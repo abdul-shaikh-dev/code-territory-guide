@@ -8,12 +8,14 @@ Complete
 
 Repository marketplaces now install from a generated minimal plugin root at
 `plugins/code-territory-guide/` instead of treating the development repository
-root as the plugin. The bundle contains only adapter manifests, the complete
-runtime skill, and the intentionally distributed portable `AGENTS.md`.
+root as the plugin. The bundle contains only Codex and Claude manifests, the
+Git-tracked runtime skill, and the intentionally distributed portable
+`AGENTS.md` under `assets/portable/`.
 
 The canonical skill remains under `skills/code-territory-guide/`.
-`scripts/sync_plugin_bundle.py` generates the installable copy and rejects
-missing, changed, stale, or unexpected bundle files. Codex installation
+`scripts/sync_plugin_bundle.py` generates the installable copy from Git-tracked
+skill files and rejects missing, changed, stale, unexpected, forbidden, or
+non-ignored untracked files. Codex installation
 guidance now uses sparse marketplace checkout to avoid fetching repository-only
 docs, evaluations, site sources, and development configuration.
 
@@ -33,15 +35,17 @@ docs, evaluations, site sources, and development configuration.
 
 ## Validation
 
-- `python scripts/sync_plugin_bundle.py --check` — passed; 25 exact files.
+- `python scripts/sync_plugin_bundle.py --check` — passed; 23 exact files.
 - `python <plugin-creator>/scripts/validate_plugin.py plugins/code-territory-guide`
   — passed.
 - `python evals/validate_package.py` — passed; manifests aligned at `0.3.1`.
-- `python -m unittest discover -s evals/tests -v` — passed; 36 tests.
+- `python -m unittest discover -s evals/tests -v` — passed; 41 tests.
 - `git diff --check` — passed; line-ending normalization warnings only.
-- Failure classification: the first generation copied an ignored Python cache
-  file; this task-caused packaging defect was removed and the generator now
-  excludes common development caches.
+- Failure classification: the earlier generator discovered files by walking the
+  working tree, so ignored caches needed a growing exclusion list and
+  non-ignored untracked files could enter the bundle. This task-caused
+  packaging weakness is resolved by deriving skill membership from Git's index
+  and rejecting non-ignored untracked skill files.
 - Not run: live marketplace reinstall, because the request did not authorize
   changing user-level plugin state or publishing a new version.
 
@@ -54,7 +58,8 @@ docs, evaluations, site sources, and development configuration.
 - The manifest version is `0.3.1`; a release is still needed before existing
   installations can receive the new version.
 - Canonical skill changes must be followed by
-  `python scripts/sync_plugin_bundle.py --write`; deterministic validation
+  `git add` and `python scripts/sync_plugin_bundle.py --write`; untracked
+  canonical files intentionally block generation, and deterministic validation
   prevents an out-of-sync bundle from passing CI.
 
 ## Delivery
@@ -69,8 +74,8 @@ docs, evaluations, site sources, and development configuration.
 
 ## Review and recovery
 
-- User review: confirm that distributing the portable `AGENTS.md` inside the
-  minimal bundle is intentional.
+- User review: confirm that exposing the portable `AGENTS.md` as a copyable
+  plugin asset matches the intended workplace workflow.
 - Rollback guidance: restore both marketplace sources to `./`, remove the
   generated bundle and synchronizer, and revert the package-validation and
   installation-documentation changes.

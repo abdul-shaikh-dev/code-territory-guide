@@ -16,10 +16,13 @@ plugin. Preserve all existing skill behavior and supported adapter metadata.
 
 Acceptance criteria:
 
-- `plugins/code-territory-guide/` contains only plugin manifests, the canonical
-  skill copy, and the intentionally distributed portable `AGENTS.md`.
+- `plugins/code-territory-guide/` contains only Codex and Claude manifests,
+  Git-tracked canonical skill files, and the intentionally distributed
+  portable `AGENTS.md` under `assets/`.
 - A deterministic command synchronizes the bundle from canonical sources and
   detects missing, stale, changed, or unexpected files.
+- Non-ignored untracked files under the canonical skill block generation;
+  ignored caches and repository-only paths cannot enter the bundle.
 - Codex and Claude marketplace entries resolve to the minimal plugin root.
 - Codex installation documentation uses sparse marketplace checkout.
 - Existing package and evaluation validation remains green.
@@ -35,11 +38,13 @@ Acceptance criteria:
 
 ## Route
 
-1. Add a deterministic bundle synchronizer with an exact file allowlist.
+1. Add a deterministic bundle synchronizer whose skill allowlist comes from
+   Git-tracked files and whose static assets are explicit.
 2. Generate the minimal plugin root from canonical sources.
 3. Point marketplace entries at the minimal root.
-4. Document sparse Codex installation and the generated bundle boundary.
-5. Extend deterministic package validation and run plugin/package/tests.
+4. Reject repository-only paths and non-ignored untracked canonical files.
+5. Document sparse Codex installation and the generated bundle boundary.
+6. Extend deterministic package validation and run plugin/package/tests.
 
 ## Preserve
 
@@ -69,7 +74,7 @@ Acceptance criteria:
 
 ## Delivery authorization
 
-Leave the completed and validated delta uncommitted.
+Update the existing draft pull request after validation and owned-diff review.
 
-- Commit convention: not needed without commit authorization.
+- Commit convention: Conventional Commit-style subject from repository history.
 - Ticket or issue identifier: not required.

@@ -168,6 +168,21 @@ def validate() -> None:
         check=True,
     )
 
+    bundle_root = ROOT / "plugins" / EXPECTED_NAME
+    require(
+        (bundle_root / "assets" / "portable" / "AGENTS.md").is_file(),
+        "minimal plugin must include the portable guide as an explicit asset",
+    )
+    for relative in (
+        ".cursor-plugin/plugin.json",
+        ".kimi-plugin/plugin.json",
+        "portable/AGENTS.md",
+    ):
+        require(
+            not (bundle_root / relative).exists(),
+            f"minimal plugin contains a non-runtime path: {relative}",
+        )
+
     print(f"Validated package structure and aligned manifest version {version}.")
 
 
