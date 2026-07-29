@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
+import sys
 from pathlib import Path
 
 
@@ -33,6 +35,7 @@ JSON_FILES = (
     "package.json",
     ".claude-plugin/plugin.json",
     ".claude-plugin/marketplace.json",
+    ".agents/plugins/marketplace.json",
     ".codex-plugin/plugin.json",
     ".cursor-plugin/plugin.json",
     ".kimi-plugin/plugin.json",
@@ -81,6 +84,7 @@ def validate() -> None:
     package = parsed["package.json"]
     plugin = parsed[".claude-plugin/plugin.json"]
     marketplace = parsed[".claude-plugin/marketplace.json"]
+    agents_marketplace = parsed[".agents/plugins/marketplace.json"]
 
     require(package.get("name") == EXPECTED_NAME, "package.json has an unexpected name")
     require(plugin.get("name") == EXPECTED_NAME, "plugin.json has an unexpected name")
@@ -91,6 +95,27 @@ def validate() -> None:
     marketplace_plugin = plugins[0]
     require(isinstance(marketplace_plugin, dict), "marketplace plugin entry must be an object")
     require(marketplace_plugin.get("name") == EXPECTED_NAME, "marketplace plugin has an unexpected name")
+    require(
+        marketplace_plugin.get("source") == f"./plugins/{EXPECTED_NAME}",
+        "Claude marketplace must point to the minimal plugin bundle",
+    )
+
+    agents_plugins = agents_marketplace.get("plugins")
+    require(
+        isinstance(agents_plugins, list) and len(agents_plugins) == 1,
+        "Codex marketplace must declare one plugin",
+    )
+    agents_plugin = agents_plugins[0]
+    require(isinstance(agents_plugin, dict), "Codex marketplace plugin entry must be an object")
+    require(agents_plugin.get("name") == EXPECTED_NAME, "Codex marketplace plugin has an unexpected name")
+    require(
+        agents_plugin.get("source")
+        == {
+            "source": "local",
+            "path": f"./plugins/{EXPECTED_NAME}",
+        },
+        "Codex marketplace must point to the minimal plugin bundle",
+    )
 
     versions = {
         "package.json": package.get("version"),
@@ -132,6 +157,31 @@ def validate() -> None:
 
     for relative in ("site/index.html", "site/.nojekyll", ".github/workflows/pages.yml"):
         require((ROOT / relative).is_file(), f"missing visual explainer delivery file: {relative}")
+
+    subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "sync_plugin_bundle.py"),
+            "--check",
+        ],
+        cwd=ROOT,
+        check=True,
+    )
+
+    bundle_root = ROOT / "plugins" / EXPECTED_NAME
+    require(
+        (bundle_root / "assets" / "portable" / "AGENTS.md").is_file(),
+        "minimal plugin must include the portable guide as an explicit asset",
+    )
+    for relative in (
+        ".cursor-plugin/plugin.json",
+        ".kimi-plugin/plugin.json",
+        "portable/AGENTS.md",
+    ):
+        require(
+            not (bundle_root / relative).exists(),
+            f"minimal plugin contains a non-runtime path: {relative}",
+        )
 
     print(f"Validated package structure and aligned manifest version {version}.")
 

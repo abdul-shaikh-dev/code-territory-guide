@@ -125,7 +125,7 @@ quality still requires browser or human review.
 
 ## Installation
 
-Installation differs by agent harness. If you use more than one, install Code Territory Guide separately for each one. Every adapter loads the same canonical [`skills/code-territory-guide/`](skills/code-territory-guide/) directory.
+Installation differs by agent harness. If you use more than one, install Code Territory Guide separately for each one. Every adapter loads the same canonical [`skills/code-territory-guide/`](skills/code-territory-guide/) directory. Repository marketplaces install the generated minimal bundle under [`plugins/code-territory-guide/`](plugins/code-territory-guide/) instead of treating this entire development repository as the plugin. That bundle contains only its Codex and Claude manifests, Git-tracked skill files, and the portable guide as an explicit copyable asset.
 
 ### Claude Code
 
@@ -154,7 +154,7 @@ Reinstall with the same command to update.
 Register the Git marketplace:
 
 ```bash
-codex plugin marketplace add abdul-shaikh-dev/code-territory-guide
+codex plugin marketplace add abdul-shaikh-dev/code-territory-guide --sparse .agents/plugins --sparse plugins/code-territory-guide
 ```
 
 Install the plugin:
@@ -164,6 +164,12 @@ codex plugin add code-territory-guide@code-territory-guide
 ```
 
 In the Codex app, the same marketplace makes Code Territory Guide available in the Plugins interface.
+
+The sparse marketplace checkout and plugin subdirectory keep `docs/`, `evals/`,
+`site/`, and repository-development files out of the installed plugin. Existing
+marketplace registrations created without these sparse paths may still retain a
+full repository snapshot; remove and re-add that marketplace when minimizing
+the local checkout matters.
 
 ### Cursor
 
@@ -250,6 +256,13 @@ code-territory-guide/
 │   ├── assets/artifacts/
 │   ├── references/
 │   └── scripts/validate_visual_prototype.py
+├── portable/AGENTS.md                  # standalone workplace-friendly edition
+├── plugins/code-territory-guide/       # generated tracked-file-only plugin
+│   ├── .codex-plugin/
+│   ├── .claude-plugin/
+│   ├── assets/portable/AGENTS.md
+│   └── skills/code-territory-guide/
+├── scripts/sync_plugin_bundle.py       # bundle generation and drift check
 ├── .claude-plugin/                     # Claude marketplace metadata
 ├── .codex-plugin/                      # Codex plugin metadata
 ├── .cursor-plugin/                     # Cursor plugin metadata

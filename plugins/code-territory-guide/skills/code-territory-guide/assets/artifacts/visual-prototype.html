@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prototype: &lt;task&gt;</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: system-ui, sans-serif;
+      line-height: 1.5;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: Canvas;
+      color: CanvasText;
+    }
+
+    header,
+    main {
+      width: min(72rem, 100% - 2rem);
+      margin-inline: auto;
+    }
+
+    header { padding-block: 1.5rem 1rem; }
+
+    .prototype-label {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border: 2px solid currentColor;
+      font-weight: 700;
+    }
+
+    .directions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-block: 1rem;
+    }
+
+    button {
+      min-height: 2.75rem;
+      padding-inline: 1rem;
+      border: 1px solid currentColor;
+      border-radius: 0.5rem;
+      background: Canvas;
+      color: CanvasText;
+      cursor: pointer;
+    }
+
+    button[aria-pressed="true"] {
+      background: Highlight;
+      color: HighlightText;
+    }
+
+    button:focus-visible {
+      outline: 3px solid Highlight;
+      outline-offset: 3px;
+    }
+
+    .panel {
+      display: grid;
+      gap: 1rem;
+      padding: clamp(1rem, 3vw, 2rem);
+      border: 1px solid color-mix(in srgb, CanvasText 30%, transparent);
+      border-radius: 0.75rem;
+    }
+
+    .fake-data {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+      gap: 1rem;
+    }
+
+    .fake-data article {
+      padding: 1rem;
+      border: 1px solid color-mix(in srgb, CanvasText 20%, transparent);
+      border-radius: 0.5rem;
+    }
+
+    [hidden] { display: none; }
+
+    @media (max-width: 35rem) {
+      header,
+      main { width: min(100% - 1rem, 72rem); }
+      .directions { display: grid; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="prototype-label">Disposable prototype — not production behavior</span>
+    <h1>&lt;decision to evaluate&gt;</h1>
+    <p>&lt;specific unknown this prototype should expose&gt;</p>
+  </header>
+
+  <main>
+    <nav class="directions" aria-label="Prototype directions">
+      <button type="button" aria-pressed="true" aria-controls="prototype-panel-a" data-direction="a">Direction A</button>
+      <button type="button" aria-pressed="false" aria-controls="prototype-panel-b" data-direction="b">Direction B</button>
+    </nav>
+
+    <section class="panel" id="prototype-panel-a" data-panel="a" aria-labelledby="direction-a-title">
+      <h2 id="direction-a-title">Direction A: &lt;name&gt;</h2>
+      <div class="fake-data">
+        <article><strong>Fake item</strong><p>Sanitized example content.</p></article>
+        <article><strong>Fake item</strong><p>Sanitized example content.</p></article>
+      </div>
+    </section>
+
+    <section class="panel" id="prototype-panel-b" data-panel="b" aria-labelledby="direction-b-title" hidden>
+      <h2 id="direction-b-title">Direction B: &lt;name&gt;</h2>
+      <p>&lt;meaningfully different visual or interaction direction&gt;</p>
+    </section>
+  </main>
+
+  <script>
+    const buttons = document.querySelectorAll('[data-direction]');
+    const panels = document.querySelectorAll('[data-panel]');
+
+    for (const button of buttons) {
+      button.addEventListener('click', () => {
+        const selected = button.dataset.direction;
+        for (const candidate of buttons) {
+          candidate.setAttribute('aria-pressed', String(candidate === button));
+        }
+        for (const panel of panels) {
+          panel.hidden = panel.dataset.panel !== selected;
+        }
+      });
+    }
+  </script>
+</body>
+</html>
