@@ -14,7 +14,6 @@ SKILL_RELATIVE = Path("skills") / PLUGIN_NAME
 STATIC_FILE_SOURCES = {
     Path(".codex-plugin/plugin.json"): Path(".codex-plugin/plugin.json"),
     Path(".claude-plugin/plugin.json"): Path(".claude-plugin/plugin.json"),
-    Path("assets/portable/AGENTS.md"): Path("portable/AGENTS.md"),
 }
 
 FORBIDDEN_TOP_LEVEL = {
@@ -24,6 +23,7 @@ FORBIDDEN_TOP_LEVEL = {
     ".github",
     ".kimi-plugin",
     ".opencode",
+    "assets",
     "docs",
     "evals",
     "portable",

@@ -15,7 +15,6 @@ class PluginBundleSyncTests(unittest.TestCase):
         files = {
             ".codex-plugin/plugin.json": "{}\n",
             ".claude-plugin/plugin.json": "{}\n",
-            "portable/AGENTS.md": "# Portable guide\n",
             "skills/code-territory-guide/SKILL.md": "# Skill\n",
         }
         for relative, content in files.items():
@@ -34,10 +33,7 @@ class PluginBundleSyncTests(unittest.TestCase):
         sources = sync_plugin_bundle.expected_sources(root)
 
         self.assertIn(Path("skills/code-territory-guide/SKILL.md"), sources)
-        self.assertEqual(
-            sources[Path("assets/portable/AGENTS.md")],
-            root / "portable/AGENTS.md",
-        )
+        self.assertNotIn(Path("assets/portable/AGENTS.md"), sources)
         self.assertNotIn(Path(".cursor-plugin/plugin.json"), sources)
         self.assertNotIn(Path(".kimi-plugin/plugin.json"), sources)
 
@@ -77,14 +73,14 @@ class PluginBundleSyncTests(unittest.TestCase):
         temporary, root = self.make_repository()
         self.addCleanup(temporary.cleanup)
         subprocess.run(
-            ["git", "-C", str(root), "rm", "--cached", "portable/AGENTS.md"],
+            ["git", "-C", str(root), "rm", "--cached", ".codex-plugin/plugin.json"],
             check=True,
             capture_output=True,
         )
 
         with self.assertRaisesRegex(
             ValueError,
-            "(?s)static sources must be Git-tracked.*portable/AGENTS.md",
+            "(?s)static sources must be Git-tracked.*\\.codex-plugin/plugin.json",
         ):
             sync_plugin_bundle.expected_sources(root)
 
@@ -93,6 +89,7 @@ class PluginBundleSyncTests(unittest.TestCase):
             Path("docs/guide.md"),
             Path("evals/result.json"),
             Path("scripts/helper.py"),
+            Path("assets/portable/AGENTS.md"),
             Path(".cursor-plugin/plugin.json"),
             Path(".kimi-plugin/plugin.json"),
             Path("skills/code-territory-guide/__pycache__/helper.pyc"),
