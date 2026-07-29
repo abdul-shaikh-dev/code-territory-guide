@@ -125,7 +125,7 @@ quality still requires browser or human review.
 
 ## Installation
 
-Installation differs by agent harness. If you use more than one, install Code Territory Guide separately for each one. Every adapter loads the same canonical [`skills/code-territory-guide/`](skills/code-territory-guide/) directory. Repository marketplaces install the generated minimal bundle under [`plugins/code-territory-guide/`](plugins/code-territory-guide/) instead of treating this entire development repository as the plugin. That bundle contains only its Codex and Claude manifests, Git-tracked skill files, and the portable guide as an explicit copyable asset.
+Installation differs by agent harness. If you use more than one, install Code Territory Guide separately for each one. Every adapter loads the same canonical [`skills/code-territory-guide/`](skills/code-territory-guide/) directory. Repository marketplaces install the generated minimal bundle under [`plugins/code-territory-guide/`](plugins/code-territory-guide/) instead of treating this entire development repository as the plugin. That bundle contains only its Codex and Claude manifests plus Git-tracked skill files. The standalone [`portable/AGENTS.md`](portable/AGENTS.md) remains repository-only and is not installed with the plugin.
 
 ### Claude Code
 
@@ -260,7 +260,6 @@ code-territory-guide/
 ├── plugins/code-territory-guide/       # generated tracked-file-only plugin
 │   ├── .codex-plugin/
 │   ├── .claude-plugin/
-│   ├── assets/portable/AGENTS.md
 │   └── skills/code-territory-guide/
 ├── scripts/sync_plugin_bundle.py       # bundle generation and drift check
 ├── .claude-plugin/                     # Claude marketplace metadata

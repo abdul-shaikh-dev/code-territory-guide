@@ -8,9 +8,9 @@ Complete
 
 Repository marketplaces now install from a generated minimal plugin root at
 `plugins/code-territory-guide/` instead of treating the development repository
-root as the plugin. The bundle contains only Codex and Claude manifests, the
-Git-tracked runtime skill, and the intentionally distributed portable
-`AGENTS.md` under `assets/portable/`.
+root as the plugin. The bundle contains only Codex and Claude manifests plus
+the Git-tracked runtime skill. The standalone `portable/AGENTS.md` remains in
+the repository and is not distributed inside the installed plugin.
 
 The canonical skill remains under `skills/code-territory-guide/`.
 `scripts/sync_plugin_bundle.py` generates the installable copy from Git-tracked
@@ -35,10 +35,10 @@ docs, evaluations, site sources, and development configuration.
 
 ## Validation
 
-- `python scripts/sync_plugin_bundle.py --check` — passed; 23 exact files.
+- `python scripts/sync_plugin_bundle.py --check` — passed; 22 exact files.
 - `python <plugin-creator>/scripts/validate_plugin.py plugins/code-territory-guide`
   — passed.
-- `python evals/validate_package.py` — passed; manifests aligned at `0.3.1`.
+- `python evals/validate_package.py` — passed; manifests aligned at `0.3.2`.
 - `python -m unittest discover -s evals/tests -v` — passed; 41 tests.
 - `git diff --check` — passed; line-ending normalization warnings only.
 - Failure classification: the earlier generator discovered files by walking the
@@ -55,7 +55,7 @@ docs, evaluations, site sources, and development configuration.
   a full repository snapshot until removed and re-added.
 - Other Git-backed harnesses may still retain their marketplace source checkout
   even though the installed plugin root is now minimal.
-- The manifest version is `0.3.1`; a release is still needed before existing
+- The manifest version is `0.3.2`; a release is needed before existing
   installations can receive the new version.
 - Canonical skill changes must be followed by
   `git add` and `python scripts/sync_plugin_bundle.py --write`; untracked
@@ -64,16 +64,16 @@ docs, evaluations, site sources, and development configuration.
 
 ## Delivery
 
-- State: pull request updated and ready for review.
-- Commit or link:
-  <https://github.com/abdul-shaikh-dev/code-territory-guide/pull/18>
+- State: commit, pull request, merge, and `v0.3.2` tag authorized; final
+  identifiers are reported in the completion handoff.
+- Commit or link: reported in the completion handoff
 - Commit convention: Conventional Commit-style subject from repository history
 - Intentionally uncommitted: none planned
 
 ## Review and recovery
 
-- User review: confirm that exposing the portable `AGENTS.md` as a copyable
-  plugin asset matches the intended workplace workflow.
+- User review: confirm that the portable guide remains repository-only and the
+  generated plugin has no root `assets/` directory.
 - Rollback guidance: restore both marketplace sources to `./`, remove the
   generated bundle and synchronizer, and revert the package-validation and
   installation-documentation changes.

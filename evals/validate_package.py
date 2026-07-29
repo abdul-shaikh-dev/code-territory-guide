@@ -170,10 +170,11 @@ def validate() -> None:
 
     bundle_root = ROOT / "plugins" / EXPECTED_NAME
     require(
-        (bundle_root / "assets" / "portable" / "AGENTS.md").is_file(),
-        "minimal plugin must include the portable guide as an explicit asset",
+        (ROOT / "portable" / "AGENTS.md").is_file(),
+        "repository must retain the standalone portable guide",
     )
     for relative in (
+        "assets/portable/AGENTS.md",
         ".cursor-plugin/plugin.json",
         ".kimi-plugin/plugin.json",
         "portable/AGENTS.md",

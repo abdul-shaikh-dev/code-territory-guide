@@ -17,8 +17,9 @@ plugin. Preserve all existing skill behavior and supported adapter metadata.
 Acceptance criteria:
 
 - `plugins/code-territory-guide/` contains only Codex and Claude manifests,
-  Git-tracked canonical skill files, and the intentionally distributed
-  portable `AGENTS.md` under `assets/`.
+  plus Git-tracked canonical skill files.
+- `portable/AGENTS.md` remains available in the repository but is excluded from
+  the generated and installed plugin.
 - A deterministic command synchronizes the bundle from canonical sources and
   detects missing, stale, changed, or unexpected files.
 - Non-ignored untracked files under the canonical skill block generation;
@@ -51,6 +52,7 @@ Acceptance criteria:
 - Canonical skill content and progressive-loading paths.
 - Root manifests used by existing non-Codex adapters.
 - Manual skill installation and evaluation source paths.
+- The repository-level standalone `portable/AGENTS.md`.
 - Repository-only docs, evals, site, and development files outside the bundle.
 
 ## Non-goals and scope gates
@@ -74,7 +76,8 @@ Acceptance criteria:
 
 ## Delivery authorization
 
-Update the existing draft pull request after validation and owned-diff review.
+Commit and push the completed correction, open and merge a pull request, then
+tag the merged `main` commit as `v0.3.2`.
 
 - Commit convention: Conventional Commit-style subject from repository history.
 - Ticket or issue identifier: not required.
