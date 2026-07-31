@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import sys
+import json
 import math
 import re
+import sys
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlparse
@@ -11,6 +12,7 @@ from urllib.parse import urlparse
 ROOT = Path(__file__).resolve().parents[1]
 SITE_ROOT = ROOT / "site"
 INDEX_PATH = SITE_ROOT / "index.html"
+PACKAGE_PATH = ROOT / "package.json"
 OKLCH_TOKEN = re.compile(
     r"--(?P<name>[a-z0-9-]+):\s*oklch\((?P<lightness>[0-9.]+)\s+(?P<chroma>[0-9.]+)\s+(?P<hue>[0-9.]+)\)"
 )
@@ -102,7 +104,12 @@ def contrast_ratio(first: float, second: float) -> float:
     return (lighter + 0.05) / (darker + 0.05)
 
 
-def validate_html_text(text: str, *, site_root: Path = SITE_ROOT) -> list[str]:
+def validate_html_text(
+    text: str,
+    *,
+    site_root: Path = SITE_ROOT,
+    expected_version: str | None = None,
+) -> list[str]:
     parser = SiteParser()
     parser.feed(text)
     errors: list[str] = []
@@ -130,6 +137,11 @@ def validate_html_text(text: str, *, site_root: Path = SITE_ROOT) -> list[str]:
             errors.append(f"missing required explainer section: {required_id}")
 
     lowered = text.lower()
+    if expected_version is not None:
+        version_marker = f'data-release-version="{expected_version}"'
+        visible_version = f">v{expected_version}<"
+        if version_marker not in text or visible_version not in text:
+            errors.append(f"site release version does not match package version {expected_version}")
     if "skip-link" not in lowered or 'href="#main"' not in lowered:
         errors.append("missing skip link to #main")
     if "prefers-reduced-motion: reduce" not in lowered:
@@ -256,7 +268,11 @@ def validate() -> None:
     if not (SITE_ROOT / ".nojekyll").is_file():
         raise ValueError("missing site/.nojekyll")
 
-    errors = validate_html_text(INDEX_PATH.read_text(encoding="utf-8"))
+    package = json.loads(PACKAGE_PATH.read_text(encoding="utf-8"))
+    errors = validate_html_text(
+        INDEX_PATH.read_text(encoding="utf-8"),
+        expected_version=package["version"],
+    )
     if errors:
         raise ValueError("invalid production site:\n- " + "\n- ".join(errors))
     print("Validated production visual explainer site.")

@@ -4,20 +4,20 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="A visual guide to choosing, using, and trusting Code Territory Guide for evidence-led code work.">
-  <meta name="theme-color" content="#61384f">
+  <meta name="theme-color" content="#005451">
   <title>Code Territory Guide — Navigate code work by what is unknown</title>
   <style>
     :root {
       color-scheme: light;
-      --signal: oklch(0.39 0.07 350);
-      --signal-deep: oklch(0.27 0.055 350);
-      --signal-soft: oklch(0.95 0.015 350);
-      --route: oklch(0.57 0.08 188);
-      --route-deep: oklch(0.3 0.045 188);
-      --ink: oklch(0.16 0.02 342);
-      --ink-soft: oklch(0.39 0.025 342);
-      --line: oklch(0.84 0.012 342);
-      --surface: oklch(0.975 0.008 350);
+      --signal: oklch(0.4 0.075 190);
+      --signal-deep: oklch(0.26 0.045 190);
+      --signal-soft: oklch(0.95 0.018 190);
+      --route: oklch(0.62 0.12 82);
+      --route-deep: oklch(0.29 0.045 190);
+      --ink: oklch(0.16 0.02 190);
+      --ink-soft: oklch(0.39 0.025 190);
+      --line: oklch(0.84 0.012 190);
+      --surface: oklch(0.975 0.008 190);
       --white: oklch(1 0 0);
       --max: 78rem;
       --pad: max(1.25rem, calc((100vw - var(--max)) / 2));
@@ -79,6 +79,7 @@
     :focus-visible {
       outline: 3px solid var(--route);
       outline-offset: 4px;
+      box-shadow: 0 0 0 6px var(--white);
     }
 
     .site-header {
@@ -222,66 +223,52 @@
     .button-primary { border-color: var(--white); background: var(--white); color: var(--signal-deep); }
     .button-secondary { color: var(--white); }
 
-    .decision-map { position: relative; z-index: 1; justify-self: end; width: min(32rem, 100%); margin: 0; }
+    .decision-map { position: relative; z-index: 1; justify-self: end; width: min(34rem, 100%); margin: -3rem 0 0; }
 
-    .decision-map > figcaption { margin-bottom: 1.1rem; }
-    .decision-map > figcaption strong { display: block; margin-bottom: 0.25rem; font-family: var(--font-display); font-size: 1.35rem; }
-    .decision-map > figcaption span { color: color-mix(in oklch, var(--white) 78%, transparent); font-size: 0.88rem; }
+    .decision-map > figcaption { margin-bottom: 1.5rem; }
+    .decision-map > figcaption strong { display: block; max-width: 18ch; margin-bottom: 0.4rem; font-family: var(--font-display); font-size: 1.55rem; line-height: 1.05; }
+    .decision-map > figcaption span { color: color-mix(in oklch, var(--white) 82%, transparent); font-size: 0.9rem; }
 
-    .mode-map { position: relative; aspect-ratio: 1.12; }
-
-    .mode-map-lines { position: absolute; inset: 0; width: 100%; height: 100%; }
-    .mode-map-lines line { stroke: color-mix(in oklch, var(--white) 44%, transparent); stroke-width: 0.45; }
-    .mode-map-lines circle { fill: var(--route); }
-
-    .mode-route,
-    .mode-map-core {
-      position: absolute;
-      z-index: 2;
-      display: grid;
-      align-content: center;
-      border: 1px solid color-mix(in oklch, var(--white) 38%, transparent);
-      border-radius: var(--radius-sm);
-    }
+    .mode-map { border-block: 1px solid color-mix(in oklch, var(--white) 44%, transparent); }
 
     .mode-route {
-      width: 42%;
-      min-height: 24%;
-      padding: 1rem;
-      background: color-mix(in oklch, var(--signal-deep) 58%, transparent);
+      display: grid;
+      min-height: 5.35rem;
+      grid-template-columns: minmax(0, 1fr) minmax(6.5rem, 0.34fr) auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 1rem 0.85rem;
+      border-bottom: 1px solid color-mix(in oklch, var(--white) 30%, transparent);
+      background: transparent;
       color: var(--white);
       cursor: pointer;
       text-decoration: none;
-      transition: background-color 180ms cubic-bezier(.22,1,.36,1), border-color 180ms cubic-bezier(.22,1,.36,1), transform 180ms cubic-bezier(.22,1,.36,1);
+      transition: background-color 180ms var(--ease), color 180ms var(--ease);
     }
 
-    .mode-route span { color: color-mix(in oklch, var(--white) 74%, transparent); font-size: 0.76rem; line-height: 1.25; }
-    .mode-route strong { margin-top: 0.25rem; font-family: var(--font-display); font-size: 1.35rem; line-height: 1; }
+    .mode-route:last-child { border-bottom: 0; }
+    .mode-route span { color: color-mix(in oklch, var(--white) 84%, transparent); font-size: 0.95rem; line-height: 1.3; }
+    .mode-route strong { font-family: var(--font-display); font-size: 1.35rem; line-height: 1; }
     .mode-route small {
-      margin-top: 0.65rem;
       color: color-mix(in oklch, var(--white) 82%, transparent);
       font-family: var(--font-data);
-      font-size: 0.66rem;
+      font-size: 0.7rem;
       font-weight: 700;
+      transition: color 180ms var(--ease), transform 180ms var(--ease);
     }
-    .mode-route:hover { border-color: color-mix(in oklch, var(--white) 72%, transparent); transform: translateY(-2px); }
-    .mode-route[aria-current="true"] { border-color: var(--route); background: var(--signal-deep); }
+    .mode-route:hover { background: color-mix(in oklch, var(--signal-deep) 32%, transparent); }
+    .mode-route:hover small { transform: translateX(0.2rem); }
+    .mode-route[aria-current="true"] { background: color-mix(in oklch, var(--signal-deep) 58%, var(--signal)); }
     .mode-route[aria-current="true"] small { color: var(--route); }
-    .mode-route[data-compass-mode="survey"] { top: 0; left: 0; }
-    .mode-route[data-compass-mode="track"] { top: 0; right: 0; }
-    .mode-route[data-compass-mode="prove"] { bottom: 0; left: 0; }
-    .mode-route[data-compass-mode="expedition"] { right: 0; bottom: 0; }
-
-    .mode-map-core {
-      inset: 34% 31%;
-      padding: 0.85rem;
-      background: var(--signal-soft);
-      color: var(--ink);
-      text-align: center;
+    .mode-route[aria-current="true"] small::before {
+      content: "";
+      display: inline-block;
+      width: 0.45rem;
+      height: 0.45rem;
+      margin-right: 0.4rem;
+      border-radius: 50%;
+      background: var(--route);
     }
-
-    .mode-map-core span { color: var(--signal-deep); font-family: var(--font-data); font-size: 0.7rem; font-weight: 800; }
-    .mode-map-core strong { margin-top: 0.3rem; font-size: 0.9rem; line-height: 1.15; }
 
     .section {
       padding: clamp(5rem, 10vw, 9rem) var(--pad);
@@ -649,7 +636,7 @@
     }
 
     .router-node strong { display: block; font-size: 1.45rem; }
-    .router-node span { display: block; color: oklch(0.78 0.02 342); }
+    .router-node span { display: block; color: color-mix(in oklch, var(--white) 74%, var(--ink)); }
 
     .reference-lines { display: grid; gap: 0.55rem; }
 
@@ -669,38 +656,106 @@
 
     .evidence { background: var(--route-deep); color: var(--white); }
 
-    .evidence .section-head p { color: oklch(0.84 0.02 183); }
+    .evidence .section-head p { color: color-mix(in oklch, var(--white) 80%, var(--route-deep)); }
 
-    .evidence-bands { border-top: 1px solid oklch(0.52 0.07 183); }
+    .evidence-bands { border-top: 1px solid color-mix(in oklch, var(--white) 28%, var(--route-deep)); }
 
     .evidence-band {
       display: grid;
       grid-template-columns: 0.28fr 0.72fr;
       gap: 2rem;
       padding: 2rem 0;
-      border-bottom: 1px solid oklch(0.52 0.07 183);
+      border-bottom: 1px solid color-mix(in oklch, var(--white) 28%, var(--route-deep));
     }
 
     .evidence-band strong { font-size: 1.1rem; }
-    .evidence-band p { max-width: 68ch; margin-bottom: 0; color: oklch(0.87 0.02 183); }
+    .evidence-band p { max-width: 68ch; margin-bottom: 0; color: color-mix(in oklch, var(--white) 84%, var(--route-deep)); }
     .evidence-band a { text-decoration-color: var(--route); text-underline-offset: 0.18em; }
     .evidence-band a:hover { text-decoration-thickness: 0.14em; }
 
-    .install { text-align: center; }
+    .install { text-align: left; }
+
+    .install-head {
+      display: grid;
+      grid-template-columns: minmax(0, 0.72fr) minmax(16rem, 0.28fr);
+      gap: clamp(2rem, 7vw, 6rem);
+      align-items: end;
+      margin-bottom: clamp(2.5rem, 5vw, 4rem);
+    }
 
     .install h2 {
       max-width: 14ch;
-      margin: 0 auto 1.25rem;
+      margin: 0 0 1.25rem;
       font-size: clamp(3rem, 6vw, 5.4rem);
       line-height: 0.96;
       letter-spacing: -0.025em;
     }
 
-    .install > p { max-width: 62ch; margin: 0 auto 2.5rem; color: var(--ink-soft); }
+    .install-head p { max-width: 62ch; margin-bottom: 0; color: var(--ink-soft); }
+
+    .release-stamp {
+      padding: 1.25rem 0;
+      border-block: 1px solid var(--line);
+      color: var(--ink-soft);
+      font-family: var(--font-data);
+      font-size: 0.82rem;
+    }
+
+    .release-stamp strong {
+      display: block;
+      margin-bottom: 0.25rem;
+      color: var(--signal-deep);
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+    }
+
+    .install-routes {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      border: 1px solid var(--ink);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .install-route {
+      display: flex;
+      min-height: 22rem;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 2rem;
+      padding: clamp(1.5rem, 4vw, 3rem);
+    }
+
+    .install-route + .install-route { border-left: 1px solid var(--ink); }
+    .install-route:first-child { background: var(--signal-soft); }
+    .install-route-label { color: var(--signal-deep); font-family: var(--font-data); font-size: 0.78rem; font-weight: 800; }
+    .install-route h3 { margin: 0.65rem 0 1rem; font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1; }
+    .install-route p { max-width: 48ch; margin-bottom: 0; color: var(--ink-soft); }
 
     .install-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; }
+    .install-route .install-actions { justify-content: flex-start; }
     .install .button-primary { background: var(--signal); border-color: var(--signal); color: var(--white); }
     .install .button-secondary { color: var(--ink); }
+
+    .install-boundary {
+      max-width: 74ch;
+      margin: 1.25rem 0 0;
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+    }
+
+    .model-routing-map { margin-top: 2rem; border-top: 1px solid var(--line); }
+    .detail-divider { margin: clamp(2.5rem, 6vw, 5rem) 0; border: 0; border-top: 1px solid var(--line); }
+    .model-routing-row {
+      display: grid;
+      grid-template-columns: minmax(9rem, 0.24fr) minmax(0, 0.76fr);
+      gap: 1.5rem;
+      padding: 1.35rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .model-routing-row strong { color: var(--signal-deep); }
+    .model-routing-row p { max-width: 68ch; margin-bottom: 0; color: var(--ink-soft); }
+    .model-routing-note { margin: 1.5rem 0 0; color: var(--ink-soft); font-size: 0.9rem; }
 
     .site-footer {
       display: flex;
@@ -708,7 +763,7 @@
       gap: 2rem;
       padding: 2rem var(--pad);
       background: var(--ink);
-      color: oklch(0.8 0.018 342);
+      color: color-mix(in oklch, var(--white) 78%, var(--ink));
       font-size: 0.85rem;
     }
 
@@ -747,8 +802,8 @@
       .site-header { align-items: flex-start; }
       .site-nav a:not(.repo-link) { display: none; }
       .hero { grid-template-columns: 1fr; min-height: auto; gap: 4rem; }
-      .decision-map { justify-self: center; width: min(28rem, 92vw); }
-      .section-head, .route-layout, .loading-map { grid-template-columns: 1fr; }
+      .decision-map { justify-self: center; width: min(34rem, 92vw); margin-top: 0; }
+      .section-head, .route-layout, .loading-map, .install-head { grid-template-columns: 1fr; }
       .route-intro { position: static; }
       .mode-tool { grid-template-columns: 1fr; }
       .mode-options {
@@ -764,6 +819,9 @@
       .capability-chain button:nth-child(3)::after { display: none; }
       .evidence-band { grid-template-columns: 1fr; gap: 0.5rem; }
       .example-layout { grid-template-columns: 1fr; }
+      .install-routes { grid-template-columns: 1fr; }
+      .install-route { min-height: auto; }
+      .install-route + .install-route { border-left: 0; border-top: 1px solid var(--ink); }
       .journey-nav {
         position: sticky;
         z-index: 4;
@@ -782,6 +840,13 @@
 
     @media (max-width: 520px) {
       .hero h1 { font-size: clamp(3.1rem, 17vw, 4.2rem); }
+      .mode-route {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 0.35rem 0.8rem;
+      }
+      .mode-route span { grid-column: 1; }
+      .mode-route strong { grid-column: 1; }
+      .mode-route small { grid-column: 2; grid-row: 1 / 3; }
       .site-header { gap: 1rem; }
       .brand span:last-child { max-width: 8rem; line-height: 1.15; }
       .hero-actions, .install-actions { display: grid; }
@@ -796,6 +861,7 @@
       .capability-chain button:nth-child(n+3) { border-top: 0; }
       .capability-chain button:nth-child(2n)::after { display: none; }
       .reference-row { grid-template-columns: 1fr; gap: 0.2rem; }
+      .model-routing-row { grid-template-columns: 1fr; gap: 0.3rem; }
       .site-footer { flex-direction: column; }
       .example-step, .promise-row { grid-template-columns: 2.5rem 1fr; }
       .example-step p, .promise-row p { grid-column: 2; }
@@ -846,20 +912,12 @@
         <p class="hero-proof">Deterministic integrity is verified. Fresh independent behavioral evaluation is still pending. <a href="#evidence">See the evidence boundary.</a></p>
       </div>
       <figure class="decision-map">
-        <figcaption><strong>Choose by the main unknown</strong><span>Start in the center, then follow the matching task condition.</span></figcaption>
+        <figcaption><strong>Find your route.</strong><span>What is the main unknown? Choose the closest statement.</span></figcaption>
         <div class="mode-map">
-          <svg class="mode-map-lines" viewBox="0 0 100 90" aria-hidden="true">
-            <line x1="50" y1="45" x2="21" y2="12"></line>
-            <line x1="50" y1="45" x2="79" y2="12"></line>
-            <line x1="50" y1="45" x2="21" y2="78"></line>
-            <line x1="50" y1="45" x2="79" y2="78"></line>
-            <circle cx="50" cy="45" r="1.4"></circle>
-          </svg>
-          <a class="mode-route" href="#tab-survey" data-compass-mode="survey"><span>Goal or design is unclear</span><strong>Survey</strong><small>Open mode ↓</small></a>
-          <a class="mode-route" href="#tab-track" data-compass-mode="track"><span>Something fails or varies</span><strong>Track</strong><small>Open mode ↓</small></a>
-          <a class="mode-route" href="#tab-prove" data-compass-mode="prove"><span>Behavior is narrow and testable</span><strong>Prove</strong><small>Open mode ↓</small></a>
-          <a class="mode-route" href="#tab-expedition" data-compass-mode="expedition"><span>The route is clear</span><strong>Expedition</strong><small>Open mode ↓</small></a>
-          <div class="mode-map-core"><span>START HERE</span><strong>What is the main unknown?</strong></div>
+          <a class="mode-route" href="#tab-survey" data-compass-mode="survey"><span>Goal or design is unclear</span><strong>Survey</strong><small>View mode ↓</small></a>
+          <a class="mode-route" href="#tab-track" data-compass-mode="track"><span>Something fails or varies</span><strong>Track</strong><small>View mode ↓</small></a>
+          <a class="mode-route" href="#tab-prove" data-compass-mode="prove"><span>Behavior is narrow and testable</span><strong>Prove</strong><small>View mode ↓</small></a>
+          <a class="mode-route" href="#tab-expedition" data-compass-mode="expedition"><span>The route is clear</span><strong>Expedition</strong><small>View mode ↓</small></a>
         </div>
       </figure>
     </section>
@@ -934,12 +992,37 @@
     </section>
 
     <section class="section install" id="install" aria-labelledby="install-title">
-      <h2 id="install-title">Take the map into your next repository.</h2>
-      <p>You now have the essential model. Install through your agent harness, inspect the canonical skill, or continue into the detailed operating reference below.</p>
-      <div class="install-actions">
-        <a class="button button-primary" href="https://github.com/abdul-shaikh-dev/code-territory-guide#installation">Choose an installation</a>
-        <a class="button button-secondary" href="https://github.com/abdul-shaikh-dev/code-territory-guide/tree/main/skills/code-territory-guide">Read the canonical skill</a>
+      <div class="install-head">
+        <div>
+          <h2 id="install-title">Choose the form that fits your territory.</h2>
+          <p>Use the progressively loaded skill where plugins are allowed. Use the standalone guide where workplace policy permits only one repository instruction file.</p>
+        </div>
+        <div class="release-stamp" data-release-version="0.3.5"><strong>v0.3.5</strong>Current stable release · Sol/Luna routing included</div>
       </div>
+      <div class="install-routes">
+        <article class="install-route">
+          <div>
+            <span class="install-route-label">FULL WORKFLOW</span>
+            <h3>Install the skill.</h3>
+            <p>A compact router progressively loads only the safety, mode, workflow, artifact, routing, or delivery guidance the task needs.</p>
+          </div>
+          <div class="install-actions">
+            <a class="button button-primary" href="https://github.com/abdul-shaikh-dev/code-territory-guide#installation">Choose your harness</a>
+            <a class="button button-secondary" href="https://github.com/abdul-shaikh-dev/code-territory-guide/tree/main/skills/code-territory-guide">Inspect the skill</a>
+          </div>
+        </article>
+        <article class="install-route">
+          <div>
+            <span class="install-route-label">RESTRICTED WORKPLACE</span>
+            <h3>Use one AGENTS.md.</h3>
+            <p>The self-contained workplace edition carries the complete workflow without depending on an installed skill, reference, template, asset, or validator.</p>
+          </div>
+          <div class="install-actions">
+            <a class="button button-secondary" href="https://github.com/abdul-shaikh-dev/code-territory-guide/blob/main/portable/AGENTS.md">Open the portable guide</a>
+          </div>
+        </article>
+      </div>
+      <p class="install-boundary">Marketplace installs contain only the plugin manifests and canonical skill files. The portable guide, documentation, evaluation records, and this site remain repository resources rather than installed skill content.</p>
     </section>
 
     <section class="section operating-model" id="operating-model" aria-labelledby="operating-model-title">
@@ -1028,8 +1111,19 @@
                 <div class="reference-row"><strong>Implementation</strong><span>standard-workflow.md</span></div>
                 <div class="reference-row"><strong>Artifacts</strong><span>artifacts.md</span></div>
                 <div class="reference-row"><strong>Git delivery</strong><span>delivery.md</span></div>
+                <div class="reference-row"><strong>Model assignment</strong><span>model-routing.md</span></div>
               </div>
             </div>
+            <hr class="detail-divider">
+            <h3>Match model effort to the uncertainty.</h3>
+            <p>Use the least expensive capable model, then escalate when requirements, ownership, coupling, failures, or validation stop being explicit.</p>
+            <div class="model-routing-map">
+              <div class="model-routing-row"><strong>Sol · high</strong><p>Owns ambiguity, architecture, difficult debugging, consequential judgment, and final review where mistakes carry material risk.</p></div>
+              <div class="model-routing-row"><strong>Luna · medium</strong><p>Handles normal repository exploration and implementation from a clear, testable brief.</p></div>
+              <div class="model-routing-row"><strong>Luna · high / xhigh</strong><p>Takes complex but fully specified work and routine review; xhigh is reserved for rare difficult tasks whose route remains explicit.</p></div>
+              <div class="model-routing-row"><strong>Luna · low</strong><p>Runs deterministic tests, builds, formatting, Git checks, and evidence collection where judgment is minimal.</p></div>
+            </div>
+            <p class="model-routing-note">In Codex, Sol maps to <code>gpt-5.6</code>. The Luna ladder uses the current Luna-family model with the named reasoning level. Other environments preserve the same strong-reasoner and fast-executor roles.</p>
           </div>
         </details>
 
@@ -1071,7 +1165,7 @@
         if (selected) route.setAttribute("aria-current", "true");
         else route.removeAttribute("aria-current");
         const action = route.querySelector("small");
-        if (action) action.textContent = selected ? "Selected mode ↓" : "Open mode ↓";
+        if (action) action.textContent = selected ? "Selected ↓" : "View mode ↓";
       }
     }
 
