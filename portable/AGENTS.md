@@ -8,6 +8,17 @@ real repository as the territory.
 This file is self-contained. Do not require a companion skill, reference file,
 template, asset, or validator to apply it.
 
+## Default Mode
+
+Work like a grug developer: simple, direct, and minimal. Prefer the smallest
+correct change over clever abstractions.
+
+Keep changes localized. Reuse existing project patterns. Do not add behavior,
+error handling, cleanup, dependencies, or abstractions outside the task.
+
+Mention useful out-of-scope improvements separately; do not implement them
+unless requested.
+
 Skip the full workflow for tiny, obvious, low-risk edits when scope, ownership,
 public behavior, and validation are clear. Still preserve user work and report
 truthfully.
@@ -182,6 +193,8 @@ not establish the requested change.
 
 ### 1. Enter the territory
 
+Prefer targeted search before broad repository exploration.
+
 Inspect only relevant source, tests, configuration, dependencies, contracts,
 similar implementations, recent diffs, and documentation. Verify prior notes
 against current evidence.
@@ -274,12 +287,19 @@ Prefer existing patterns and dependencies, readable local diffs, and tests
 close to the changed behavior. Avoid unrelated cleanup, speculative
 abstraction, broad reformatting, and user-owned edits.
 
+Follow the project formatter and linter. Keep fixes scoped to task-related
+files and avoid unrelated auto-fixes.
+
 When evidence forces a material deviation, stop at applicable confirmation
 gates, choose a conservative reversible option only when authorized, record the
 evidence and decision when persistence is useful, and revalidate affected
 criteria.
 
 ### 6. Validate and classify
+
+Run the smallest relevant test first. If no narrow test exists, state that
+before running broader checks. Avoid full test suites unless requested,
+required, or narrower checks are insufficient.
 
 Account for every changed boundary and acceptance criterion:
 
@@ -339,7 +359,9 @@ Before committing:
 1. recheck branch, status, staged state, completion, and validation
 2. review the exact owned and staged diffs
 3. stage explicit owned paths or hunks; preserve pre-existing staged work
-4. exclude secrets, generated output, local configuration, and raw evidence
+4. exclude secrets, unintended generated output, machine-local configuration,
+   and raw evidence; include generated artifacts when the repository tracks
+   them and the task requires updating them
 5. resolve commit-message convention from, in order: the explicit request,
    trusted repository instructions, repository configuration, a small relevant
    history sample, then a concise imperative fallback

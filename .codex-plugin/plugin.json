@@ -1,6 +1,6 @@
 {
   "name": "code-territory-guide",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Evidence-led workflow for scoped, safe code changes across repositories and delivery stages.",
   "author": {
     "name": "Abdul Gaffar Shaikh",
