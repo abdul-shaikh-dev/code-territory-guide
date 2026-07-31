@@ -2,15 +2,15 @@
 name: Code Territory Guide
 description: A visual field instrument for evidence-led code work
 colors:
-  signal: "oklch(0.39 0.07 350)"
-  signal-deep: "oklch(0.27 0.055 350)"
-  signal-soft: "oklch(0.95 0.015 350)"
-  route: "oklch(0.57 0.08 188)"
-  route-deep: "oklch(0.3 0.045 188)"
-  ink: "oklch(0.16 0.02 342)"
-  ink-soft: "oklch(0.39 0.025 342)"
-  line: "oklch(0.84 0.012 342)"
-  surface: "oklch(0.975 0.008 350)"
+  signal: "oklch(0.4 0.075 190)"
+  signal-deep: "oklch(0.26 0.045 190)"
+  signal-soft: "oklch(0.95 0.018 190)"
+  route: "oklch(0.62 0.12 82)"
+  route-deep: "oklch(0.29 0.045 190)"
+  ink: "oklch(0.16 0.02 190)"
+  ink-soft: "oklch(0.39 0.025 190)"
+  line: "oklch(0.84 0.012 190)"
+  surface: "oklch(0.975 0.008 190)"
   white: "oklch(1 0 0)"
 typography:
   display:
@@ -62,7 +62,7 @@ operational sequence harder to follow.
 
 **Key Characteristics:**
 
-- Muted berry orientation, restrained teal wayfinding, and neutral-dominant working surfaces.
+- Deep topographic teal orientation, restrained survey-ochre wayfinding, and neutral-dominant working surfaces.
 - Diagrammatic relationships that remain readable without animation.
 - A short decision journey followed by optional operational depth.
 - Direct language and visible qualification of claims.
@@ -96,12 +96,13 @@ state instead of dividing every concept into a new visual world.
 - **Field Surface** (`surface`): alternating explanatory sections.
 - **True White** (`white`): primary canvas and text on saturated fills.
 
-**The Quiet Signal Rule.** Muted berry anchors the hero and selected states.
+**The Quiet Signal Rule.** Deep topographic teal anchors the hero and selected states.
 Supporting sections return to neutral surfaces instead of repeating saturated
 fields.
 
-**The Evidence Color Rule.** Blue-green always means route, focus, or evidence.
-It cannot become a second ornamental brand fill.
+**The Evidence Color Rule.** Survey ochre marks route, focus, or verified
+evidence. Deep teal grounds evidence-heavy surfaces. Neither color becomes an
+ornamental fill without an information role.
 
 ## 3. Typography
 
@@ -171,14 +172,15 @@ Navigation sits directly on the hero field with high-contrast text. Desktop
 shows learning anchors and repository access; narrow layouts preserve the brand
 and repository action while the page itself supplies the learning sequence.
 
-### Main-Unknown Decision Map
+### Main-Unknown Field Legend
 
-The hero's signature diagram begins with one explicit question: "What is the
-main unknown?" Four visible spokes pair a recognizable task condition with
-Survey, Track, Prove, or Expedition. The map is not a maturity ladder and does
-not require visitors to infer meaning from position or decoration. Each route
-is a keyboard-accessible link that selects the matching mode explanation and
-retains useful anchor navigation when JavaScript is unavailable.
+The hero's signature field legend begins with one explicit prompt: choose the
+statement closest to the task. Four horizontal routes pair a recognizable task
+condition directly with Survey, Track, Prove, or Expedition. The legend avoids
+invented spatial relationships and is not a maturity ladder. Each route is a
+keyboard-accessible link that selects the matching mode explanation and retains
+useful anchor navigation when JavaScript is unavailable. The selected route
+uses a subdued teal field, explicit status copy, and one survey-ochre marker.
 
 ### One-Viewport Chapters
 

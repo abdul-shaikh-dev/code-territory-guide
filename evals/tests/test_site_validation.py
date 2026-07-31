@@ -89,12 +89,20 @@ class SiteValidationTests(unittest.TestCase):
 
     def test_rejects_retired_high_intensity_palette(self) -> None:
         html = self.valid_html.replace(
-            "--signal-deep: oklch(0.27 0.055 350);",
-            "--signal-deep: oklch(0.27 0.055 350); --caution: oklch(0.84 0.16 92);",
+            "</style>",
+            ":root { --caution: oklch(0.84 0.16 92); }</style>",
             1,
         )
         errors = validate_html_text(html, site_root=SITE_ROOT)
         self.assertIn("retired high-intensity caution palette must not return", errors)
+
+    def test_rejects_outdated_release_version(self) -> None:
+        errors = validate_html_text(
+            self.valid_html,
+            site_root=SITE_ROOT,
+            expected_version="0.3.3",
+        )
+        self.assertIn("site release version does not match package version 0.3.3", errors)
 
 
 if __name__ == "__main__":
