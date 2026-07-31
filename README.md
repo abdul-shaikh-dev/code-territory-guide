@@ -99,6 +99,13 @@ consumer repositories do not require a companion file.
 behavior. `agents/openai.yaml` adds optional Codex-facing presentation metadata;
 other harnesses can ignore it without losing the workflow.
 
+For Codex, model routing uses an explicit Sol and Luna ladder: Luna scales from
+low-effort deterministic execution through medium, high, and exceptional xhigh
+well-specified work; Sol high owns ambiguity, consequential judgment, and
+consequential final review. See
+[`model-routing.md`](skills/code-territory-guide/references/model-routing.md)
+for the exact model identifiers, escalation boundaries, and non-Codex fallback.
+
 For work that spans sessions, agents, or substantial investigation, the skill materializes only the useful artifacts under the owning repository’s existing documentation convention or `docs/code-territory/<task-slug>/`, resolved from that repository’s Git root. It never writes into the installed skill or a parent multi-repository workspace by assumption. Narrow work remains in chat.
 
 Cross-repository features keep separate ownership, validation, completion, and delivery state per repository. A shared Expedition Index is created only in an explicitly designated coordination repository; otherwise coordination remains in chat.

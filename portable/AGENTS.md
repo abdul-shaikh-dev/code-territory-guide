@@ -393,15 +393,34 @@ the conversation.
 Use the least expensive capable model, but make correctness and risk the
 priority:
 
-- use a strong reasoning model for ambiguity, architecture, debugging strategy,
-  scope, risk, security, data, APIs, deployment, migrations, test strategy,
-  product and UX judgment, and final review
-- use a cheaper implementation model for an approved explicit brief,
-  mechanical edits, narrow tests, formatting, and deterministic checks
-- escalate when requirements, ownership, coupling, failures, drift, or
-  validation cannot be explained cleanly
-- use a different strong reviewer when practical
+- use GPT-5.6 Sol (`gpt-5.6`) at `high` reasoning for ambiguity, architecture,
+  difficult debugging, scope, risk, security, data, APIs, deployment,
+  migrations, test strategy, product and UX judgment, and consequential final
+  review
+- use `gpt-5.6-luna` at `medium` reasoning for read-heavy exploration,
+  repository mapping, supporting-document review, approved well-specified
+  implementation, writing or modifying tests, and bounded multi-step tool
+  workflows
+- use `gpt-5.6-luna` at `high` reasoning for complex but well-specified
+  implementation, edge-case analysis, and routine owned-diff review
+- use `gpt-5.6-luna` at `xhigh` reasoning only for rare, difficult, fully
+  specified work where deeper reasoning is expected to improve the result
+- use `gpt-5.6-luna` at `low` reasoning for running deterministic tests or
+  builds, formatting, log or screenshot collection, and other mechanical checks
+- move up the Luna ladder while the route remains explicit; switch to Sol at
+  `high` when requirements, architecture, ownership, coupling, consequences,
+  failures, drift, or validation require route-changing judgment
+- use a different agent or model configuration for review when practical
 - avoid parallel write-heavy agents on the same files
+
+A task may change models as uncertainty falls: use Sol to settle the route,
+then the lowest Luna effort that can satisfy a brief whose behavior,
+boundaries, checks, and escalation conditions are explicit.
+
+If these exact models are unavailable, map the Sol role to the environment's
+strongest reasoning model and the Luna ladder to its fastest reliable
+lower-cost model. If no safe lower-cost option exists, keep the work on the
+stronger model.
 
 Delegate only bounded, independent work when coordination costs less than doing
 it locally. A handoff must include the original request, applicable
