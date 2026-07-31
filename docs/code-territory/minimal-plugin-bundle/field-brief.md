@@ -76,8 +76,8 @@ Acceptance criteria:
 
 ## Delivery authorization
 
-Commit and push the completed correction, open and merge a pull request, then
-tag the merged `main` commit as `v0.3.2`.
+Commit and push the completed standalone-guide refinement, open and merge a
+pull request, then tag the merged `main` commit as `v0.3.3`.
 
 - Commit convention: Conventional Commit-style subject from repository history.
 - Ticket or issue identifier: not required.

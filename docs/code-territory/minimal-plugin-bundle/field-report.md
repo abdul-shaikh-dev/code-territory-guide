@@ -38,7 +38,7 @@ docs, evaluations, site sources, and development configuration.
 - `python scripts/sync_plugin_bundle.py --check` — passed; 22 exact files.
 - `python <plugin-creator>/scripts/validate_plugin.py plugins/code-territory-guide`
   — passed.
-- `python evals/validate_package.py` — passed; manifests aligned at `0.3.2`.
+- `python evals/validate_package.py` — passed; manifests aligned at `0.3.3`.
 - `python -m unittest discover -s evals/tests -v` — passed; 41 tests.
 - `git diff --check` — passed; line-ending normalization warnings only.
 - Failure classification: the earlier generator discovered files by walking the
@@ -55,7 +55,7 @@ docs, evaluations, site sources, and development configuration.
   a full repository snapshot until removed and re-added.
 - Other Git-backed harnesses may still retain their marketplace source checkout
   even though the installed plugin root is now minimal.
-- The manifest version is `0.3.2`; a release is needed before existing
+- The manifest version is `0.3.3`; a release tag is needed before existing
   installations can receive the new version.
 - Canonical skill changes must be followed by
   `git add` and `python scripts/sync_plugin_bundle.py --write`; untracked
@@ -64,7 +64,7 @@ docs, evaluations, site sources, and development configuration.
 
 ## Delivery
 
-- State: commit, pull request, merge, and `v0.3.2` tag authorized; final
+- State: commit, pull request, merge, and `v0.3.3` tag authorized; final
   identifiers are reported in the completion handoff.
 - Commit or link: reported in the completion handoff
 - Commit convention: Conventional Commit-style subject from repository history
