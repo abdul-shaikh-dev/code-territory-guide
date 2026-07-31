@@ -4,28 +4,61 @@ Use this reference when choosing which model should plan, implement, review, or 
 
 ## Principle
 
-Use the cheapest model that can meet the quality bar, but escalate without hesitation when the output affects shipped behavior, architecture, security, user experience, data integrity, public contracts, or review quality.
+Match model capability to the outcome required at each stage of the workflow.
+Use the cheapest model that can meet the quality bar, but escalate without
+hesitation when the output affects shipped behavior, architecture, security,
+user experience, data integrity, public contracts, or review quality.
 
 Cost is a tie-breaker only after quality, correctness, and risk are satisfied.
+One task may use different models as uncertainty falls: a strong model can
+resolve the route, then a lower-cost model can execute a sufficiently explicit
+brief.
 
 ## Default Routing
 
-- **Strong planning model**: use for ambiguous requirements, architecture, debugging strategy, risk analysis, test strategy, scope decisions, security/data/API/deployment changes, and implementation briefs.
-- **Cheaper implementation model**: use for clear-spec implementation, mechanical edits, narrow tests, small documentation updates, and straightforward refactors from an approved brief.
-- **Strong review model**: use for final diff review, shipped behavior, public API changes, UI/UX, security-sensitive changes, data changes, migration work, or anything where missing a defect is more expensive than rerunning the model.
+- **Sol role**: use for ambiguous requirements, architecture, difficult
+  debugging, risk and scope decisions, security/data/API/deployment changes,
+  implementation briefs, taste-sensitive work, and consequential final review.
+- **Luna execution role**: use for read-heavy exploration, repository mapping,
+  supporting-document review, well-specified implementation, bounded
+  multi-step tool workflows, mechanical edits, tests, evaluations, routine
+  review, and routine documentation.
+
+In Codex, use these exact defaults when the models are available:
+
+| Work | Model | Reasoning effort |
+| --- | --- | --- |
+| Deterministic test/build execution, formatting, and evidence collection | `gpt-5.6-luna` | `low` |
+| Normal exploration, well-specified implementation, and test authoring | `gpt-5.6-luna` | `medium` |
+| Complex but well-specified implementation or routine review | `gpt-5.6-luna` | `high` |
+| Rare, difficult, fully specified work with an expected quality gain | `gpt-5.6-luna` | `xhigh` |
+| Ambiguous or consequential decisions and consequential final review | GPT-5.6 Sol (`gpt-5.6`) | `high` |
+
+Move up the Luna ladder while the route remains explicit. Switch to GPT-5.6
+Sol (`gpt-5.6`) at `high` when the work requires route-changing judgment or
+crosses a consequential risk boundary.
 
 ## Escalation Rules
 
-Escalate to a stronger model without hesitation when:
+Escalate reasoning effort or route to Sol without hesitation when:
 
 - the cheaper model produces vague, incorrect, incomplete, or overbroad work
 - the task involves unknown architecture, unclear ownership, or hidden coupling
-- the change can affect users, data, security, reliability, performance, compatibility, or deployment
+- the change can materially affect users, data, security, reliability,
+  performance, compatibility, or deployment
 - the implementation starts drifting from the brief
 - tests fail for reasons the current model cannot explain cleanly
 - review finds missed requirements, weak tests, avoidable complexity, or scope creep
 
-Do not continue polishing mediocre work with the same weak model when a stronger review or rerun would be cheaper than shipping risk.
+Use Luna `medium` when semantic judgment or file changes begin. Use Luna `high`
+for complex logic, edge cases, or routine review. Use Luna `xhigh` only when the
+work remains fully specified and deeper reasoning is expected to improve the
+result. Route to Sol `high` when requirements, architecture, ownership, hidden
+coupling, consequences, or expected behavior require judgment rather than more
+execution effort.
+
+Do not continue polishing mediocre work with the same configuration when a
+stronger review or rerun would be cheaper than shipping risk.
 
 ## Taste-Sensitive Work
 
@@ -41,21 +74,28 @@ Taste-sensitive work includes:
 
 For these tasks, prioritize judgment and review quality over cost.
 
-## Mechanical Work
+## Well-Specified Execution
 
-Cheaper models are appropriate when:
+Lower-cost models are appropriate for more than single mechanical steps when:
 
 - the brief is explicit
 - the change is localized
 - expected behavior is already clear
+- tool access and intermediate checkpoints are defined
 - tests or checks provide fast feedback
-- the work is repetitive or mostly mechanical
+- failures have an unambiguous escalation path
+- the work may be multi-step but does not require route-changing judgment
 
-Even for mechanical work, escalate if the output violates scope, misses edge cases, or requires repeated correction.
+This can include implementing a clear brief, using tools, running and updating
+narrow tests, evaluating results, and completing routine follow-through. Even
+for well-specified work, escalate if the output violates scope, misses edge
+cases, encounters unexplained failures, or requires repeated correction.
 
 ## Review Independence
 
-When practical, use a different model for review than the one used for implementation.
+When practical, use a different agent or model configuration for review than
+the one used for implementation. Luna `high` is sufficient for routine owned-
+diff review; use Sol `high` for consequential review.
 
 The reviewer should inspect:
 
@@ -85,6 +125,11 @@ When work moves between models, pass the original request, canonical safety-and-
 
 ## Environment-Specific Models
 
-Do not hard-code model names, prices, or vendor-specific mechanics in this skill.
+The explicit model identifiers above are the default Codex mapping. Do not
+encode prices in the workflow because they change independently of the routing
+contract.
 
-Each environment may have different model availability, pricing, limits, wrappers, or CLI access. Map the roles above to the best available models in the current environment.
+When those models are unavailable, preserve the two-role strategy: map the Sol
+role to the environment's strongest reasoning model and the Luna role to its
+fastest lower-cost model that can reliably complete the explicit brief. If no
+safe lower-cost option exists, keep the work on the stronger model.
