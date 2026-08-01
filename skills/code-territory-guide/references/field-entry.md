@@ -1,35 +1,68 @@
-# Field Entry: The Missing Empty State
+# Field Entry: Safer Workspace Deletion
 
-Use this short example to understand the guide's shape. It is illustrative, not a required template.
+Use this compact example to understand how the guide collaborates with a user
+before, during, and after implementation. It is illustrative, not a required
+template.
 
-## Map
+## Starting Map
 
-User request: "Show a useful state when a filtered dashboard has no results."
+User request:
+
+> Add a safer workspace deletion flow. I know the right confirmation when I
+> see it, but I am unfamiliar with this part of the app.
+
+That starting context matters. It identifies a tacit UX preference, admits a
+repository blind spot, and leaves the implementation open to evidence.
 
 ## Survey
 
-The request does not specify whether the empty state means no data exists or the active filters exclude existing data. Inspect the dashboard component, current filter state, nearby loading/error states, and relevant UI tests before asking a question.
+Inspect the current settings flow, deletion contract, adjacent confirmation
+dialogs, accessibility conventions, and focused UI tests. The repository shows
+that deletion is consequential, but it does not settle which confirmation
+interaction best fits the product.
 
-## Territory
+Create three disposable, fake-data directions: a standard confirmation, a
+typed workspace-name confirmation, and a staged warning that first explains
+impact. The user selects the typed confirmation because it feels deliberate
+without adding unnecessary steps.
 
-The repository already distinguishes `hasLoaded`, `items.length`, and `activeFilters`. A shared `EmptyPanel` component is used by adjacent views. The relevant test suite renders the dashboard with mocked query results.
+## Expedition Route
 
-## Route
+Reuse the existing dialog and form patterns. Require the exact workspace name,
+preserve the current API contract, keep keyboard and screen-reader behavior,
+and add focused tests for mismatch, success, cancellation, and pending state.
+Do not redesign the settings page or change deletion semantics.
 
-Reuse `EmptyPanel`. Render a filter-specific message only after loading completes and only when results are empty while filters are active. Preserve the existing no-data message for an unfiltered empty list. Add the two narrow rendering tests and run the dashboard test file.
+The route is short enough to keep in chat. The prototype remains a decision
+probe, not evidence that production behavior is complete.
 
-## Field Brief
+## Route-Changing Evidence
 
-Files: the dashboard view and its existing test file. Non-goals: changing filter behavior, query APIs, or the shared component. Scope expansion: new filtering semantics or a redesign of all empty states requires confirmation.
+During implementation, the API contract reveals that deletion is recoverable
+for 30 days. The planned “permanently delete” copy is therefore inaccurate.
+This is not a cosmetic wording choice: it changes the promise made to users.
 
-Artifact decision: this is a narrow, single-session change, so keep the brief and report in chat.
-
-## Expedition Result
-
-The smallest patch adds one conditional branch and two tests. The targeted test suite passes. No notes file is needed because the repository convention resolved the only ambiguity.
-
-If the targeted test failed, classify the failure before handoff. A regression introduced by the patch returns to Track and prevents a Complete result; a verified pre-existing or environmental failure is preserved and disclosed with evidence.
+Stop, present the conflict, and ask whether the flow should describe scheduled
+deletion and recovery. After confirmation, record that material deviation,
+update the acceptance criteria, and revalidate the affected UI and tests. Do
+not silently keep the original wording merely because it appeared in the plan.
 
 ## Field Report
 
-Changed the dashboard's post-load empty rendering so filtered and unfiltered empty results have distinct guidance. Verified with the dashboard tests. Delivery state: uncommitted because no commit or remote operation was requested. Review the final copy and whether the clear-filters action belongs in this change.
+Lead with the outcome: workspace deletion now requires typing the workspace
+name and accurately explains the 30-day recovery window. Then report the owned
+files, focused tests, accessibility check, deviation from the original copy,
+remaining risk, and actual delivery state.
+
+## Other Useful Entries
+
+- “Do a blind-spot pass on this authentication module. I am new to this
+  subsystem; explain only the unknowns that could change the route.”
+- “Prototype three toolbar layouts with fake data before wiring state. I can
+  recognize the right density more easily than I can specify it.”
+- “Interview me one question at a time about the import contract. Prioritize
+  answers that would change compatibility or data integrity.”
+
+Specific instructions are valuable when they describe real constraints. Do
+not let them prevent a pivot when repository evidence proves that the planned
+route or user-facing promise is wrong.
