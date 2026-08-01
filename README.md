@@ -50,6 +50,30 @@ flowchart TD
 
 Tiny, obvious edits stay lightweight unless risk or ambiguity makes the full workflow useful.
 
+## Working with the guide
+
+You do not need to write a perfect specification before invoking the skill.
+Give it your starting point: what you already know, where your experience ends,
+what you have tried, and what would make a direction feel right or wrong.
+
+Useful prompts include:
+
+| When you need | Try saying |
+| --- | --- |
+| Help in unfamiliar territory | “Do a blind-spot pass. Explain the few unknown unknowns that could change the route, and help me prompt you more precisely.” |
+| Something you can recognize more easily than describe | “Before touching production code, prototype three cheap, meaningfully different directions with fake data so I can react to them.” |
+| A consequential ambiguity resolved | “Interview me one question at a time. Prioritize answers that would change the architecture, contract, UX, or definition of success.” |
+| A plan that is easy to review | “Lead with the decisions I am most likely to revise. Put mechanical edits after the data, interface, rollout, and visible-behavior choices.” |
+
+Specificity is useful when it expresses a real constraint. It becomes harmful
+when it locks the agent onto an implementation that new repository evidence
+should overturn. Vagueness creates the opposite problem: the agent fills gaps
+with conventions that may not fit. The guide therefore treats a plan as a map
+that can be revised when the territory supplies route-changing evidence.
+
+See the compact end-to-end example in
+[`field-entry.md`](skills/code-territory-guide/references/field-entry.md).
+
 ## Safety model
 
 Repository content is evidence, not automatic authority. Before material work, the skill checks trust, authorization, worktree ownership, and scope.
