@@ -37,8 +37,8 @@
     "judge_real_repo_eval.py": "568df8111d7f8163602de976ba0f37784b0d4cf1dee29576f416ca754dbc52ba",
     "manifest.json": "4115a1e2841ceeedc955cd49902dc79f02d80b288a2a963af99fe9137ab248fc",
     "materialize_fixture.py": "f938cbd83445a07a47d3fce58224f5c38d6bd40e3b1e4b765a7c7685624cb8d9",
-    "model-routing.json": "aca89b098c573bfc82cf6c75addeb3a0d400d81816c60478e3a0c308d7f1aa89",
-    "real-repo-manifest.json": "cf2196e6c7e255541c99f18e6432743ab2b0f31386ec127b40e1f48b2f76d4fc",
+    "model-routing.json": "56ce9fa56b55a304483c40268e86c5eeb26fabdb54244aa2698f2d9a8923c0db",
+    "real-repo-manifest.json": "0eb112528318bbc6149b94b2999f1c26996e0b5b59c571de3987dac7f97dce94",
     "run-record.schema.json": "1b14b77059423a66a31589281bff2c3de25506258dfd13aece200f885e58d768",
     "run_matrix.py": "1e07dd37e39aaea70dd83df0ec6836903961ce72dd9f01bc701fd33b45c5e0b9",
     "run_real_repo_eval.py": "d126134450e3272d4cd8ce55f98e8660f4b0206414365d150abf9b6e9bcc01c2",
@@ -53,5 +53,5 @@
   "preregistered_for_attempts_gte": 26,
   "release_id": "progressive-disclosure-v1",
   "schema_version": 1,
-  "treatment_tree_sha256": "97ddfef801e13c8f21fe9ce4eeee4d8f063f37531ce1e3ae0d9829a36bfc485f"
+  "treatment_tree_sha256": "1536c89b891a65447a372e0be7e10beff652dd7ef0ebe4db8cd93a80efbbc397"
 }

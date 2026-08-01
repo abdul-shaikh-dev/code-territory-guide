@@ -2,7 +2,7 @@
   "name": "code-territory-guide",
   "displayName": "Code Territory Guide",
   "description": "Evidence-led workflow for scoped, safe code changes",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "author": {
     "name": "Abdul Gaffar Shaikh"
   },

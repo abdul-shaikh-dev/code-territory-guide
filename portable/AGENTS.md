@@ -397,30 +397,35 @@ priority:
   difficult debugging, scope, risk, security, data, APIs, deployment,
   migrations, test strategy, product and UX judgment, and consequential final
   review
-- use `gpt-5.6-luna` at `medium` reasoning for read-heavy exploration,
-  repository mapping, supporting-document review, approved well-specified
-  implementation, writing or modifying tests, and bounded multi-step tool
-  workflows
-- use `gpt-5.6-luna` at `high` reasoning for complex but well-specified
-  implementation, edge-case analysis, and routine owned-diff review
-- use `gpt-5.6-luna` at `xhigh` reasoning only for rare, difficult, fully
+- use `gpt-5.6-terra` at `medium` reasoning for read-heavy exploration,
+  repository mapping, large-file and supporting-document review, parallel
+  evidence gathering, and approved well-specified multi-step implementation
+- use `gpt-5.6-terra` at `high` reasoning for complex explicit implementation,
+  edge-case analysis, and substantive routine owned-diff review
+- use `gpt-5.6-terra` at `xhigh` reasoning only for rare, difficult, fully
   specified work where deeper reasoning is expected to improve the result
+- use `gpt-5.6-luna` at `medium` reasoning for narrow, repeatable
+  implementation, focused test authoring, and predictable high-volume work
 - use `gpt-5.6-luna` at `low` reasoning for running deterministic tests or
   builds, formatting, log or screenshot collection, and other mechanical checks
-- move up the Luna ladder while the route remains explicit; switch to Sol at
-  `high` when requirements, architecture, ownership, coupling, consequences,
-  failures, drift, or validation require route-changing judgment
+- move from Luna to Terra when work becomes exploratory, multi-step, or
+  edge-heavy; move up the Terra ladder while the route remains explicit; switch
+  to Sol at `high` when requirements, architecture, ownership, coupling,
+  consequences, failures, drift, or validation require route-changing judgment
 - use a different agent or model configuration for review when practical
 - avoid parallel write-heavy agents on the same files
 
 A task may change models as uncertainty falls: use Sol to settle the route,
-then the lowest Luna effort that can satisfy a brief whose behavior,
-boundaries, checks, and escalation conditions are explicit.
+Terra to explore or execute an explicit multi-step brief, and Luna for narrow,
+repeatable work with fast validation.
 
-If these exact models are unavailable, map the Sol role to the environment's
-strongest reasoning model and the Luna ladder to its fastest reliable
-lower-cost model. If no safe lower-cost option exists, keep the work on the
-stronger model.
+If an exact model is unavailable, preserve its routing role with the closest
+supported model. If Terra is unavailable, use Luna only for narrow explicit
+work and Sol for demanding work. If Luna is unavailable, use Terra at the same
+effort for narrow execution. Map Sol to the environment's strongest reasoning
+model. Never claim that an unavailable model was used; report the actual
+fallback when material. If no safe lower-cost option exists, keep the work on
+the stronger model.
 
 Delegate only bounded, independent work when coordination costs less than doing
 it locally. A handoff must include the original request, applicable

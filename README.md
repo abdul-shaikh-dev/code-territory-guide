@@ -123,10 +123,10 @@ consumer repositories do not require a companion file.
 behavior. `agents/openai.yaml` adds optional Codex-facing presentation metadata;
 other harnesses can ignore it without losing the workflow.
 
-For Codex, model routing uses an explicit Sol and Luna ladder: Luna scales from
-low-effort deterministic execution through medium, high, and exceptional xhigh
-well-specified work; Sol high owns ambiguity, consequential judgment, and
-consequential final review. See
+For Codex, model routing uses three explicit roles: Luna handles narrow,
+repeatable and mechanical work; Terra handles exploration and well-specified
+multi-step execution, scaling from medium through exceptional xhigh; Sol high
+owns ambiguity, consequential judgment, and consequential final review. See
 [`model-routing.md`](skills/code-territory-guide/references/model-routing.md)
 for the exact model identifiers, escalation boundaries, and non-Codex fallback.
 
