@@ -1,0 +1,62 @@
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -3 +3,4 @@
+-## Model Routing
++Complete authorized work through implementation, relevant verification, and
++correction of task-caused failures. Ask only for unresolved user intent that
++materially changes the result or an action beyond existing authorization.
++Honor explicitly requested supervision; do not turn internal plans into gates.
+@@ -5,40 +8,13 @@
+-- When Code Territory Guide applies, follow its model-routing and handoff policy.
+-- Use built-in subagents only when bounded, independent work materially reduces
+-  cost, latency, or main-thread context. Do not delegate tiny tasks when
+-  coordination costs more than the work.
+-- Use GPT-5.6 Sol (`gpt-5.6`) at `medium` reasoning for ambiguous planning,
+-  architecture, difficult debugging, product and UX judgment, security and
+-  privacy, financial or data-integrity decisions, migrations, public contracts,
+-  release decisions, and consequential final review.
+-- Use GPT-5.6 Terra (`gpt-5.6-terra`) at `high` reasoning for read-heavy
+-  exploration, repository mapping, large-file and supporting-document review,
+-  parallel evidence gathering, and well-specified multi-step implementation.
+-- Use GPT-5.6 Terra (`gpt-5.6-terra`) at `high` reasoning for complex explicit
+-  implementation, edge-case analysis, and substantive routine owned-diff
+-  review.
+-- Use GPT-5.6 Terra (`gpt-5.6-terra`) at `xhigh` reasoning only for rare,
+-  difficult, fully specified work where deeper reasoning is expected to improve
+-  the result.
+-- Use GPT-5.6 Luna (`gpt-5.6-luna`) at `high` reasoning for narrow,
+-  repeatable implementation, focused test authoring, and predictable
+-  high-volume work.
+-- Use GPT-5.6 Luna (`gpt-5.6-luna`) at `high` reasoning for running deterministic
+-  tests or builds, formatting, log or screenshot collection, Git/GitHub checks,
+-  and other mechanical work with fast validation.
+-- When an exact model is unavailable, preserve its routing role with the closest
+-  supported model. If Terra is unavailable, use Luna only for narrow explicit
+-  work and Sol for demanding work. If Luna is unavailable, use Terra at the
+-  same effort for narrow execution. Never claim that an unavailable model was
+-  used; report the actual fallback when it is material to the task or handoff.
+-- Move from Luna to Terra when work becomes exploratory, multi-step, or
+-  edge-heavy. Move up the Terra ladder while the route remains explicit. Switch
+-  to GPT-5.6 Sol (`gpt-5.6`) at `high` when requirements, architecture,
+-  ownership, coupling, consequences, failures, drift, or validation require
+-  route-changing judgment.
+-- Avoid parallel write-heavy agents on the same files. Prefer one or two bounded
+-  read-heavy workers that return concise evidence summaries.
+-- A delegated handoff must include the original request, applicable instructions,
+-  worktree baseline, owned files or boundaries, acceptance criteria, validation
+-  commands, and unresolved decisions.
+-- Keep narrow handoffs in chat. Create durable field briefs only for multi-step,
+-  multi-session, or genuinely complex delegated work.
++Keep the current capable primary agent by default. Delegate bounded independent
++work only when it reduces total effort; avoid simultaneous writers on the same
++files. When selecting a worker, use Code Territory Guide's model-routing and
++handoff policy as the single mapping. In this workspace its source is
++`G:/Projects/2026/cool_projects/code-territory-guide/skills/code-territory-guide/references/model-routing.md`;
++elsewhere use the installed skill's reference when available. If neither is
++available, use a callable model appropriate to the task and preserve the user's
++model preferences. Never invent a model or tool that the host does not expose.
++
++Load only task-relevant skill references and reuse instructions already read.
++Prefer the user's named workflow; otherwise choose the smallest relevant skill
++without stacking overlapping critiques. Keep historical snapshots unchanged
++unless the task is specifically to update them.

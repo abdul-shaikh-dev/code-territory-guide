@@ -1,0 +1,5 @@
+--- a/references/evaluation.md
++++ b/references/evaluation.md
+@@ -355 +355 @@
+-Add a new gotcha to `SKILL.md` whenever the skill:
++Persist a gotcha in `SKILL.md` only when the evaluation verifies it is reusable, it is not already covered, and the repository owner or user has authorized that skill change. Otherwise report it as an evaluation finding without changing the skill:

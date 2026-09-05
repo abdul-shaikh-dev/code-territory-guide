@@ -42,10 +42,11 @@ During implementation, the API contract reveals that deletion is recoverable
 for 30 days. The planned “permanently delete” copy is therefore inaccurate.
 This is not a cosmetic wording choice: it changes the promise made to users.
 
-Stop, present the conflict, and ask whether the flow should describe scheduled
-deletion and recovery. After confirmation, record that material deviation,
-update the acceptance criteria, and revalidate the affected UI and tests. Do
-not silently keep the original wording merely because it appeared in the plan.
+Correct the copy to describe the verified recovery window while preserving the
+requested deletion behavior. Explain the evidence and revalidate the UI and
+tests. Ask only if the user intended to change deletion semantics or the
+recovery contract remains uncertain; factual copy corrections need no separate
+approval. Record the deviation when a durable brief already exists.
 
 ## Field Report
 

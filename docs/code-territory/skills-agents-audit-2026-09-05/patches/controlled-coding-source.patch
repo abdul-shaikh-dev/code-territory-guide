@@ -1,0 +1,109 @@
+--- /dev/null
++++ b/skills/controlled-coding-plan/agents/openai.yaml
+@@ -0,0 +1,6 @@
++interface:
++  display_name: "Controlled Coding Plan"
++  short_description: "Plan a supervised coding change"
++  default_prompt: "Use $controlled-coding-plan to prepare a supervised implementation plan."
++policy:
++  allow_implicit_invocation: false
+--- a/skills/controlled-coding-plan/SKILL.md
++++ b/skills/controlled-coding-plan/SKILL.md
+@@ -3 +3 @@
+-description: Use when a non-trivial coding task needs discovery, architecture-sensitive planning, implementation steps, acceptance criteria, or a canonical implementation-plan.md before source edits.
++description: Explicit opt-in planning for supervised coding, including a canonical implementation-plan.md when controlled scaffolding needs one.
+--- /dev/null
++++ b/skills/controlled-coding-review/agents/openai.yaml
+@@ -0,0 +1,6 @@
++interface:
++  display_name: "Controlled Coding Review"
++  short_description: "Review a supervised coding diff"
++  default_prompt: "Use $controlled-coding-review to review this controlled diff."
++policy:
++  allow_implicit_invocation: false
+--- a/skills/controlled-coding-review/SKILL.md
++++ b/skills/controlled-coding-review/SKILL.md
+@@ -3 +3 @@
+-description: Use when reviewing an implementation diff against an approved controlled coding plan, checking scope discipline, plan adherence, risky changes, test gaps, or creating targeted fixes without rewriting the feature.
++description: Explicit opt-in review of a controlled coding diff against its plan, with targeted fixes and scope checks.
+--- /dev/null
++++ b/skills/controlled-coding-scaffold/agents/openai.yaml
+@@ -0,0 +1,6 @@
++interface:
++  display_name: "Controlled Coding Scaffold"
++  short_description: "Create supervised coding scaffolds"
++  default_prompt: "Use $controlled-coding-scaffold to create approved starter scaffolds."
++policy:
++  allow_implicit_invocation: false
+--- a/skills/controlled-coding-scaffold/SKILL.md
++++ b/skills/controlled-coding-scaffold/SKILL.md
+@@ -3 +3 @@
+-description: Use when the user explicitly asks to scaffold starter files, create skeletons, insert autocomplete markers, or prepare real files for Copilot ghost-text completion from an approved controlled-coding-plan implementation plan.
++description: Explicit opt-in scaffolding of approved controlled plans into autocomplete-ready starter files and cursor handoff.
+@@ -8,3 +8,3 @@
+-Prepare real files for autocomplete-first implementation from an approved `controlled-coding-plan`. Never plan here. Never write business logic.
+-
+-The approved plan must exist at `docs/controlled-coding/{feature-name}/implementation-plan.md`. Chat-only plans and single-file notes are not scaffold inputs.
++Prepare real files for autocomplete-first implementation from an approved `controlled-coding-plan`. Never write business logic.
++
++Use `docs/controlled-coding/{feature-name}/implementation-plan.md` as the canonical plan. If it is missing and the user explicitly authorized plan-plus-scaffold work, create the scoped plan there first, then scaffold the approved slice. Otherwise ask for or create the plan before scaffolding.
+@@ -38 +38 @@
+-If missing, stop and ask the user to run `controlled-coding-plan` and save the approved plan to the canonical path.
++If missing, create and save a scoped plan when plan-plus-scaffold work is explicitly authorized; otherwise request the canonical plan.
+@@ -55 +55 @@
+-Before editing, output a dry-run and wait for explicit confirmation.
++Before editing, output a dry-run. Wait for confirmation only when the user requested supervision, the slice is not exactly authorized, or the dry-run identifies a material scope change.
+@@ -72,4 +72,4 @@
+-Confirm scaffold? yes / no / adjust
+-```
+-
+-For interfaces, contracts, routing, DI, or wiring files, require explicit wording such as "confirm integration scaffold".
++When confirmation is required, ask: Confirm scaffold? yes / no / adjust. Otherwise state: Exact authorized scaffold: proceeding.
++```
++
++For interfaces, contracts, routing, DI, or wiring files, require an integration-scaffold confirmation only when the exact integration scope is not already authorized or the user requested supervised checkpoints.
+@@ -143 +143 @@
+-- the user explicitly confirms integration scaffold.
++- the user explicitly confirms integration scaffold, unless that exact integration scope is already authorized and no checkpoint was requested.
+@@ -202 +202 @@
+-- Does not scaffold without an approved plan file.
++- Does not scaffold without a canonical approved plan; it may create that plan first when plan-plus-scaffold work is explicitly authorized.
+@@ -206 +206 @@
+-- Does not skip dry-run confirmation.
++- Does not skip a requested dry-run confirmation or one required by an inexact or materially changed scope.
+--- /dev/null
++++ b/skills/controlled-coding/agents/openai.yaml
+@@ -0,0 +1,6 @@
++interface:
++  display_name: "Controlled Coding"
++  short_description: "Supervised plan-based coding workflow"
++  default_prompt: "Use $controlled-coding for supervised plan-based coding."
++policy:
++  allow_implicit_invocation: false
+--- a/skills/controlled-coding/SKILL.md
++++ b/skills/controlled-coding/SKILL.md
+@@ -3 +3 @@
+-description: Use when non-trivial coding work needs bounded AI assistance, plan-before-code discipline, scoped implementation, starter-file scaffolding, review against an approved plan, or cost-aware protection from large uncontrolled agent diffs.
++description: Explicit opt-in supervised coding workflow for plan-based implementation, scaffolding, review, and debugging.
+@@ -10 +10 @@
+-## Hard Gates
++## Supervised mode
+@@ -12 +12 @@
+-Every non-trivial coding task needs an approved implementation plan before source edits, targeted fixes, or scaffolding.
++Use this family only when the user explicitly invokes controlled coding or asks for plan approval, per-step supervision, or controlled scaffolding. It is not the default workflow for general implementation.
+@@ -14,3 +14 @@
+-"Implement this", "make the changes", and "apply the patch" do not mean edit immediately. They mean create or update the implementation plan first, then wait for approval before changing source files.
+-
+-Do not create or modify repository files unless implementation, scaffold, or documentation artifact creation is explicitly requested.
++Within supervised mode, create a plan before edits when the user requests that control. Treat an explicitly authorized plan and exact implementation slice as sufficient approval; ask again only when the user requested a checkpoint or scope materially changes. Do not create repository artifacts unless the user authorized them.
+@@ -39,2 +37,2 @@
+-2. Wait for user approval.
+-3. Implement one approved step, or use controlled-coding-scaffold for autocomplete-ready starter files.
++2. If the user requested a plan checkpoint, wait for approval. Otherwise, an exact authorized plan and implementation slice authorizes the next step.
++3. Implement the authorized step, or use controlled-coding-scaffold for autocomplete-ready starter files.
+@@ -45 +43 @@
+-If a plan assumption proves wrong mid-implementation, stop, update the plan, and ask before continuing.
++If a plan assumption materially changes scope, update the plan and ask only when the user requested supervision or the new scope is not authorized.
+@@ -90 +88 @@
+-When in doubt, plan first. Do not let a coding request become an open-ended agent session.
++Keep this opt-in workflow bounded; use ordinary repository guidance when it was not requested.

@@ -1,8 +1,8 @@
 # Unknowns Lifecycle
 
-Load this reference for vague, unfamiliar, product-facing, architecture-sensitive,
-multi-step, or reviewer-sensitive work. Use only the techniques needed to make
-material unknowns cheap to discover before they become expensive to reverse.
+Load this reference when a material product or architecture unknown needs
+more than targeted inspection. Use only techniques that can change the route;
+a multi-step task with clear requirements does not need this reference.
 
 ## Collaborator Context
 

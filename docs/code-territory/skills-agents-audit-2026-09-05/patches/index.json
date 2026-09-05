@@ -1,0 +1,182 @@
+[
+  {
+    "patch": "codex-guidance.patch",
+    "path": "AGENTS.md",
+    "before_sha256": "cb86e7d2d444a56cf0e0a1c96669fba23b11b663de874c1c6bb7476c575c9efa"
+  },
+  {
+    "patch": "personal-skills.patch",
+    "path": "find-skills/SKILL.md",
+    "before_sha256": "1e85f6f9686e145aca4a124e3b704b9bbea9aa87e08515c1e352eee70f6e6e7a"
+  },
+  {
+    "patch": "personal-skills.patch",
+    "path": "impeccable/reference/codex.md",
+    "before_sha256": "915d6c88b84d81acd2cc467ce5aff5f4c93a45078d0b7d752f9f154d494b7c84"
+  },
+  {
+    "patch": "personal-skills.patch",
+    "path": "impeccable/reference/craft.md",
+    "before_sha256": "76a1956dd1dd402048fce715103be1ddeebc4634d8d31de5ba4ba19fd7759b6a"
+  },
+  {
+    "patch": "personal-skills.patch",
+    "path": "impeccable/reference/critique.md",
+    "before_sha256": "9af4fc615c7d0c16cb983cf6fa822e7b2230231aa255bd817efe873dafef3ac3"
+  },
+  {
+    "patch": "personal-skills.patch",
+    "path": "impeccable/reference/hooks.md",
+    "before_sha256": "d2459e95cbd9c0988d553b964e7fd7d769da046bad449799377382a7b9069f85"
+  },
+  {
+    "patch": "personal-skills.patch",
+    "path": "impeccable/reference/init.md",
+    "before_sha256": "11d8fb70c525e02eda6333c5e55ee855e898c4992722c4cc4f066f7e1b3b25ef"
+  },
+  {
+    "patch": "personal-skills.patch",
+    "path": "impeccable/reference/live.md",
+    "before_sha256": "6e2afff57357a92b205573a6ae7d7917320ec4bbedaf204f4d337b4614d017b1"
+  },
+  {
+    "patch": "personal-skills.patch",
+    "path": "impeccable/reference/polish.md",
+    "before_sha256": "727673406646bb97ad7904d67ed63a18e155f2c0b7bb665ba6a5b093913508f6"
+  },
+  {
+    "patch": "personal-skills.patch",
+    "path": "impeccable/reference/shape.md",
+    "before_sha256": "7d1f0183d5dab72f8d52499ccb557209de0f57b46b509345edd76adb2a3fcd99"
+  },
+  {
+    "patch": "personal-skills.patch",
+    "path": "impeccable/SKILL.md",
+    "before_sha256": "4ff55c665ec610d7e20a15abe9483e4f8b41ff22b72ef1ab5a0d5e5e6a09f3f5"
+  },
+  {
+    "patch": "personal-skills.patch",
+    "path": "writing-great-skills/agents/openai.yaml",
+    "before_sha256": null
+  },
+  {
+    "patch": "personal-skills.patch",
+    "path": "writing-great-skills/GLOSSARY.md",
+    "before_sha256": "be421a233b56697bc78da8147abfaac3ad47bfbcaa0d869c996db056f0e8d470"
+  },
+  {
+    "patch": "personal-skills.patch",
+    "path": "writing-great-skills/SKILL.md",
+    "before_sha256": "fb053e06c232a940c742f8786d0b33fe34badac291f1e6bf6952f509b7488038"
+  },
+  {
+    "patch": "controlled-coding-source.patch",
+    "path": "skills/controlled-coding-plan/agents/openai.yaml",
+    "before_sha256": null
+  },
+  {
+    "patch": "controlled-coding-source.patch",
+    "path": "skills/controlled-coding-plan/SKILL.md",
+    "before_sha256": "2614655ea2659d0c7597f3ee6e8573464f228fe926f0b9da36d9c7d8747727cf"
+  },
+  {
+    "patch": "controlled-coding-source.patch",
+    "path": "skills/controlled-coding-review/agents/openai.yaml",
+    "before_sha256": null
+  },
+  {
+    "patch": "controlled-coding-source.patch",
+    "path": "skills/controlled-coding-review/SKILL.md",
+    "before_sha256": "9a0e874b43dba952c46c7c83436ac546251c4652672dfd01783247577ae768f2"
+  },
+  {
+    "patch": "controlled-coding-source.patch",
+    "path": "skills/controlled-coding-scaffold/agents/openai.yaml",
+    "before_sha256": null
+  },
+  {
+    "patch": "controlled-coding-source.patch",
+    "path": "skills/controlled-coding-scaffold/SKILL.md",
+    "before_sha256": "c31d128815613c7770371c133469a86ce9e31a3402cb17ad6d460a68b73f78ab"
+  },
+  {
+    "patch": "controlled-coding-source.patch",
+    "path": "skills/controlled-coding/agents/openai.yaml",
+    "before_sha256": null
+  },
+  {
+    "patch": "controlled-coding-source.patch",
+    "path": "skills/controlled-coding/SKILL.md",
+    "before_sha256": "7f5c5e5973e14603bb2b61e9b45929c04432f54b4510abd57768c72aae807901"
+  },
+  {
+    "patch": "ghost-source.patch",
+    "path": "references/evaluation.md",
+    "before_sha256": "2d067419007de281ff4107b0a10beb9188113a1a3885fb57686b2ec27193a9fc"
+  },
+  {
+    "patch": "vendor-cache.patch",
+    "path": "openai-bundled/computer-use/26.901.41600/skills/computer-use/SKILL.md",
+    "before_sha256": "8211e4b11a19a0dc4f0ace91096c74c5b36037ca4cb2c8988f0f535bb209e951"
+  },
+  {
+    "patch": "vendor-cache.patch",
+    "path": "openai-primary-runtime/spreadsheets/26.904.11930/skills/spreadsheets/SKILL.md",
+    "before_sha256": "b2477f39319682cf156c8faa36eac9f039aaea03a5f09ae72111c76910ae4e75"
+  },
+  {
+    "patch": "vendor-cache.patch",
+    "path": "openai-curated-remote/deep-research-work/0.1.14/skills/deep-research/SKILL.md",
+    "before_sha256": "c7b924a736d715bf90941c5e75460b3387ec90b1fdb3a7c79d3e9bfb10427dc6"
+  },
+  {
+    "patch": "codex-system-skills.patch",
+    "path": "openai-docs/SKILL.md",
+    "before_sha256": "4371fcc6652d78309ccf5e7710a4fd22314ad7f1f4928a6c172ddae80c87cc87"
+  },
+  {
+    "patch": "vendor-cache.patch",
+    "path": "openai-curated-remote/figma/2.0.21/skills/figma-generate-library/SKILL.md",
+    "before_sha256": "3c995d483bbf4761392ba0c2e00df2b1b1c632cc05c6e7df57a2e89c311f53b7"
+  },
+  {
+    "patch": "vendor-cache.patch",
+    "path": "openai-curated-remote/figma/2.0.21/skills/figma-swiftui/SKILL.md",
+    "before_sha256": "868c4defe2c0854f5a3e27594d3fa0f20347c86a9b15d103483b7488bfa8affe"
+  },
+  {
+    "patch": "vendor-cache.patch",
+    "path": "openai-curated-remote/figma/2.0.21/skills/figma-use/SKILL.md",
+    "before_sha256": "7de62bb574c7acf3241643e0aafcea13e48ff06a12ef5203447eda3584e6ff4f"
+  },
+  {
+    "patch": "vendor-cache.patch",
+    "path": "openai-curated-remote/product-design/0.1.53/skills/ideate/SKILL.md",
+    "before_sha256": "649e8782ca93d5aece712964fae5be2b111cc3143577e1507b98df7f9d8e6bde"
+  },
+  {
+    "patch": "vendor-cache.patch",
+    "path": "openai-curated-remote/product-design/0.1.53/skills/url-to-code/SKILL.md",
+    "before_sha256": "2624d0e2ec5f14ba2a4bf74fe05aaa23520b4fb76ca57973c9dadd54fd4b09d2"
+  },
+  {
+    "patch": "vendor-cache.patch",
+    "path": "openai-bundled/sites/0.1.57/skills/sites-building/SKILL.md",
+    "before_sha256": "f036a18be47d3012ca8993c82eed2350cb8920ffacd4576c99849846952ea880"
+  },
+  {
+    "patch": "vendor-cache.patch",
+    "path": "openai-primary-runtime/documents/26.904.11930/skills/documents/SKILL.md",
+    "before_sha256": "9fcc13c3cc34746b134d4ecf4a3c96c9f464d59944fcc99862b2e69ac953f19e"
+  },
+  {
+    "patch": "vendor-cache.patch",
+    "path": "openai-curated-remote/figma/2.0.21/skills/figma-generate-library/references/component-creation.md",
+    "before_sha256": "abfeadf4f49a12a6efb7b62b7855e22c42eae041cce8b3fa07090480dfe6ae7d"
+  },
+  {
+    "patch": "vendor-cache.patch",
+    "path": "openai-curated-remote/figma/2.0.21/skills/figma-use/references/gotchas.md",
+    "before_sha256": "82c1044e28647116459b7d7510facb9ff7eef2dc3d64d12e40f7808c2bb484af"
+  }
+]

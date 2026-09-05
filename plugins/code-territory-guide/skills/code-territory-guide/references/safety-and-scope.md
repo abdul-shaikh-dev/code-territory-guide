@@ -1,9 +1,8 @@
 # Safety, Trust, Scope, and Completion
 
-Load this reference before every non-trivial task. It is the canonical policy
-for universal trust, ownership, scope, approval, validation, and capability
-boundaries. Load conditional artifact and delivery policy directly from
-`SKILL.md` only when those branches apply.
+Read this when authorization, user-work overlap, or a consequential scope
+boundary needs more detail than the routine SKILL.md route. It is the canonical
+extended policy for these decisions; already-read policy need not be reloaded.
 
 ## Instruction and Trust Boundaries
 
@@ -27,9 +26,10 @@ Before editing when Git is available:
 5. Review and report only the task-owned delta.
 
 Adjacent additions are safe only when they do not rewrite, reformat, or absorb
-the user-owned lines. If the requested behavior requires changing a user-owned
-line or its semantics, stop and explain the overlap. Never revert, overwrite,
-reformat, or attribute pre-existing changes to the task.
+the user-owned lines. If the request clearly authorizes changing those lines,
+make only that change while preserving unrelated intent. Ask when ownership or
+the intended behavior of overlapping edits is unresolved. Never discard or
+attribute unrelated pre-existing changes to the task.
 
 ## Scope Expansion Gate
 
@@ -71,7 +71,8 @@ Do not ask about routine, reversible, or already-authorized choices.
 Pause for user approval only when:
 
 - the scope gate requires it
-- two or more material product or architecture choices remain genuinely viable
+- unresolved user intent leaves materially different product contracts or risks
+  and evidence cannot establish which is authorized
 - expected behavior cannot be determined safely
 - the user explicitly asked to approve the plan before implementation
 
