@@ -9,7 +9,7 @@ prototype. Read `safety-and-scope.md` first.
 Use artifacts to preserve useful execution context, not merely to satisfy process. Make and announce an artifact decision after discovery:
 
 - Keep tiny edits, narrow Prove tasks, and short single-session work in chat.
-- Materialize durable artifacts for multi-session work, delegated implementation, substantial Survey or Track findings, multi-step Expeditions, or when the user requests a written plan, investigation, or handoff.
+- Materialize artifacts when complex handoffs, multi-session resumption, or substantial findings need durable context, or when the user requests a written deliverable. Multiple steps or a narrow delegated read do not alone require a file.
 - Follow an existing repository documentation convention first.
 - When no convention exists, use `docs/code-territory/<task-slug>/`.
 

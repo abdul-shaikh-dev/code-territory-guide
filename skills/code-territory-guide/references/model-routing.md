@@ -1,150 +1,64 @@
 # Model Routing
 
-Use this reference when choosing which model should plan, implement, review, or rerun work.
+Use this reference when delegation, escalation, or fallback is actually needed.
+Keep the current capable primary agent by default; do not hand off merely to
+satisfy a model table. These are worker-selection defaults, not universal task
+phases. User-selected models and reasoning preferences take precedence.
 
-## Principle
+## Roles
 
-Match model capability to the outcome required at each stage of the workflow.
-Use the cheapest model that can meet the quality bar, but escalate without
-hesitation when the output affects shipped behavior, architecture, security,
-user experience, data integrity, public contracts, or review quality.
+- **Astra primary:** when already running GPT-6 Astra, keep task judgment,
+  integration, and final accountability there. Delegate only independent work
+  whose coordination cost is lower than doing it locally.
+- **Sol judgment:** ambiguous planning, architecture, consequential decisions,
+  difficult debugging, product taste, security/data contracts, and final review
+  when a separate judgment worker materially improves confidence.
+- **Terra exploration and execution:** repository mapping, supporting-document
+  review, explicit multi-step implementation, edge cases, and substantive review.
+- **Luna narrow execution:** repeatable localized implementation, focused tests,
+  deterministic checks, formatting, and bounded evidence collection.
 
-Cost is a tie-breaker only after quality, correctness, and risk are satisfied.
-One task may use different models as uncertainty falls: a strong model can
-resolve the route, then a lower-cost model can execute a sufficiently explicit
-brief.
+## Codex defaults
 
-## Default Routing
+This table is the single authoritative model/effort mapping for this skill.
+Other instruction files should reference it rather than repeat the mapping.
 
-- **Sol role**: use for ambiguous requirements, architecture, difficult
-  debugging, risk and scope decisions, security/data/API/deployment changes,
-  implementation briefs, taste-sensitive work, and consequential final review.
-- **Terra exploration and execution role**: use for read-heavy exploration,
-  repository mapping, large-file and supporting-document review, parallel
-  evidence gathering, well-specified multi-step implementation, edge-case
-  analysis, and routine owned-diff review.
-- **Luna narrow execution role**: use for clear, repeatable, high-volume work,
-  including localized implementation, focused test authoring, mechanical edits,
-  deterministic checks, formatting, and evidence collection.
-
-In Codex, use these exact defaults when the models are available:
-
-| Work | Model | Reasoning effort |
+| Worker role | Callable model | Effort |
 | --- | --- | --- |
-| Deterministic test/build execution, formatting, Git checks, and evidence collection | `gpt-5.6-luna` | `low` |
-| Narrow, repeatable implementation, focused tests, and high-volume transformations | `gpt-5.6-luna` | `medium` |
-| Repository mapping, read-heavy scans, large-file review, and parallel evidence gathering | `gpt-5.6-terra` | `medium` |
-| Well-specified multi-step implementation and routine follow-through | `gpt-5.6-terra` | `medium` |
-| Complex explicit implementation, edge-case analysis, or substantive routine review | `gpt-5.6-terra` | `high` |
-| Rare, difficult, fully specified work with a clear expected quality gain | `gpt-5.6-terra` | `xhigh` |
-| Ambiguous or consequential decisions and consequential final review | GPT-5.6 Sol (`gpt-5.6`) | `high` |
+| Judgment with unresolved requirements or consequential review | `gpt-5.6-sol` | `medium` |
+| Judgment requiring deeper investigation or route-changing decisions | `gpt-5.6-sol` | `high` |
+| Read-heavy exploration, explicit implementation, or substantive routine review | `gpt-5.6-terra` | `high` |
+| Rare difficult work with fully specified scope and expected quality gain | `gpt-5.6-terra` | `xhigh` |
+| Narrow repeatable implementation, focused tests, and mechanical checks | `gpt-5.6-luna` | `high` |
 
-Move from Luna to Terra when narrow work becomes exploratory, multi-step, or
-edge-heavy. Move up the Terra ladder while the route remains explicit. Switch
-to GPT-5.6 Sol (`gpt-5.6`) at `high` when the work requires route-changing
-judgment or crosses a consequential risk boundary.
+Use the identifiers actually offered by the host. Some hosts name Sol `gpt-5.6`;
+that alias is not permission to pass an unavailable identifier to a tool. For
+Astra keep the current user/session effort unless there is a reason to change it.
+Do not encode prices or assert that a particular model is universally cheapest.
 
-## Escalation Rules
+## Escalation and fallback
 
-Escalate reasoning effort or route to Sol without hesitation when:
+Move Luna work to Terra when it becomes exploratory or edge-heavy. Use deeper
+Terra reasoning only while requirements remain explicit. Route unresolved
+architecture, ownership, consequences, or repeated unexplained failures back to
+the primary or a Sol judgment worker. Do not keep rerunning a failing configuration
+when a stronger review is likely to resolve the issue.
 
-- the cheaper model produces vague, incorrect, incomplete, or overbroad work
-- the task involves unknown architecture, unclear ownership, or hidden coupling
-- the change can materially affect users, data, security, reliability,
-  performance, compatibility, or deployment
-- the implementation starts drifting from the brief
-- tests fail for reasons the current model cannot explain cleanly
-- review finds missed requirements, weak tests, avoidable complexity, or scope creep
+When an exact model is unavailable, preserve its role with the closest callable
+model. Use Terra for unavailable Luna; use a judgment-capable model for demanding
+work when Terra or Sol is unavailable. Luna remains suitable only for narrow
+explicit work. Report the actual fallback when material; never claim a model ran
+when it did not. A capable single agent is a valid fallback.
 
-Use Luna `medium` for narrow semantic work with fast feedback. Route to Terra
-`medium` when exploration or multi-step execution begins, Terra `high` for
-complex logic, edge cases, or substantive routine review, and Terra `xhigh`
-only when the work remains fully specified and deeper reasoning is expected to
-improve the result. Route to Sol `high` when requirements, architecture,
-ownership, hidden coupling, consequences, or expected behavior require judgment
-rather than more execution effort.
+## Handoffs and review
 
-Do not continue polishing mediocre work with the same configuration when a
-stronger review or rerun would be cheaper than shipping risk.
+Avoid simultaneous writers on the same files. A bounded handoff includes the
+original request, applicable instructions, baseline/user-owned changes, owned
+boundaries, acceptance criteria, validation route, and unresolved decisions.
+Keep narrow handoffs in chat. Use a durable brief for complex or multi-session
+coordination when it prevents loss of context.
 
-## Taste-Sensitive Work
-
-For user-facing work, select a model with strong judgment, not just raw implementation ability.
-
-Taste-sensitive work includes:
-
-- UI/UX behavior and visual design
-- copy, naming, empty/error/loading states
-- API ergonomics and developer experience
-- public documentation
-- accessibility and interaction details
-
-For these tasks, prioritize judgment and review quality over cost.
-
-## Well-Specified Execution
-
-Lower-cost models are appropriate for more than single mechanical steps when:
-
-- the brief is explicit
-- the change is localized
-- expected behavior is already clear
-- tool access and intermediate checkpoints are defined
-- tests or checks provide fast feedback
-- failures have an unambiguous escalation path
-- the work may be multi-step but does not require route-changing judgment
-
-This can include implementing a clear brief, using tools, running and updating
-narrow tests, evaluating results, and completing routine follow-through. Even
-for well-specified work, escalate if the output violates scope, misses edge
-cases, encounters unexplained failures, or requires repeated correction.
-
-## Review Independence
-
-When practical, use a different agent or model configuration for review than
-the one used for implementation. Terra `high` is sufficient for substantive
-routine owned-diff review; use Sol `high` for consequential review.
-
-The reviewer should inspect:
-
-- correctness against the original request and brief
-- unnecessary scope expansion
-- missed tests or false validation claims
-- compatibility and migration risks
-- security, reliability, and data risks
-- UI/accessibility gaps for user-facing work
-- complexity that can be reduced
-
-## Single-Model Fallback
-
-When model switching or independent review is unavailable, do not weaken the quality bar. Use one model with explicit context boundaries:
-
-1. Write the route or field brief before implementation.
-2. Capture the worktree baseline and task-owned files or hunks.
-3. Implement without rewriting the brief to fit the result.
-4. Run and classify validation.
-5. Start a fresh review pass from the original request, brief, baseline, owned delta, and validation evidence.
-
-The review pass must look for disconfirming evidence rather than defend the implementation.
-
-## Handoff Integrity
-
-When work moves between models, pass the original request, canonical safety-and-scope policy, field brief, worktree baseline, owned files or hunks, validation commands, and pending decisions. Do not rely on a prose summary that omits constraints or pre-existing user changes.
-
-## Environment-Specific Models
-
-The explicit model identifiers above are the default Codex mapping. Do not
-encode prices in the workflow because they change independently of the routing
-contract.
-
-When a model is unavailable, preserve its routing role with the closest
-supported model:
-
-- if Terra is unavailable, use Luna `medium` only for narrow explicit work;
-  use Sol when the task is demanding, exploratory, or consequential
-- if Luna is unavailable, use Terra at the same effort for its narrow execution
-  role
-- if Sol is unavailable, use the environment's strongest reasoning model
-
-Never claim that an unavailable model was used. Report the actual fallback when
-it is material to the task or handoff. If no safe lower-cost option exists, keep
-the work on the stronger model.
+An independent reviewer is useful when risk warrants it. Otherwise start a fresh
+pass from the original request, owned diff, and verification evidence, looking
+for missed behavior, scope creep, compatibility changes, and false completion
+claims. Independence is not a reason to delegate a tiny change.

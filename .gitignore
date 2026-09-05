@@ -22,3 +22,12 @@ evals/results/generated/
 evals/results/**/*.jsonl
 evals/results/**/*.stderr.txt
 evals/results/**/*.record.json
+evals/removal-manifest.json
+
+# Local full-file installation manifests and machine-specific patch runner.
+# Publish focused patches and audit reports instead of installed vendor copies.
+docs/code-territory/skills-agents-audit-2026-09-05/global-patch.json
+docs/code-territory/skills-agents-audit-2026-09-05/personal-fixes.json
+docs/code-territory/skills-agents-audit-2026-09-05/apply_patches.py
+docs/code-territory/skills-agents-audit-2026-09-05/vendor-patches/manifest.json
+docs/code-territory/skills-agents-audit-2026-09-05/vendor-patches/link-correction.json

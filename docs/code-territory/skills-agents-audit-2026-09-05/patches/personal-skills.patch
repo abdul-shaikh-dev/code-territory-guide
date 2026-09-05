@@ -1,0 +1,268 @@
+--- a/find-skills/SKILL.md
++++ b/find-skills/SKILL.md
+@@ -3 +3 @@
+-description: Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.
++description: Discover or install agent skills when the user explicitly asks to find, install, list, or extend skills.
+@@ -12,8 +12 @@
+-Use this skill when the user:
+-
+-- Asks "how do I do X" where X might be a common task with an existing skill
+-- Says "find a skill for X" or "is there a skill for X"
+-- Asks "can you do X" where X is a specialized capability
+-- Expresses interest in extending agent capabilities
+-- Wants to search for tools, templates, or workflows
+-- Mentions they wish they had help with a specific domain (design, testing, deployment, etc.)
++Use this skill only when the user explicitly asks to discover, find, install, list, update, or extend agent skills. Do not use it for a general request for help; handle that work directly unless the user asks about skills.
+--- a/impeccable/reference/codex.md
++++ b/impeccable/reference/codex.md
+@@ -5,12 +5 @@
+-Read this *before* generating any images. The order matters, and the per-step user pauses are what keep generated imagery from drifting away from the brief.
+-
+-### Four stop points before code
+-
+-Steps A through D each end with the user. Do not advance past any of them on your own read of the situation.
+-
+-1. **STOP after Step A questions.** Wait for answers.
+-2. **STOP after Step B palette generation.** Wait for "confirm palette."
+-3. **STOP after Step C mocks.** Wait for direction approval or delegation.
+-4. **Only after Step D approves a direction** do you return to craft.md Step 4 and write code.
+-
+-Prior shape approval does **not** satisfy any of these. Shape's "confirm or override" advances you into Step A; it is not a substitute for it.
++Use this optional workflow for image-based visual exploration. If the user asks for collaborative or supervised exploration, agree the review points before generating images and pause at them. For an already clear, authorized implementation, this file can help test a material direction but does not create mandatory approval gates.
+@@ -20 +9 @@
+-Before generating anything, run a brief direction conversation grounded in the shape brief.
++When material direction is unresolved, use a brief conversation grounded in the supplied brief.
+@@ -22 +11 @@
+-**Step A is required even when shape just produced a confirmed brief.** The shape questions and Step A questions cover different ground: shape pins purpose, content, scope; Step A pins palette, atmosphere, and named visual references for the comps you're about to generate. The only time you can skip Step A is when the user has already answered these exact palette/atmosphere/reference questions in the same session.
++Ask targeted questions only when palette, atmosphere, or references remain material and unresolved. Reuse a supplied brief or choose a documented direction when the user has delegated those choices.
+@@ -24 +13 @@
+-Ask **2-3 targeted questions** about visual lane, color strategy, atmosphere, and named anchor references. Don't enumerate generic menus; tie each question to the shape brief's answers. Example shape-grounded questions:
++When questions are needed, ask **2-3 targeted questions** about visual lane, color strategy, atmosphere, and named anchor references. Don't enumerate generic menus; tie each question to the shape brief's answers. Example shape-grounded questions:
+@@ -29 +18 @@
+-**STOP and wait for answers.** These pin the palette before any pixel gets generated. Do not proceed to Step B until the user has responded.
++For supervised exploration, wait for the agreed answer; otherwise continue from the supplied brief or documented choice.
+@@ -37 +26 @@
+-Show the palette to the user. Ask one question: "This is the palette I'm locking in for the mocks. Confirm, or call out what to shift?"
++Show the palette when collaborative review is requested; otherwise use it as an implementation decision and continue.
+@@ -39 +28 @@
+-**STOP and wait for confirmation.** Do not generate mocks against an unconfirmed palette. "Probably good enough" is the wrong call here; the palette is the contract for everything downstream.
++In supervised mode, wait for the requested palette review. Otherwise, proceed with the palette that best follows the brief.
+@@ -43 +32 @@
+-Once the palette is confirmed, generate **1 to 3** high-fidelity north-star comps. Each mock must use the confirmed palette and typography. Mocks differ in *structural* direction (hierarchy, topology, density, composition), not in color or motif.
++Generate **1 to 3** high-fidelity north-star comps. Each mock must use the selected palette and typography. Mocks differ in *structural* direction (hierarchy, topology, density, composition), not in color or motif.
+@@ -53 +42 @@
+-Show the comps. Ask what carries forward. Iterate until **one direction is approved** or the user explicitly delegates.
++Show the comps when collaborative review is requested; otherwise select the strongest direction from the brief and record why.
+@@ -55 +44 @@
+-**STOP and wait for the approval or the delegation.** Do not begin Step E or return to craft.md Step 4 until a single direction is named. If the user delegates, pick the strongest direction and explain it from the brief, not personal taste.
++In supervised mode, wait for the requested approval or delegation. Otherwise continue with the documented choice.
+--- a/impeccable/reference/craft.md
++++ b/impeccable/reference/craft.md
+@@ -9 +9 @@
+-### Gates: do not compress
++### Working modes
+@@ -11 +11 @@
+-Craft has **multiple user gates**, not one. When the harness has native image generation (Codex via `image_gen`), the gate sequence before code is:
++For clear, authorized UI implementation with a supplied direction, inspect the relevant context, build, and complete visual QA. Ask only about a material choice the brief and repository cannot settle.
+@@ -13,8 +13 @@
+-1. **Shape brief confirmed** (Step 1)
+-2. **Direction questions answered** (codex.md Step A)
+-3. **Palette confirmed** (codex.md Step B)
+-4. **One mock direction approved or delegated** (codex.md Step D)
+-
+-You must stop at every gate. **Shape confirmation alone is NOT a green light to start coding.** It is the green light to begin codex.md Step A. Compressing gates 2 through 4 because the shape brief felt complete is the dominant failure mode of this flow.
+-
+-When the harness lacks native image generation, gates 2-4 collapse into the brief itself, and shape confirmation does advance straight to code.
++Use `shape` and the visual exploration in `codex.md` when the user asks for collaborative direction-setting, a decision remains material, or a supervised exploration is requested. In that mode, honor the requested review points. A confirmed brief or exact authorization is enough to continue when the user has not requested additional gates.
+@@ -45 +38 @@
+-Run $impeccable shape, passing along whatever feature description the user provided. Shape is **required** for craft; it is what produces a confirmed direction.
++Use `shape` when the task is ambiguous, needs a design brief, or the user asks to shape or supervise the direction. If the user supplied a clear direction and authorized implementation, state the working interpretation briefly and continue without a separate confirmation.
+@@ -47,7 +40 @@
+-Present the shape output and stop. Wait for the user to confirm, override, or course-correct before writing code.
+-
+-If the user already supplied a confirmed brief or ran shape separately, use it and skip this step.
+-
+-When the original prompt + PRODUCT.md already answer scope, content, and visual direction with no real ambiguity, the shape output can be **compact** (3-5 bullets stating what you're building and the visual lane, ending with one or two specific questions or "confirm or override"). The full 10-section structured brief is reserved for genuinely ambiguous, multi-screen, or stakeholder-heavy tasks. Don't pad a clear brief into a long one to look thorough; equally, don't skip the pause to look efficient.
+-
+-If the harness has native image generation (Codex), a compact shape's "confirm or override" advances to **Step 3 and the codex.md flow**, not to Step 4. Phrase the closing line accordingly: "Confirm or override; once we lock direction, I'll run a couple of palette and reference questions before generating any mocks." This stops the model from reading shape confirmation as code-green.
++For exploratory work, a compact 3–5 bullet brief is enough when the inputs are clear; use a full brief only when its structure resolves real ambiguity. Pause at the requested confirmation point when the user explicitly wants collaborative or supervised direction-setting.
+@@ -71,3 +58 @@
+-If the harness has **native image generation** (currently Codex via `image_gen`), this step is mandatory. **Stop and load [codex.md](codex.md)**. It covers palette generation, mock exploration, the approval loop, mock-fidelity inventory, and asset slicing via the `impeccable_asset_producer` subagent. Follow Steps A-F in that file, then return here for Step 4.
+-
+-If the harness lacks native image generation, **state in one line that the visual-direction-by-generation step is being skipped because the harness lacks native image generation, then proceed**. The one-line announcement is required; it forces a conscious decision instead of letting the step quietly evaporate. The brief is your only visual reference. Implement directly from it, treating any named anchor references and the brief's "Design Direction" as the contract.
++Use [codex.md](codex.md) for optional image-based direction exploration when it will resolve a material design choice or the user requests it. It is not a prerequisite for clear, authorized implementation. When it is used in supervised mode, retain its selected review points; otherwise choose a defensible direction from the brief and document the choice in the handoff.
+@@ -79 +64 @@
+-**Precondition.** If Step 3 routed you to codex.md (native image generation available), Steps A through D in that file must be complete before any code: questions answered, palette confirmed, mocks generated, one direction approved or delegated. **Do not mention implementation, file paths, or patch plans until that's done.** A confirmed shape brief is not enough; the model that compressed those gates is the model that already failed this flow.
++When supervised visual exploration was selected, implement the chosen direction and preserve its material ingredients. Otherwise implement the supplied or inferred direction directly, recording any consequential inference.
+--- a/impeccable/reference/critique.md
++++ b/impeccable/reference/critique.md
+@@ -23 +23 @@
+-   node .agents/skills/impeccable/scripts/critique-storage.mjs slug "<resolved-path-or-url>"
++   node "$SKILL_ROOT/scripts/critique-storage.mjs" slug "<resolved-path-or-url>"
+@@ -61 +61 @@
+-node .agents/skills/impeccable/scripts/detect.mjs --json [target]
++node "$SKILL_ROOT/scripts/detect.mjs" --json [target]
+@@ -75 +75 @@
+-4. If mutation is available, start `node .agents/skills/impeccable/scripts/live-server.mjs --background`, present the browser if supported, label `[Human]`, scroll top, inject `http://localhost:PORT/detect.js`, wait 2-3 seconds, read `impeccable` console messages, then stop the live server.
++4. If mutation is available, start `node "$SKILL_ROOT/scripts/live-server.mjs" --background`, present the browser if supported, label `[Human]`, scroll top, inject `http://localhost:PORT/detect.js`, wait 2-3 seconds, read `impeccable` console messages, then stop the live server.
+@@ -190 +190 @@
+-     node .agents/skills/impeccable/scripts/critique-storage.mjs write <slug> <body-file>
++     node "$SKILL_ROOT/scripts/critique-storage.mjs" write <slug> <body-file>
+@@ -198 +198 @@
+-   node .agents/skills/impeccable/scripts/critique-storage.mjs trend <slug> 5
++   node "$SKILL_ROOT/scripts/critique-storage.mjs" trend <slug> 5
+--- a/impeccable/reference/hooks.md
++++ b/impeccable/reference/hooks.md
+@@ -36 +36 @@
+-   node .agents/skills/impeccable/scripts/hook-admin.mjs <action> [args...]
++   node "$SKILL_ROOT/scripts/hook-admin.mjs" <action> [args...]
+@@ -59 +59 @@
+-node .agents/skills/impeccable/scripts/hook-admin.mjs ignore-value overused-font Inter --shared --reason "User confirmed Inter is intentional"
++node "$SKILL_ROOT/scripts/hook-admin.mjs" ignore-value overused-font Inter --shared --reason "User confirmed Inter is intentional"
+@@ -65 +65 @@
+-node .agents/skills/impeccable/scripts/hook-admin.mjs ignore-value bounce-easing bounce-ball --shared --reason "User confirmed ball bounce animation is intentional"
++node "$SKILL_ROOT/scripts/hook-admin.mjs" ignore-value bounce-easing bounce-ball --shared --reason "User confirmed ball bounce animation is intentional"
+@@ -71 +71 @@
+-node .agents/skills/impeccable/scripts/hook-admin.mjs ignore-rule overused-font --all-values --reason "User asked to ignore overused fonts generally"
++node "$SKILL_ROOT/scripts/hook-admin.mjs" ignore-rule overused-font --all-values --reason "User asked to ignore overused fonts generally"
+@@ -77 +77 @@
+-node .agents/skills/impeccable/scripts/hook-admin.mjs ignore-file "src/legacy/Card.tsx"
++node "$SKILL_ROOT/scripts/hook-admin.mjs" ignore-file "src/legacy/Card.tsx"
+--- a/impeccable/reference/init.md
++++ b/impeccable/reference/init.md
+@@ -149 +149 @@
+-2. Run `node .agents/skills/impeccable/scripts/detect-csp.mjs`. If it reports a patchable shape (`append-arrays` / `append-string`), use the **consent prompt template** from live.md before editing any source file. On decline, skip the patch. For `middleware` / `meta-tag` shapes, surface the detected files and ask the user to add `http://localhost:8400` to `script-src` and `connect-src` manually. For `null`, there's nothing to do.
++2. Run `node "$SKILL_ROOT/scripts/detect-csp.mjs"`. If it reports a patchable shape (`append-arrays` / `append-string`), use the **consent prompt template** from live.md before editing any source file. On decline, skip the patch. For `middleware` / `meta-tag` shapes, surface the detected files and ask the user to add `http://localhost:8400` to `script-src` and `connect-src` manually. For `null`, there's nothing to do.
+--- a/impeccable/reference/live.md
++++ b/impeccable/reference/live.md
+@@ -13 +13 @@
+-1. `live.mjs`: boot. If the request names or implies a file, route, or app inside a monorepo, infer the concrete path and run `node .agents/skills/impeccable/scripts/live.mjs --target <path>` instead; then run the rest of this live session from the returned `projectRoot`.
++1. `live.mjs`: boot. If the request names or implies a file, route, or app inside a monorepo, infer the concrete path and run `node "$SKILL_ROOT/scripts/live.mjs" --target <path>` instead; then run the rest of this live session from the returned `projectRoot`.
+@@ -35 +35 @@
+-node .agents/skills/impeccable/scripts/live.mjs
++node "$SKILL_ROOT/scripts/live.mjs"
+@@ -50 +50 @@
+-  node .agents/skills/impeccable/scripts/live-poll.mjs   # default long timeout; no --timeout=
++  node "$SKILL_ROOT/scripts/live-poll.mjs"   # default long timeout; no --timeout=
+@@ -66 +66 @@
+-node .agents/skills/impeccable/scripts/live-poll.mjs --stream   # stays running; one JSON line per event
++node "$SKILL_ROOT/scripts/live-poll.mjs" --stream   # stays running; one JSON line per event
+@@ -80,3 +80,3 @@
+-node .agents/skills/impeccable/scripts/live-status.mjs
+-node .agents/skills/impeccable/scripts/live-resume.mjs --id SESSION_ID
+-node .agents/skills/impeccable/scripts/live-complete.mjs --id SESSION_ID
++node "$SKILL_ROOT/scripts/live-status.mjs"
++node "$SKILL_ROOT/scripts/live-resume.mjs" --id SESSION_ID
++node "$SKILL_ROOT/scripts/live-complete.mjs" --id SESSION_ID
+@@ -107 +107 @@
+-node .agents/skills/impeccable/scripts/live-insert.mjs --id EVENT_ID --count EVENT_COUNT --position after \
++node "$SKILL_ROOT/scripts/live-insert.mjs" --id EVENT_ID --count EVENT_COUNT --position after \
+@@ -140 +140 @@
+-node .agents/skills/impeccable/scripts/live-wrap.mjs --id EVENT_ID --count EVENT_COUNT --element-id "ELEMENT_ID" --classes "class1,class2" --tag "div" --text "TEXT_SNIPPET"
++node "$SKILL_ROOT/scripts/live-wrap.mjs" --id EVENT_ID --count EVENT_COUNT --element-id "ELEMENT_ID" --classes "class1,class2" --tag "div" --text "TEXT_SNIPPET"
+@@ -403 +403 @@
+-node .agents/skills/impeccable/scripts/live-poll.mjs --reply EVENT_ID done --file RELATIVE_PATH
++node "$SKILL_ROOT/scripts/live-poll.mjs" --reply EVENT_ID done --file RELATIVE_PATH
+@@ -415 +415 @@
+-node .agents/skills/impeccable/scripts/live-poll.mjs --reply EVENT_ID error "Short reason"
++node "$SKILL_ROOT/scripts/live-poll.mjs" --reply EVENT_ID error "Short reason"
+@@ -502 +502 @@
+-node .agents/skills/impeccable/scripts/live-poll.mjs --reply EVENT_ID steer_done ["Optional short note for a browser toast"]
++node "$SKILL_ROOT/scripts/live-poll.mjs" --reply EVENT_ID steer_done ["Optional short note for a browser toast"]
+@@ -508 +508 @@
+-node .agents/skills/impeccable/scripts/live-poll.mjs --reply EVENT_ID error "Short reason"
++node "$SKILL_ROOT/scripts/live-poll.mjs" --reply EVENT_ID error "Short reason"
+@@ -536 +536 @@
+-After source edits finish, reply exactly once with `node .agents/skills/impeccable/scripts/live-poll.mjs --reply EVENT_ID done --data '{"status":"done","appliedEntryIds":["8hexid"],"failed":[],"files":["src/page.html"],"notes":[]}'`. Use `status:"partial"` or `status:"error"` with `failed[]` when not every entry applied. Then poll again. Never reply without the event id; `--reply done --file ...` is invalid for manual Apply.
++After source edits finish, reply exactly once with `node "$SKILL_ROOT/scripts/live-poll.mjs" --reply EVENT_ID done --data '{"status":"done","appliedEntryIds":["8hexid"],"failed":[],"files":["src/page.html"],"notes":[]}'`. Use `status:"partial"` or `status:"error"` with `failed[]` when not every entry applied. Then poll again. Never reply without the event id; `--reply done --file ...` is invalid for manual Apply.
+@@ -550 +550 @@
+-node .agents/skills/impeccable/scripts/live-server.mjs stop
++node "$SKILL_ROOT/scripts/live-server.mjs" stop
+@@ -636 +636 @@
+-node .agents/skills/impeccable/scripts/detect-csp.mjs
++node "$SKILL_ROOT/scripts/detect-csp.mjs"
+--- a/impeccable/reference/polish.md
++++ b/impeccable/reference/polish.md
+@@ -40,2 +40,2 @@
+-   slug=$(node .agents/skills/impeccable/scripts/critique-storage.mjs slug "<resolved>")
+-   node .agents/skills/impeccable/scripts/critique-storage.mjs latest "$slug"
++   slug=$(node "$SKILL_ROOT/scripts/critique-storage.mjs" slug "<resolved>")
++   node "$SKILL_ROOT/scripts/critique-storage.mjs" latest "$slug"
+--- a/impeccable/reference/shape.md
++++ b/impeccable/reference/shape.md
+@@ -15 +15 @@
+-This is a required interaction, not optional guidance. Ask these questions in conversation, adapting based on answers. Don't dump them all at once; have a natural dialogue. STOP and use Codex's structured user-input/question tool when available; if unavailable, ask directly in chat to clarify what you cannot infer.
++Use this interview when the brief leaves a material design decision unresolved or the user asks for collaborative shaping. Ask only what cannot be inferred; do not turn a clear, authorized implementation into an interview.
+@@ -80 +80 @@
+-When those conditions are met, this step is mandatory. If image generation isn't natively available, do not ask the user to install APIs or tooling. State in one line that the image step is skipped because the harness lacks native image generation, then proceed. The one-line announcement is required, not optional; it forces a conscious decision instead of letting the step quietly evaporate.
++When those conditions are met and the user wants visual exploration, use this step. If image generation isn't natively available, do not ask the user to install APIs or tooling. State in one line that the image step is skipped because the harness lacks native image generation, then proceed. The one-line announcement is required, not optional; it forces a conscious decision instead of letting the step quietly evaporate.
+@@ -114 +114 @@
+-After the interview and any required probes, present a brief and **end your response**. The user must confirm before any implementation runs. Do not present a brief and then continue to code in the same response, even if the brief feels obvious to you. The user's confirmation is the gate.
++After the interview and any selected probes, present a brief. Continue into implementation when the user has already authorized the scope; otherwise pause only when a material choice or explicitly requested supervision remains.
+@@ -123 +123 @@
+-Present the brief, then **stop and wait for explicit confirmation**. You are not the judge of whether the user already approved. Even when the brief feels obviously right, ask once and wait. The pause is what separates shape from premature implementation.
++When the user asked to review or approve the brief, stop for that review. Otherwise treat an explicit implementation request with a clear brief as authorization to continue.
+@@ -161 +161 @@
+-STOP and use Codex's structured user-input/question tool when available; if unavailable, ask directly in chat to clarify what you cannot infer. Ask for explicit confirmation of the brief before finishing.
++Use a structured question tool when a material detail cannot be inferred. End with the resolved brief and any remaining decision; request confirmation only when supervision or unresolved scope requires it.
+--- a/impeccable/SKILL.md
++++ b/impeccable/SKILL.md
+@@ -3 +3 @@
+-description: Use when the user wants to design, redesign, shape, critique, audit, polish, clarify, distill, harden, optimize, adapt, animate, colorize, extract, or otherwise improve a frontend interface. Covers websites, landing pages, dashboards, product UI, app shells, components, forms, settings, onboarding, and empty states. Handles UX review, visual hierarchy, information architecture, cognitive load, accessibility, performance, responsive behavior, theming, anti-patterns, typography, fonts, spacing, layout, alignment, color, motion, micro-interactions, UX copy, error states, edge cases, i18n, and reusable design systems or tokens. Also use for bland designs that need to become bolder or more delightful, loud designs that should become quieter, live browser iteration on UI elements, or ambitious visual effects that should feel technically extraordinary. Not for backend-only or non-UI tasks.
++description: Design, refine, or audit frontend interfaces when UI quality, accessibility, responsive behavior, or visual polish needs deliberate attention.
+@@ -11 +11 @@
+-You MUST do these steps before proceeding:
++Set `SKILL_ROOT` to this loaded skill's directory and `PROJECT_ROOT` to the actual task project. Resolve helper executable paths relative to `SKILL_ROOT`, never an assumed project-local installation. Execute from `PROJECT_ROOT` unless the helper accepts an explicit target. For example: `node "$SKILL_ROOT/scripts/context.mjs" --target "$PROJECT_ROOT"`.
+@@ -13,5 +13 @@
+-1. Run `node .agents/skills/impeccable/scripts/context.mjs` once per session. If the request names or implies a file, route, or app inside a monorepo, infer the concrete path and run `node .agents/skills/impeccable/scripts/context.mjs --target <path>` instead. If you've already seen its output in this conversation, do not re-run it. The script either prints the project's PRODUCT.md (and DESIGN.md when present) as a markdown block, or tells you it's missing. Follow whatever it prints. **If it reports `NO_PRODUCT_MD`, stop and follow `reference/init.md` before doing anything else.** If the output ends with an `UPDATE_AVAILABLE` directive, follow it (ask the user once about updating, then continue). It never blocks the current task.
+-2. If the user invoked a sub-command (`craft`, `shape`, `audit`, `polish`, ...), you MUST read `reference/<command>.md` next. Non-optional. The reference defines the command's flow; without it you will skip steps the user expects.
+-3. Familiarize yourself with any existing design system, conventions, and components in the code. Read at least one project file (CSS / tokens / theme / a representative component or page). **Required even when you've loaded a sub-command reference in step 2.** Don't reinvent the wheel; use what's there when it works, branch out when the UX wins.
+-4. Read the matching register reference. **This is non-optional; skipping it produces generic output.** If the project is marketing, a landing page, a campaign, long-form content, or a portfolio (design IS the product), read `reference/brand.md`. If it is app UI, admin, a dashboard, or a tool (design SERVES the product), read `reference/product.md`. Pick by first match: (1) task cue ("landing page" vs "dashboard"); (2) surface in focus (the page, file, or route being worked on); (3) `register` field in PRODUCT.md.
+-5. **If the project is brand-new (no existing CSS tokens / theme / committed brand colors found in step 3)**, run `node .agents/skills/impeccable/scripts/palette.mjs` to receive a brand seed color and composition guidance. This is the anchor for your primary brand color. Compose the rest of the palette (bg, surface, ink, accent, muted) around it per the script's instructions. Use OKLCH throughout. **Skip this step only if step 3 found committed brand colors in existing tokens; in that case identity-preservation wins.**
++Read the requested command reference and inspect the relevant UI, tokens, theme, or representative component. Use context output when it helps; a missing `PRODUCT.md` is not an initialization gate for clear, authorized work. Read `reference/init.md` only when the user asks to establish project context or the missing context prevents a sound design decision. If a new project has no established visual tokens, `node "$SKILL_ROOT/scripts/palette.mjs"` can provide a seed; use it from `PROJECT_ROOT` and keep existing identity when tokens already exist.
+@@ -18,0 +15 @@
++Read the matching brand or product register when the work needs its guidance. Do not delay an already clear, authorized UI change for routine setup or repeated confirmation.
+@@ -139 +136 @@
+-1. **No argument**: the user is asking "what should I do?" Make the menu context-aware instead of static. Setup has already run `context.mjs`; if that reported `NO_PRODUCT_MD` you are already in init (setup), so finish that and skip this. Otherwise run `node .agents/skills/impeccable/scripts/context-signals.mjs` once and read its JSON, then lead with the **2-3 highest-value next commands**, each with a one-line reason pulled from the signals, followed by the full menu (the table above, grouped by category). **Never auto-run a command; the recommendation is a suggestion the user confirms.**
++1. **No argument**: the user is asking "what should I do?" Make the menu context-aware instead of static. If context is missing, include `init` among the recommendations when useful. Run `node "$SKILL_ROOT/scripts/context-signals.mjs"` once and read its JSON, then lead with the **2-3 highest-value next commands**, each with a one-line reason pulled from the signals, followed by the full menu (the table above, grouped by category). **Never auto-run a command; the recommendation is a suggestion the user confirms.**
+@@ -149 +146 @@
+-   **If `scan.targets` is non-empty, run `node .agents/skills/impeccable/scripts/detect.mjs --json <scan.targets joined by spaces>` once** (the bundled detector over local files: no network, no npx). `scan.via` tells you what they are: `git-changes` (the markup/style files in your dirty tree, the most relevant set), `source-dir` (e.g. `src`, `app`), `html`, or `root`. Fold the hits into your picks: many quality / contrast hits → `audit` or `polish`; a specific slop family → the matching command (gradient text or eyebrows → `quieter` / `typeset`, flat or gray palette → `colorize`, and so on). It's a real, current signal that beats guessing. If detect errors or the tree is large and slow, skip it and recommend the user run `audit` themselves; never block the suggestion on it.
++   **If `scan.targets` is non-empty, run `node "$SKILL_ROOT/scripts/detect.mjs" --json <scan.targets joined by spaces>` once** (the bundled detector over local files: no network, no npx). `scan.via` tells you what they are: `git-changes` (the markup/style files in your dirty tree, the most relevant set), `source-dir` (e.g. `src`, `app`), `html`, or `root`. Fold the hits into your picks: many quality / contrast hits → `audit` or `polish`; a specific slop family → the matching command (gradient text or eyebrows → `quieter` / `typeset`, flat or gray palette → `colorize`, and so on). It's a real, current signal that beats guessing. If detect errors or the tree is large and slow, skip it and recommend the user run `audit` themselves; never block the suggestion on it.
+@@ -167 +164 @@
+-node .agents/skills/impeccable/scripts/pin.mjs <pin|unpin> <command>
++node "$SKILL_ROOT/scripts/pin.mjs" <pin|unpin> <command>
+--- /dev/null
++++ b/writing-great-skills/agents/openai.yaml
+@@ -0,0 +1,6 @@
++interface:
++  display_name: "Writing Great Skills"
++  short_description: "Reference for designing reliable skills"
++  default_prompt: "Use $writing-great-skills to improve this skill."
++policy:
++  allow_implicit_invocation: false
+--- a/writing-great-skills/GLOSSARY.md
++++ b/writing-great-skills/GLOSSARY.md
+@@ -17 +17 @@
+-A skill that keeps its **description** field, so the agent can see it and fire it autonomously — and the human can still type its name, so model-invocation always *includes* user reach. There is no model-only state: a description only ever *adds* agent discovery, never removes the human's. Pays a permanent **context load** on every turn in exchange for that discoverability. Reachable by other skills, because the description that makes it agent-discoverable makes it invocable. A model-invoked skill whose content is all **reference** is also one home for shared reference: another skill can invoke it, so reference needed by several skills lives in one place. Pick model-invocation only when the agent must reach the skill on its own; if it never fires except by hand, drop the description and pay no context load.
++A skill the current host may select automatically from its **description** and invocation policy. The user can still invoke it explicitly. Its discoverability and **context load** depend on the host, not on a universal frontmatter convention. Use automatic invocation only when ordinary requests should reach the skill.
+@@ -23 +23 @@
+-A skill with its **description** stripped — invisible to the agent and reachable only by the human typing its name (user-*only*, where **model-invoked** is user-*and-agent*). Trades agent-discoverability for zero **context load**. Because it has no description, nothing but the human can reach it: no other skill can fire it.
++A skill configured by the current host for explicit invocation. It remains a named skill with a concise **description**; explicit-only policy controls automatic selection. In Codex, use `agents/openai.yaml` with `policy.allow_implicit_invocation: false`. Other hosts may use different mechanics.
+@@ -29 +29 @@
+-The skill's machine-readable trigger, and the one **context pointer** a **model-invoked** skill is forced to keep loaded at all times. Its mere presence *is* the invocation axis: keep it and the skill is model-invoked (and reachable by other skills); delete it and the skill is **user-invoked**, reachable only by the human. The source of a model-invoked skill's **context load**.
++A concise skill summary used by people and, where the host supports it, automatic selection. It should state the capability and discriminating trigger. Keep it when a skill is explicit-only; use host-specific policy to control automatic invocation.
+--- a/writing-great-skills/SKILL.md
++++ b/writing-great-skills/SKILL.md
+@@ -4 +3,0 @@
+-disable-model-invocation: true
+@@ -13 +12 @@
+-Two choices, trading different costs:
++Invocation mechanics are host-specific. Keep a concise `description` as the skill summary; do not delete it to express explicit-only use. In Codex, configure explicit-only skills in `agents/openai.yaml` with `policy.allow_implicit_invocation: false`. Other hosts may use a different manifest or field, so follow that host's documented mechanism rather than copying Codex frontmatter.
+@@ -15,6 +14 @@
+-- A **model-invoked** skill keeps a **description**, so the agent can fire it autonomously _and_ other skills can reach it (you can still type its name too). It contributes to **context load** — the description sits in the window every turn. Mechanics: omit `disable-model-invocation`, and write a model-facing description with rich trigger phrasing ("Use when the user wants…, mentions…").
+-- A **user-invoked** skill strips the description from the agent's reach: only you, typing its name, can invoke it — and no other skill can. Zero context load, but it spends **cognitive load**: _you_ are the index that must remember it exists. Mechanics: set `disable-model-invocation: true`; the `description` becomes human-facing — a one-line summary, trigger lists stripped.
+-
+-Pick model-invocation only when the agent must reach the skill on its own, or another skill must. If it only ever fires by hand, make it user-invoked and pay no context load.
+-
+-When user-invoked skills multiply past what you can remember, that piled-up cognitive load is cured by a **router skill**: one user-invoked skill that names the others and when to reach for each.
++Choose automatic invocation only when the agent should discover the skill from ordinary requests. Choose explicit-only invocation for deliberate tools whose use the user names or selects. A router can reduce the cognitive load of several explicit-only skills, subject to the host's routing support.

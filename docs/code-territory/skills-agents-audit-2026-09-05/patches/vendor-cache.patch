@@ -1,0 +1,301 @@
+--- a/openai-bundled/computer-use/26.901.41600/skills/computer-use/SKILL.md
++++ b/openai-bundled/computer-use/26.901.41600/skills/computer-use/SKILL.md
+@@ -8 +8,3 @@
+-Use this skill to automate the UI of Microsoft Windows apps. It uses SendInput, UI Automation, and Windows.Graphics.Capture screenshots that work even when windows are occluded.
++Use this skill to automate the UI of Microsoft Windows apps. Use only the Computer
++Use surface exposed by the current host; do not claim an unavailable browser, helper,
++or connector can be supplied by this skill.
+@@ -10 +12,4 @@
+-If this plugin is available, read this entire `SKILL.md` once before Windows automation work, before saying Computer Use is unavailable, and before falling back to other Windows automation.
++Start with the host's current Computer Use documentation and initialize the available
++surface exactly as it requires. In hosts exposing `mcp__cua_repl`, use its `cua` API and
++its documented first-call entry point. It reports the available apps, browsers, and
++tabs, and its returned documentation is authoritative for later calls in that session.
+@@ -12,11 +17,5 @@
+-Start with the directions in the Initialize section below. Read these bundled Markdown files relative to this `SKILL.md` when you need information about the specific topic they cover:
+-
+-- `../../docs/guidance.md`: core runtime behavior, target-window workflow, screenshot handling, and recovery guidance. You MUST read this before controlling Windows apps.
+-- `../../docs/api.md`: full `sky` API reference. Read this when you need method signatures or object shapes.
+-- `../../docs/confirmations.md`: you MUST read this before deciding whether a Windows UI action needs confirmation
+-
+-## Initialize
+-
+-The bundled `cua_node` `@oai/sky` package is the core entry point for Computer Use. Import it directly by package name from the JavaScript session. Do not spawn `codex-computer-use.exe`, search for the helper executable, or build a custom helper protocol client.
+-
+-Run this once per fresh `node_repl` JavaScript session:
++Use the bundled Sky route only when the host does not expose `mcp__cua_repl` and a
++`node_repl` session with `@oai/sky` is actually available. Read `../../docs/guidance.md` before controlling a Windows app,
++`../../docs/api.md` when API details are needed, and `../../docs/confirmations.md`
++before deciding whether an action needs confirmation. Initialize Sky once per fresh
++Node session:
+@@ -29,0 +29,4 @@
++
++When neither route is available, report that Computer Use is unavailable in this host
++and continue only with another tool the host exposes. Do not build a custom helper
++client, search for private executables, or invent a browser surface.
+--- a/openai-primary-runtime/spreadsheets/26.904.11930/skills/spreadsheets/SKILL.md
++++ b/openai-primary-runtime/spreadsheets/26.904.11930/skills/spreadsheets/SKILL.md
+@@ -23 +23 @@
+-- Use `update_plan` for complex work.
++- For complex work, keep a concise in-chat plan or use `update_plan` when the host exposes it. Do not block the workbook task on an unavailable planning tool.
+--- a/openai-curated-remote/deep-research-work/0.1.14/skills/deep-research/SKILL.md
++++ b/openai-curated-remote/deep-research-work/0.1.14/skills/deep-research/SKILL.md
+@@ -28,7 +28,5 @@
+-Before researching, you MUST call `update_plan` with the scope, assumptions, source
+-classes, and steps for discovery, follow-up, synthesis, and deliverable verification. If
+-the call fails, retry when practical; continue if planning remains unavailable. While work
+-remains, keep exactly one step in progress. Update the plan after discovery, during
+-follow-up, and at synthesis; mark it complete only when the work is genuinely finished.
+-Keep each required progress update concise and avoid redundant updates that do not reflect
+-a completed phase, changed scope, material blocker, or genuinely finished deliverable.
++Before researching, record a concise plan with the scope, assumptions, source classes, and
++steps for discovery, follow-up, synthesis, and verification. Use `update_plan` when the
++host exposes it; otherwise keep that plan and material progress updates in the conversation.
++Do not block research or retry a persistently unavailable planning tool. Keep progress
++updates tied to a completed phase, changed scope, material blocker, or finished result.
+@@ -113,7 +111,5 @@
+-substantive research and synthesis before generating the final artifact. Create
+-`report-source.md` once as the canonical internal report. Include its title, audience,
+-date, scope, assumptions, direct executive answer, question-specific analysis, material
+-limitations and disagreements, and recommendations only when useful or requested. Cite
+-every material sourced claim and maintain one claim-to-source ledger recording the source
+-title, publisher or author, publication or update date, URL, and access notes. Preserve
+-native tool citations and metadata for evaluation.
++substantive research and synthesis before generating the final artifact. Create `report-source.md` and a claim-to-source ledger when the requested deliverable, a
++durable handoff, or artifact production needs them. A conversation-only result can retain
++the same evidence in the response. In either case, cite every material sourced claim and
++preserve source title, publisher or author, publication or update date, URL, access notes,
++and available native citations.
+@@ -129,4 +125,5 @@
+-A professionally formatted artifact in the selected format is the required deliverable
+-whenever artifact creation and delivery are available. Use native Work tools or the
+-applicable artifact skill to produce and deliver it. Do not create additional formats
+-unless requested or needed for companion chart data. Honor the requested format,
++Create a professionally formatted artifact when the user requests a file, presentation,
++workbook, site, or another artifact deliverable. Otherwise deliver the cited result in the
++conversation. Use native Work tools or the applicable artifact skill when producing an
++artifact, and do not create additional formats unless requested or needed for companion
++chart data. Honor the requested format,
+@@ -175,5 +172,7 @@
+-Present the verified artifact as an accessible attachment or link first, followed by a
+-concise summary. Include companion chart data when applicable; add verified source
+-attachments or an appendix only when useful. Do not expose the complete report, detailed
+-citations, QA images, temporary files, `report-source.md`, or the claim-to-source ledger
+-unless the user requests them.
++When an artifact was requested and produced, present it as an accessible attachment or
++link first, followed by a concise summary. Otherwise present the cited research result in
++the conversation. Include companion chart data when applicable; add verified source
++attachments or an appendix only when useful. When delivering an artifact, do not duplicate
++the complete report in chat unless requested. Keep QA images, temporary files,
++`report-source.md`, and the internal claim-to-source ledger out of the final response
++unless requested; retain the citations needed to support the delivered answer.
+--- a/openai-curated-remote/figma/2.0.21/skills/figma-generate-library/SKILL.md
++++ b/openai-curated-remote/figma/2.0.21/skills/figma-generate-library/SKILL.md
+@@ -3 +3 @@
+-description: "Build or update a professional-grade design system in Figma from a codebase. Use when the user wants to create variables/tokens, build component libraries, create individual components with proper variant sets and variable bindings, set up theming (light/dark modes), document foundations, or reconcile gaps between code and Figma. Also use when the user asks to create or generate any component in Figma — even a single one — since components require proper variable foundations, variant states, and design token bindings to be production-quality. This skill teaches WHAT to build and in WHAT ORDER — it complements the `figma-use` skill which teaches HOW to call the Plugin API. Both skills should be loaded together."
++description: "Build or update Figma design systems, tokens, and components. Use the focused route for components in an existing library and the full route for library creation or restructuring. Load figma-use for Plugin API execution."
+@@ -9 +9,5 @@
+-Build professional-grade design systems in Figma that match code. This skill orchestrates multi-phase workflows across 20–100+ `use_figma` calls, enforcing quality patterns from real-world design systems (Material 3, Polaris, Figma UI3, Simple DS).
++Build professional-grade design systems in Figma that match code. For a new or materially revised library, use the full multi-phase workflow below.
++
++## Focused existing-library component
++
++For one requested component or a small component change in an established library, inspect the existing pages, component conventions, variables, and styles first. Reuse their page and tokens, add only the requested variants and properties, and preserve bindings for all changed visual properties. Validate the changed component with metadata and a screenshot, including its bindings and intended variant states. Do not create foundations, page skeletons, or library documentation unless the request or inspection shows they are needed.
+@@ -19 +23 @@
+-For every phase, follow this communication contract.
++For a full library build, follow this phase communication contract. Focused component work uses concise progress updates and a final validation summary; it does not require phase checklists or task IDs.
+@@ -42 +46 @@
+-- Only ask for explicit approval after Phase 0 or if a genuine decision fork arises (see [Section 6](#6-decision-forks)). For Phases 1–4, the default is to continue automatically after the summary.
++- Ask for approval only when the user requested that checkpoint or an unresolved decision changes authorized scope (see [Section 6](#6-decision-forks)). For Phases 1–4, the default is to continue automatically after the summary.
+@@ -55 +59 @@
+-**This is NEVER a one-shot task.** Building a design system requires 20–100+ `use_figma` calls across multiple phases, with mandatory progress between them. Any attempt to create everything in one call WILL produce broken, incomplete, or unrecoverable results. Break every operation to the smallest useful unit, validate, get feedback, proceed.
++**A full design-system build is not a one-shot task.** It may require many focused calls and progress updates. A focused existing-library component uses only the calls needed to inspect, bind, and validate that component.
+@@ -61,3 +65,3 @@
+-Work through the phases in order. Do not move to the next phase until the current phase's required actions and acceptance checks are complete. If a phase cannot pass, stop and report the blocker. Do not approximate, skip, or defer a failed phase unless the user explicitly approves the limitation. No best-effort substitutions. No quiet approximations. No handoff with missing source truth, missing visual truth, fake assets, approximate typography, broken interactions, or unverified states.
+-
+-### Phase 0: DISCOVERY (always first — no `use_figma` writes yet)
++Use these phases for a new or materially revised library. A focused existing-library component follows the focused route above, including inspection, token bindings, and validation, without unrelated foundations or documentation. In the full route, report a failed phase rather than quietly approximating it.
++
++### Phase 0: DISCOVERY (first for a full library build — no `use_figma` writes yet)
+@@ -72 +76 @@
+-### Phase 1: FOUNDATIONS (tokens first — always before components)
++### Phase 1: FOUNDATIONS (for a full library build, tokens before components)
+@@ -120 +124 @@
+-- Page context resets each call — always `await figma.setCurrentPageAsync(page)` at start. **Call it at most once per script**: each component or doc page is its own `use_figma` call. Never loop over `figma.root.children` and switch pages inside a mutating script — split that work into one focused call per target page (see [figma-use → gotchas.md → Set current page once per `use_figma` call](../figma-use/references/gotchas.md#set-current-page-once-per-use_figma-call--split-multi-page-work-across-calls))
++- Page context resets each call — always `await figma.setCurrentPageAsync(page)` at start. **Call it at most once per script**: each component or doc page is its own `use_figma` call. Never loop over `figma.root.children` and switch pages inside a mutating script — split that work into one focused call per target page (see [figma-use → gotchas.md → Set current page once per `use_figma` call](../figma-use/references/gotchas.md#set-current-page-once-per-use_figma-call--use-focused-multi-page-calls))
+@@ -337 +341 @@
+-- ❌ Starting Phase 3 because the user said "build the button" without completing Phases 0-2
++- ❌ Starting a full-library component phase without foundations, or changing an existing-library component without first inspecting its conventions and bindings
+@@ -349 +353 @@
+-| [discovery-phase.md](references/discovery-phase.md) | 0 | **Required** | Starting any build — codebase analysis + Figma inspection |
++| [discovery-phase.md](references/discovery-phase.md) | 0 | **Required for full library** | Starting a full library build; focused work still performs targeted Figma inspection |
+@@ -352 +356 @@
+-| [component-creation.md](references/component-creation.md) | 3 | **Required** | Creating any component or variant |
++| [component-creation.md](references/component-creation.md) | 3 | **Required** | Creating a component or variant in either route |
+--- a/openai-curated-remote/figma/2.0.21/skills/figma-swiftui/SKILL.md
++++ b/openai-curated-remote/figma/2.0.21/skills/figma-swiftui/SKILL.md
+@@ -3 +3 @@
+-description: "SwiftUI ↔ Figma translation. Use whenever the user mentions Swift, SwiftUI, iOS, iPhone, or iPad — in EITHER direction — translating a Figma design into SwiftUI (design → code), or pushing SwiftUI views / screens / tokens back into a Figma file (code → design). Triggers on phrases like 'implement this Figma design in SwiftUI', 'build this screen in Swift', 'push this SwiftUI view to Figma', 'mirror my Swift code in a Figma file', or whenever a Figma URL appears alongside `.swift` files / an `.xcodeproj`. Routes to a direction-specific reference doc; loads alongside `figma-use` for the code → design path."
++description: "Translate between a Figma design and SwiftUI, or push SwiftUI views, screens, or tokens into Figma. Use when a request involves both Figma and SwiftUI; it does not apply to general Swift or iOS work without a Figma task. Routes to direction-specific guidance and loads alongside `figma-use` for code → design."
+--- a/openai-curated-remote/figma/2.0.21/skills/figma-use/SKILL.md
++++ b/openai-curated-remote/figma/2.0.21/skills/figma-use/SKILL.md
+@@ -30 +30 @@
+-5.  **Work incrementally in small steps.** Break large operations into multiple `use_figma` calls. Validate after each step. This is the single most important practice for avoiding bugs.
++5.  **Work incrementally at a risk-appropriate size.** Split complex, destructive, or hard-to-validate work into focused calls and validate each mutation. Simple, clearly bounded work may use one call; do not impose a fixed operation count.
+@@ -63,20 +63,5 @@
+-### Call `setCurrentPageAsync` at most once per `use_figma` invocation — fan multi-page work out in parallel
+-
+-**One script must switch pages at most once.** Never loop over `figma.root.children` and switch pages inside the loop.
+-
+-If the work spans multiple pages, **split it into N `use_figma` calls (one per target page) and emit them in parallel** — a single assistant message containing N `use_figma` tool-use blocks. The harness runs them concurrently; each script sets `currentPage` exactly once.
+-
+-> **Explicit instruction:** when fanning out, you MUST issue the N tool calls in **one message**. Do not send them across multiple turns. Do not await one before issuing the next. Sequential per-page calls are slower than the in-loop pattern this rule replaces and waste the entire benefit of splitting.
+-
+-```js
+-// AVOID — switches pages N times in one script, reloads the file each time
+-for (const page of figma.root.children) {
+-  await figma.setCurrentPageAsync(page);
+-  // ... touch this page ...
+-}
+-
+-// PREFER — read-only discovery call to get page IDs, then in the NEXT message
+-// emit N parallel use_figma tool calls (one per page), each setting currentPage once.
+-```
+-
+-Default to parallel fan-out for any multi-page work — reads and writes alike. See [gotchas.md → Set current page once per `use_figma` call](references/gotchas.md#set-current-page-once-per-use_figma-call--split-multi-page-work-into-parallel-calls) for the full rationale.
++### Call `setCurrentPageAsync` at most once per `use_figma` invocation
++
++One script must switch pages at most once. Never loop over `figma.root.children` and switch pages inside the loop.
++
++For multi-page work, use focused calls with one target page each. Serialize mutations so each call observes the validated state from the prior call; Figma changes must not race. Read-only discovery may be parallelized only when the host explicitly supports it and the calls do not depend on shared mutable state. Choose the number of calls from operation risk and validation needs, not a fixed quota. See [gotchas.md → Set current page once per `use_figma` call](references/gotchas.md#set-current-page-once-per-use_figma-call--use-focused-multi-page-calls).
+@@ -278 +263 @@
+-- **At most 10 logical operations per `use_figma` call.** A "logical operation" is creating a node, setting its properties, and parenting it. If you need to create 20 nodes, split across 2-3 calls. **Slides override:** in Slides files, slides are isolated subtrees — the relevant limit is complexity per slide, not total nodes across slides. Building 3–5 new slides in one call is safe, and so is applying the same edit (e.g. adding a footer, recoloring a heading) across every slide in the deck in a single call. See [figma-use-slides](../figma-use-slides/SKILL.md) for the deck-building workflow.
++- **Size a `use_figma` call to risk and validation.** Split work when it becomes hard to inspect, recover, or attribute; a clearly bounded repeated edit may safely use one call. **Slides override:** in Slides files, slides are isolated subtrees — the relevant limit is complexity per slide, not total nodes across slides. Building 3–5 new slides in one call is safe, and so is applying the same edit (e.g. adding a footer, recoloring a heading) across every slide in the deck in a single call. See [figma-use-slides](../figma-use-slides/SKILL.md) for the deck-building workflow.
+@@ -394 +379 @@
+-Step 2: in the **next assistant turn, emit one `use_figma` per page in parallel** (a single message containing N tool-use blocks). Each runs:
++Step 2: issue one focused `use_figma` call per page and serialize mutations. Each runs:
+--- a/openai-curated-remote/product-design/0.1.53/skills/ideate/SKILL.md
++++ b/openai-curated-remote/product-design/0.1.53/skills/ideate/SKILL.md
+@@ -56 +56 @@
+-- For a broad product idea, explore three meaningfully different product directions.
++- For a broad product idea, explore the number of meaningfully different directions the brief needs, usually two or three.
+@@ -78 +78 @@
+-8. Generate 3 independent options that have distinct information hierarchy, layout strategy, interaction model, or product framing.
++8. Generate the number of independent options the user requests. If no count is requested, choose one to three based on the material design uncertainty; make each option meaningfully distinct.
+@@ -84 +84 @@
+-- Generate exactly three independent images unless the user overrides the count.
++- Honor the user's requested image count. When unspecified, generate one to three independent images according to the material uncertainty, not a fixed default.
+@@ -183 +183 @@
+-Do not name or describe the options. For the default three images, send only:
++Do not name or describe the options. For an unspecified multi-image exploration, send only:
+--- a/openai-curated-remote/product-design/0.1.53/skills/url-to-code/SKILL.md
++++ b/openai-curated-remote/product-design/0.1.53/skills/url-to-code/SKILL.md
+@@ -43,7 +43,2 @@
+-- Start at the top of the page.
+-- Scroll down in small steps.
+-- At each step, capture what is visible.
+-- Note any new sections, controls, sticky elements, animations, or lazy-loaded assets.
+-- Continue until the full page has been seen.
+-- Scroll back to the top and check whether anything changed.
+-- Repeat on mobile at `390 x 844`.
++- Inspect the requested page from top to bottom on desktop and mobile, unless the user explicitly limits the viewport or section. Capture the important sections and primary-flow states; add breakpoints when they materially affect the result.
++- Record sections, controls, sticky elements, animations, and lazy-loaded assets that the implementation needs.
+@@ -72,5 +67,2 @@
+-- Use the screenshots and browser DOM tools to find visible controls.
+-- Include navigation, buttons, links, inputs, menus, drawers, modals, tabs, carousels, hover states, sticky elements, and anything else the user can interact with.
+-- Test one control at a time.
+-- Return to the starting state before testing the next control.
+-- Save the result when the page visibly changes or the browser tools show a state change.
++- Identify and test interactions that are requested or materially affect the primary flow.
++- Capture the resulting state when it will be reproduced. Test every interaction only for an explicitly exhaustive clone.
+@@ -115,3 +107,2 @@
+-- Check desktop.
+-- Check mobile.
+-- Check every interaction you captured.
++- Check desktop and mobile within the requested scope.
++- Check each reproduced interaction against the captured source state, including primary-flow states.
+@@ -138,2 +129 @@
+-- Capture source evidence first. Do not scaffold, write app code, start a server, or create the local prototype until desktop capture, mobile capture, key states, and every required asset, icon, control mark, and font is captured or replaced.
+-- Do not hand off until every single interaction and state is captured from the target.
++- Capture source evidence before building. Capture desktop, responsive widths, states, assets, icons, controls, and fonts to the fidelity the user requested; include important primary-flow states even when the request is brief. Require every interaction and state only for an explicitly exhaustive clone.
+--- a/openai-bundled/sites/0.1.57/skills/sites-building/SKILL.md
++++ b/openai-bundled/sites/0.1.57/skills/sites-building/SKILL.md
+@@ -102 +102 @@
+-- Use asset-only subagents for web image search and `imagegen`; the Site-owning agent selects and integrates results.
++- Delegate asset search or `imagegen` only when it materially helps the requested Site and bounded parallel work is available. Otherwise the Site-owning agent may obtain the needed assets directly and selects and integrates all results.
+@@ -113,3 +113,3 @@
+-For the default 1–3 generated in-page assets, use exactly one image-generation subagent with one request per chosen asset, together as one parallel batch when supported. Do not generate variants or retry in-page generation. Explicit requests for additional generated images take precedence over this default. Have the subagent save outside the Site checkout and return assets to the Site-owning agent for inspection and integration. When delegation is unavailable, the owner makes the same bounded requests using the synchronous fallback below. Explicitly requested social cards follow their separate retry allowance in **Social previews**.
+-
+-Start asset-only subagents with `fork_turns="none"` and only the subject, factual requirements, placement, dimensions, and visual direction. They return candidate assets and, for search, source-page and image URLs plus available reuse information; they must not edit the Site, call Sites tools, invoke Sites skills, initialize projects, or spawn agents. If concurrency is unavailable, finish the preview slice's independent work first. Request synchronously only the images needed to make that slice coherent, show the preview where supported, then request the remaining required images; omit optional generation that would delay delivery. Never invent asynchronous jobs.
++When generated in-page assets are needed, choose the count from the request and visual need. Asset delegation is optional: use an asset-only subagent only when it helps and is available; otherwise the owner makes the bounded requests directly. Do not generate variants or retry without a specific need. Explicit requests for additional generated images take precedence. Keep generated assets outside the Site checkout until the owner has inspected and selected them. Explicitly requested social cards follow their separate retry allowance in **Social previews**.
++
++When delegating asset work, start an asset-only subagent with `fork_turns="none"` and only the subject, factual requirements, placement, dimensions, and visual direction. It returns candidate assets and, for search, source-page and image URLs plus available reuse information; it must not edit the Site, call Sites tools, invoke Sites skills, initialize projects, or spawn agents. If no delegation is useful or available, request only the images needed to make the slice coherent and omit optional generation that would delay delivery. Never invent asynchronous jobs.
+--- a/openai-primary-runtime/documents/26.904.11930/skills/documents/SKILL.md
++++ b/openai-primary-runtime/documents/26.904.11930/skills/documents/SKILL.md
+@@ -112 +112 @@
+-2. Once you have a working DOCX, continue iterating until the entire document is polished and correct. After every change or edit, render the DOCX and review it carefully to evaluate the result. The plan from (1) should guide you, but it is only a flexible draft; you should update your decisions as needed throughout the revision process. Important: each time you render and reflect, you should check for both:
++2. Once you have a working DOCX, continue iterating until the entire document is polished and correct. Render and review after layout-affecting edits, such as changes to styles, tables, images, headers, sections, page breaks, or OOXML. Batch content-only edits when they do not affect layout, then render for final QA before delivery. The plan from (1) should guide you, but it is only a flexible draft; you should update your decisions as needed throughout the revision process. Important: each time you render and reflect, you should check for both:
+@@ -447 +447 @@
+-**Rule of thumb:** every meaningful edit batch must end with a render + PNG review. No exceptions.
++**Rule of thumb:** every layout-affecting edit batch must end with a render + PNG review. Perform a final render and review before delivery.
+@@ -455 +455 @@
+-5. **Re-render and inspect again** after *any* OOXML patch or layout-sensitive change.
++5. **Re-render and inspect again** after a layout-affecting OOXML patch or other layout-sensitive change.
+--- a/openai-curated-remote/figma/2.0.21/skills/figma-generate-library/references/component-creation.md
++++ b/openai-curated-remote/figma/2.0.21/skills/figma-generate-library/references/component-creation.md
+@@ -5 +5 @@
+-Complete guide for Phase 3: building components with variant matrices, variable bindings, component properties, and documentation.
++Component-creation guidance for a full library or a focused existing-library component: variants, variable bindings, component properties, and documentation when requested.
+@@ -25 +25 @@
+-If a component embeds an instance of another component, the embedded component must be created first. Build your dependency graph during Phase 0 and encode the creation order in the plan.
++If a component embeds another component, create or locate the dependency first. Build a dependency graph during Phase 0 for a full library; for focused work, inspect the existing dependency and its conventions before changing the component.
+--- a/openai-curated-remote/figma/2.0.21/skills/figma-use/references/gotchas.md
++++ b/openai-curated-remote/figma/2.0.21/skills/figma-use/references/gotchas.md
+@@ -191,31 +191,9 @@
+-## Set current page once per `use_figma` call — split multi-page work into parallel calls
+-
+-**A `use_figma` script must call `setCurrentPageAsync` at most once.** Never loop over `figma.root.children` and switch pages inside one script.
+-
+-**The rule is the same for reads and writes:** if work spans multiple pages, split it into **multiple `use_figma` tool calls, one per target page, and YOU MUST issue them in parallel**.
+-
+-> **Explicit instruction to the agent:** emit all N `use_figma` calls in a **single assistant message**, as N parallel tool-use blocks. Do not send them in separate turns. Do not await one before issuing the next. Each call sets `currentPage` exactly once; the harness runs them concurrently. Sequential per-page calls defeat the entire point of splitting and are slower than the in-loop pattern this rule replaces.
+-
+-```js
+-// WRONG — one script switches pages on every iteration; reloads the file N times sequentially
+-const componentsByPage = {}
+-for (const page of figma.root.children) {
+-  await figma.setCurrentPageAsync(page)
+-  componentsByPage[page.name] = page.findAllWithCriteria({ types: ['COMPONENT'] }).map(n => n.id)
+-}
+-return componentsByPage
+-```
+-
+-Instead, do it in two steps and parallelize step 2:
+-
+-```js
+-// CORRECT — step 1: cheap, no page switch. Return the page IDs you'll fan out over.
+-return figma.root.children.map(p => ({ id: p.id, name: p.name }))
+-```
+-
+-Then in the **next assistant turn**, emit **N parallel `use_figma` tool-use blocks in one message** — one per page. Each script runs this:
+-
+-```js
+-// CORRECT — step 2: one call per page, currentPage set exactly once.
+-// The assistant issues N of these in parallel — do NOT loop pages inside the script.
+-const page = await figma.getNodeByIdAsync(PAGE_ID)  // PAGE_ID supplied by caller
++## Set current page once per `use_figma` call — use focused multi-page calls
++
++A `use_figma` script must call `setCurrentPageAsync` at most once. Never loop over `figma.root.children` and switch pages inside one script.
++
++For multi-page work, use one focused call per target page. Serialize mutations so each call observes the prior validated state; concurrent Figma writes can race. Read-only discovery may be parallelized only when the host supports independent calls and no later operation depends on their order.
++
++```js
++// One target page per call; serialize this call when it mutates the file.
++const page = await figma.getNodeByIdAsync(PAGE_ID)
+@@ -224,4 +202,2 @@
+-return { pageId: page.id, components: page.findAllWithCriteria({ types: ['COMPONENT'] }).map(n => n.id) }
+-```
+-
+-This applies to discovery, mutation, component-set creation, and audits — reads and writes alike. **The only acceptable reason to switch pages multiple times in one script is when splitting would break a transactional/atomicity guarantee** (i.e., the operation must succeed across all pages or none, and a partial failure between calls would corrupt state). "It's read-only" and "I want a consistent snapshot" are *not* exceptions — fan out in parallel.
++return { pageId: page.id }
++```

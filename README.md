@@ -104,10 +104,11 @@ The entrypoint stays compact. Detailed guidance is loaded only when the selected
 ```mermaid
 flowchart TD
     M[Skill metadata] --> K[SKILL.md router]
-    K --> C[safety-and-scope.md]
+    K -->|Routine change| Q[Implement, verify, review]
+    K -->|Consequential scope or ownership| C[safety-and-scope.md]
     K -->|Survey, Track, Prove| O[modes.md]
     K -->|Material unknowns| U[unknowns-lifecycle.md]
-    K -->|Expedition| W[standard-workflow.md]
+    K -->|Complex Expedition| W[standard-workflow.md]
     K -->|Durable artifacts or prototypes| A[artifacts.md]
     K -->|Authorized Git delivery| D[delivery.md]
     K -->|Handoff prompts| T[templates.md]
@@ -123,10 +124,9 @@ consumer repositories do not require a companion file.
 behavior. `agents/openai.yaml` adds optional Codex-facing presentation metadata;
 other harnesses can ignore it without losing the workflow.
 
-For Codex, model routing uses three explicit roles: Luna handles narrow,
-repeatable and mechanical work; Terra handles exploration and well-specified
-multi-step execution, scaling from medium through exceptional xhigh; Sol high
-owns ambiguity, consequential judgment, and consequential final review. See
+Keep the current capable primary agent, including Astra, by default. When a
+bounded worker helps, Luna handles narrow execution, Terra handles exploration
+and explicit implementation, and Sol handles consequential judgment. See
 [`model-routing.md`](skills/code-territory-guide/references/model-routing.md)
 for the exact model identifiers, escalation boundaries, and non-Codex fallback.
 
@@ -156,7 +156,7 @@ quality still requires browser or human review.
 
 ## Installation
 
-Installation differs by agent harness. If you use more than one, install Code Territory Guide separately for each one. Every adapter loads the same canonical [`skills/code-territory-guide/`](skills/code-territory-guide/) directory. Repository marketplaces install the generated minimal bundle under [`plugins/code-territory-guide/`](plugins/code-territory-guide/) instead of treating this entire development repository as the plugin. That bundle contains only its Codex and Claude manifests plus Git-tracked skill files. The self-contained [`portable/AGENTS.md`](portable/AGENTS.md) remains repository-only and is not installed with the plugin; it provides minimal-by-default coding guidance plus the complete workflow for workplaces where the skill cannot be installed.
+Installation differs by agent harness. If you use more than one, install Code Territory Guide separately for each one. Every adapter loads the same canonical [`skills/code-territory-guide/`](skills/code-territory-guide/) directory. Repository marketplaces install the generated minimal bundle under [`plugins/code-territory-guide/`](plugins/code-territory-guide/) instead of treating this entire development repository as the plugin. That bundle contains only its Codex and Claude manifests plus Git-tracked skill files. The self-contained [`portable/AGENTS.md`](portable/AGENTS.md) remains repository-only and is not installed with the plugin; it provides compact coding guidance for workplaces where the skill cannot be installed. The optional [full standalone edition](portable/full/AGENTS.md) retains the expanded workflow without being loaded by the compact edition.
 
 ### Claude Code
 
@@ -196,7 +196,7 @@ codex plugin add code-territory-guide@code-territory-guide
 
 In the Codex app, the same marketplace makes Code Territory Guide available in the Plugins interface.
 
-The sparse marketplace checkout and plugin subdirectory keep `docs/`, `evals/`,
+The sparse marketplace checkout and plugin subdirectory keep `docs/`, `tests/`,
 `site/`, and repository-development files out of the installed plugin. Existing
 marketplace registrations created without these sparse paths may still retain a
 full repository snapshot; remove and re-add that marketplace when minimizing
@@ -287,7 +287,8 @@ code-territory-guide/
 │   ├── assets/artifacts/
 │   ├── references/
 │   └── scripts/validate_visual_prototype.py
-├── portable/AGENTS.md                  # standalone workplace-friendly edition
+├── portable/AGENTS.md                  # compact standalone edition
+├── portable/full/AGENTS.md             # optional full standalone workflow
 ├── plugins/code-territory-guide/       # generated tracked-file-only plugin
 │   ├── .codex-plugin/
 │   ├── .claude-plugin/
@@ -302,48 +303,42 @@ code-territory-guide/
 ├── site/                               # GitHub Pages visual explainer
 ├── .github/workflows/pages.yml         # static Pages deployment
 ├── package.json                        # Pi and Git-backed package metadata
-└── evals/
-    ├── README.md
-    ├── manifest.json
-    ├── fixtures/
-    ├── run_matrix.py
-    ├── judge_matrix.py
-    ├── build_report.py
-    └── results/
+├── scripts/validate_package.py         # local package checks
+├── scripts/validate_site.py            # static site integrity
+├── tests/                              # ordinary deterministic tests
+└── docs/archive/evaluations/           # historical evidence summaries
 ```
 
-## Behavioral evaluation
+## Validation
 
-The evaluation suite compares clean baseline sessions with sessions that can discover the installed skill. Synthetic fixtures and read-only repository inspections remain distinct evidence classes.
+Routine changes use local checks with no model calls, API keys, or evaluation
+locks:
 
-```mermaid
-flowchart TD
-    L[Frozen skill, harness, routing, and cases] --> V[Deterministic validation]
-    V --> S[Synthetic fixtures]
-    V --> RO[Read-only real repositories]
-    S --> P[Matched baseline and skill arms]
-    RO --> P
-    P --> J[Sanitized blinded opposite-family judge]
-    J --> R[Qualified evidence report]
-    R --> A[Adversarial audit]
+```sh
+python scripts/validate_package.py
+python skills/code-territory-guide/scripts/validate_visual_prototype.py --committed
+python scripts/validate_site.py
+python -m unittest discover -s tests -v
 ```
 
-Raw transcripts, judgments, local paths, and treatment contents remain ignored. The repository keeps only qualified evidence summaries:
+CI runs these same lightweight checks. They verify package structure, generated
+bundle consistency, the site, and artifact helpers. They do not establish that
+a skill improves model behavior across all tasks.
 
-- [Synthetic behavioral evidence](evals/results/synthetic-evidence.md)
-- [Real-repository behavioral evidence](evals/results/real-repository-evidence.md)
-
-The evidence supports scoped, safety-conscious use. It does not prove universal quality uplift or performance across every repository and risk class. See [the evaluation guide](evals/README.md) for prerequisites, interpretation, and case-authoring rules.
+The former model-based benchmark runners, judges, fixtures, and frozen locks
+have been removed. [Historical evidence summaries](docs/archive/evaluations/)
+remain archived; they are not validation of the current skill. A major behavior
+change may benefit from a few realistic trial tasks, but model runs are not a
+routine contribution or release gate.
 
 ## Contributing
 
-Keep `SKILL.md` as a router, put detailed policy in directly linked references, avoid duplicated guidance, and validate behavior rather than judging prose alone. When changing the skill:
-
-1. Validate its structure.
-2. Run the deterministic evaluation checks.
-3. Run only the affected behavioral cases first.
-4. Preserve every failed or excluded attempt.
-5. Update evidence claims only after independent judging and audit.
+Keep routine guidance concise and self-contained, and load detailed references
+only when needed. Preserve actual tool contracts, user intent, and authorized
+completion boundaries. Run the local checks above for relevant source changes.
+For substantial workflow changes, inspect realistic outcomes when useful and
+state the limits of that evidence. No permanent model-evaluation framework is
+required.
 
 ## License
 

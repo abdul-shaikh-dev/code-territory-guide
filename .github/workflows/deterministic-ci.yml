@@ -1,4 +1,4 @@
-name: Deterministic CI
+name: Package checks
 
 on:
   pull_request:
@@ -22,19 +22,13 @@ jobs:
           python-version: "3.12"
 
       - name: Validate package and skill structure
-        run: python evals/validate_package.py
+        run: python scripts/validate_package.py
 
       - name: Validate committed visual prototypes
         run: python skills/code-territory-guide/scripts/validate_visual_prototype.py --committed
 
       - name: Validate production visual explainer
-        run: python evals/validate_site.py
-
-      - name: Validate behavioral manifest
-        run: python evals/validate_manifest.py
-
-      - name: Validate recorded evidence
-        run: python evals/validate_records.py
+        run: python scripts/validate_site.py
 
       - name: Run deterministic tests
-        run: python -m unittest discover -s evals/tests -v
+        run: python -m unittest discover -s tests -v
