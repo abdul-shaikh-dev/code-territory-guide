@@ -1,6 +1,6 @@
 # Code Territory Guide Modes
 
-Read `safety-and-scope.md` before using a mode. Choose the lightest mode that reduces the main uncertainty; do not run every mode.
+Choose the lightest mode that reduces the main uncertainty; do not run every mode.
 
 For vague, unfamiliar, product-facing, or architecture-sensitive work, also
 load `unknowns-lifecycle.md`.

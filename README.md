@@ -124,11 +124,11 @@ consumer repositories do not require a companion file.
 behavior. `agents/openai.yaml` adds optional Codex-facing presentation metadata;
 other harnesses can ignore it without losing the workflow.
 
-Keep the current capable primary agent, including Astra, by default. When a
-bounded worker helps, Luna handles narrow execution, Terra handles exploration
-and explicit implementation, and Sol handles consequential judgment. See
+Keep the current capable primary agent by default. Choose bounded workers by
+role and the current host's available capabilities. The canonical
 [`model-routing.md`](skills/code-territory-guide/references/model-routing.md)
-for the exact model identifiers, escalation boundaries, and non-Codex fallback.
+contains selection, escalation, and fallback guidance without pinned model
+versions or mandatory reasoning levels.
 
 For work that spans sessions, agents, or substantial investigation, the skill materializes only the useful artifacts under the owning repository’s existing documentation convention or `docs/code-territory/<task-slug>/`, resolved from that repository’s Git root. It never writes into the installed skill or a parent multi-repository workspace by assumption. Narrow work remains in chat.
 
