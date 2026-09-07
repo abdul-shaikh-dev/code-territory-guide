@@ -1,8 +1,7 @@
 # Authorized Git Delivery
 
 Load this reference before creating a commit, pushing, opening a pull request,
-tagging, releasing, merging, or performing another delivery operation. Read
-`safety-and-scope.md` first.
+tagging, releasing, merging, or performing another delivery operation.
 
 ## Delivery Authorization
 

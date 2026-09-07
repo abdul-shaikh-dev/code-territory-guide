@@ -1,6 +1,6 @@
 # Code Territory Guide Templates
 
-Use these templates only when a copyable handoff or structured output adds value. Load `safety-and-scope.md` and the relevant workflow reference first. Do not use templates as a substitute for repository inspection.
+Use these templates only when a copyable handoff or structured output adds value. Do not use templates as a substitute for repository inspection.
 
 For durable repository artifacts, copy the corresponding starter from `assets/artifacts/`. The prompt templates below remain useful for chat and model handoffs.
 
@@ -94,7 +94,8 @@ Do not write implementation code.
 ## Implementation Handoff
 
 ```text
-Implement this field brief within the supplied canonical safety-and-scope policy.
+Implement this field brief within the supplied Code Territory Guide entrypoint
+and any applicable scope constraints.
 
 Field brief:
 <brief>
@@ -106,7 +107,7 @@ Rules:
 - own only the listed files or hunks
 - preserve pre-existing changes
 - use the smallest safe diff and existing patterns
-- stop when the canonical scope gate requires confirmation
+- ask when a proposed action exceeds the supplied authority
 - run listed validation and classify failures
 - do not report Complete while required task-caused checks fail
 

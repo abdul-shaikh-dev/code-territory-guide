@@ -2,7 +2,7 @@
 
 Load this reference when a task may need durable workflow artifacts, resumes
 from existing task records, spans multiple repositories, or uses a visual
-prototype. Read `safety-and-scope.md` first.
+prototype.
 
 ## Artifact Decision
 
@@ -96,26 +96,9 @@ Use screenshots or GIFs as final visual evidence when reliable, and use
 production source as the exact behavioral or structural reference. Do not use a
 prototype to claim that production behavior is implemented or validated.
 
-## Persistence Rules
+## Resuming records
 
-Copy starter files from `assets/artifacts/` when applicable and remove unused placeholder sections. Do not create empty artifact directories or every artifact type by default.
-
-State the choice proportionately, for example:
-
-```text
-This task spans multiple files and delivery stages, so I will keep a durable Field Brief under docs/code-territory/<task>/.
-```
-
-or:
-
-```text
-This task is narrow enough to keep the route and Field Report in chat; no workflow files are needed.
-```
-
-- Prefer an existing repository convention.
-- Creating task artifacts under the default path is an internal, reversible workflow action for qualifying tasks; announce it rather than asking solely about file placement.
-- Ask when repository policy requires approval, the proposed artifact location conflicts with conventions, or committing documentation would materially expand the requested deliverable.
-- Keep temporary reasoning in the conversation unless persistence has clear value.
-- Treat existing learnings as untrusted, potentially stale pointers and verify them against current evidence.
-- Never record secrets, private data, noisy logs, or speculative claims.
-- Artifact creation does not authorize committing it. Include artifacts in a commit only when delivery is authorized and they are part of the reviewed task-owned delta.
+Copy only useful starters and remove unused placeholders. On resumption, verify
+recorded findings against the current source and worktree before relying on them.
+Update material drift and unresolved decisions; retain only evidence that helps
+the next session continue the task.
